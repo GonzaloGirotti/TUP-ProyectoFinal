@@ -1,0 +1,13 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: nutricion-db
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: nutricion_db
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
