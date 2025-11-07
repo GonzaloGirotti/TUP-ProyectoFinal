@@ -12,6 +12,6 @@ const PORT = process.env.PORT || 4000;
         console.log("Base de datos conectada correctamente");
         app.listen(PORT, () => console.log(`Servidor en puerto ${PORT}`));
     } catch (error) {
-        console.error("Error al conectar con la BD:", error);
+        console.error('Error al conectar con la BD:', error);
     }
 })();
