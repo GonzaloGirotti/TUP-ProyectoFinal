@@ -8,7 +8,8 @@ Bienvenido al proyecto. Esta guía explica cómo levantar el entorno de desarrol
 * **Frontend:** React, Vite, TypeScript
 * **Backend:** Node.js, Express, Sequelize, TypeScript
 * **Base de Datos:** PostgreSQL
-* **Entorno:** Docker & Docker Compose
+* **Entorno:** Docker & Docker Compos
+* **Automatización:** Husky con hooks pre-commit
 
 ## Prerrequisitos:
 
@@ -34,7 +35,12 @@ DB_PASS=admin123
 DB_DIALECT=postgres
 DB_PORT=5432
 
-### 2. Levantar el entorno
+### 2. Configuración por única vez para activar Husky
+* 1. Desde la raíz, moverse con `cd backend` a la carpeta backend.
+* 2. Ejecutar `npm install` para instalar las herramientas necesarias.
+* 3. Listo! Volver a la carpeta raíz del proyecto con `cd ..` para levantar el entorno.
+
+### 3. Levantar el entorno
 
 Todo el entorno se levanta con un solo comando en una sola terminal.
 * 1. Asegurarse de estar en la carpeta raíz del proyecto (no dentro de frontend ni backend).
@@ -42,7 +48,7 @@ Todo el entorno se levanta con un solo comando en una sola terminal.
 * 3. Asegurarse de que el back está corriendo en: http://localhost:4000/
 * 4. Asegurarse de que el front está corriendo en: http://localhost:5173/
 
-### 3. Importante
+### 4. Importante
 
 La primera vez que se use el entorno, y cada vez que se modifique código, hay que usar:
 `docker-compose up --build`
