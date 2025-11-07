@@ -4,11 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "prepare": "cd .. && npx husky",
     "dev": "nodemon --watch src --exec ts-node src/server.ts",
     "build": "tsc",
-    "start": "node dist/server.js",
-    "prepare": "husky",
-    "postinstall": "husky install"
+    "start": "node dist/server.js"
   },
   "keywords": [],
   "author": "",
@@ -40,8 +39,8 @@
     "typescript-eslint": "^8.46.3"
   },
   "lint-staged": {
-    "backend/src/**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}": [
-      "eslint --config backend/eslint.config.mts --fix",
+    "src/**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}": [
+      "npx eslint --config eslint.config.mts --fix",
       "npx prettier --write"
     ]
   }
