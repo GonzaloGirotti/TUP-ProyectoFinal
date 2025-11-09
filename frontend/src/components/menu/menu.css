@@ -5,3 +5,8 @@ list-style-type: none;
 a{
     text-decoration: none;
 }
+
+nav ul li a.active {
+  font-weight: bold;
+  text-decoration: underline;
+}
