@@ -9,8 +9,8 @@ const BaseLayout = () => {
   return (
     <div className="base">
       <aside className="flex flex-col gap-4 p-2 bg-zinc-900">
-        <div className="flex justify-center p-4">
-          <div className="rounded-full bg-amber-200 h-30 w-30">Avatar</div>
+        <div className="flex justify-center p-4 w-full" >
+          <img src="/avatar.jpg" alt="avatar " />
         </div>
     
         <Menu />
