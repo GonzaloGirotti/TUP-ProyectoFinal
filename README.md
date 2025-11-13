@@ -51,6 +51,8 @@ JWT_EXPIRES_IN="1d"
 
 * 1. Asegurarse de estar en la carpeta raíz del proyecto (no dentro de frontend ni backend).
 * 2. Ejecutar el siguiente comando: `docker-compose up -d`
-* 3. Asegurarse de que el back está corriendo en: http://localhost:4000/
+* 3. `cd backend` y `npm run dev`
+* 4. Asegurarse de que el back está corriendo en: http://localhost:4000/
+* 5. El back está listo para las consultas con postman
 
 ### 4. Importante
