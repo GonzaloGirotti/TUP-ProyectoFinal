@@ -49,10 +49,8 @@ JWT_EXPIRES_IN="1d"
 
 ### 3. Levantar el entorno
 
-Todo el entorno se levanta con un solo comando en una sola terminal.
 * 1. Asegurarse de estar en la carpeta raíz del proyecto (no dentro de frontend ni backend).
 * 2. Ejecutar el siguiente comando: `docker-compose up -d`
 * 3. Asegurarse de que el back está corriendo en: http://localhost:4000/
-* 4. Asegurarse de que el front está corriendo en: http://localhost:5173/
 
 ### 4. Importante
