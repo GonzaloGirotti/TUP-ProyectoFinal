@@ -6,9 +6,9 @@ Bienvenido al proyecto. Esta guía explica cómo levantar el entorno de desarrol
 ## Tecnologías Principales:
 
 * **Frontend:** React, Vite, TypeScript
-* **Backend:** Node.js, Express, Sequelize, TypeScript
+* **Backend:** Node.js, Express, Sequelize, TypeScript, Zod, Jsonwebtoken
 * **Base de Datos:** PostgreSQL
-* **Entorno:** Docker & Docker Compos
+* **Entorno:** Docker & Docker Compose
 * **Automatización:** Husky con hooks pre-commit
 
 ## Prerrequisitos:
@@ -26,14 +26,21 @@ Antes de levantar los servicios, necesitas configurar el proyecto.
 ### 1. Crear el archivo con las variables de entorno
 
 Crear un archivo .env en la raíz del proyecto con el siguiente contenido:
-# Puerto del Backend
+## Configuración del Servidor
 PORT=4000
-# Variables de la Base de Datos
-DB_NAME=nutricion_db
-DB_USER=postgres
-DB_PASS=admin123
-DB_DIALECT=postgres
+
+## Configuración de la Base de Datos
+DB_HOST=localhost
 DB_PORT=5432
+DB_USER=admin_nutri
+DB_PASSWORD=password_seguro_123
+DB_NAME=nutricion_db
+DB_DIALECT=postgres
+
+## Configuración de Autenticación
+## Usado por el backend
+JWT_SECRET="un_secreto_muy_largo"
+JWT_EXPIRES_IN="1d"
 
 ### 2. Configuración por única vez para activar Husky
 * 1. Desde la raíz, moverse con `cd backend` a la carpeta backend.
@@ -44,13 +51,8 @@ DB_PORT=5432
 
 Todo el entorno se levanta con un solo comando en una sola terminal.
 * 1. Asegurarse de estar en la carpeta raíz del proyecto (no dentro de frontend ni backend).
-* 2. Ejecutar el siguiente comando: `docker-compose up --build`
+* 2. Ejecutar el siguiente comando: `docker-compose up -d`
 * 3. Asegurarse de que el back está corriendo en: http://localhost:4000/
 * 4. Asegurarse de que el front está corriendo en: http://localhost:5173/
 
 ### 4. Importante
-
-La primera vez que se use el entorno, y cada vez que se modifique código, hay que usar:
-`docker-compose up --build`
-Luego, cada vez que se quiera levantar el servidor, simplemente puede usarse:
-`docker-compose up`
