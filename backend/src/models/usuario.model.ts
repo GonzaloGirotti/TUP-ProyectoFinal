@@ -20,8 +20,7 @@ class Usuario
     UsuarioAttributes,
     Optional<UsuarioAttributes, "id_usuario" | "fecha_creacion" | "updatedAt">
   >
-  implements UsuarioAttributes
-{
+  implements UsuarioAttributes {
   public id_usuario!: number;
   public nombre_usuario!: string;
   public email!: string;
