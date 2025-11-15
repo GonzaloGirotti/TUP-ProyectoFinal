@@ -31,7 +31,7 @@ export default defineConfig([
        "error" -> Falla si no se cumple
        "double" -> Usa comillas dobles
        */
-      "quotes": ["error", "double"],
+      // "quotes": ["error", "simple"],
 
       /**
        Forzar punto y coma (;) al final
