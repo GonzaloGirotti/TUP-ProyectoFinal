@@ -3,33 +3,32 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    // Corresponde a usuario.model.ts
-    await queryInterface.createTable("Usuarios", {
-      id_usuario: {
+    // Corresponde a alimento.model.ts
+    await queryInterface.createTable("Alimentos", {
+      id_alimento: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
         primaryKey: true,
       },
-      nombre_usuario: {
+      nombre: {
         type: Sequelize.TEXT,
         allowNull: false,
       },
-      email: {
-        type: Sequelize.TEXT,
-        allowNull: false,
-        unique: true,
-      },
-      password: {
-        type: Sequelize.TEXT,
+      carbohidratos: {
+        type: Sequelize.REAL,
         allowNull: false,
       },
-      fecha_nacimiento: {
-        type: Sequelize.DATE,
-        allowNull: true, // El modelo lo tiene opcional
+      proteinas: {
+        type: Sequelize.REAL,
+        allowNull: false,
       },
-      genero: {
-        type: Sequelize.TEXT,
-        allowNull: true, // El modelo lo tiene opcional
+      grasas: {
+        type: Sequelize.REAL,
+        allowNull: false,
+      },
+      calorias: {
+        type: Sequelize.REAL,
+        allowNull: false,
       },
       fecha_creacion: {
         type: Sequelize.DATE,
@@ -45,6 +44,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("Usuarios");
+    await queryInterface.dropTable("Alimentos");
   },
 };
