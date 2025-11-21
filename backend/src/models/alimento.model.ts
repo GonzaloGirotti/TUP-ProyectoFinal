@@ -71,18 +71,4 @@ Alimento.init(
   },
 );
 
-// Definición de la Relación
-
-// Un 'Alimento' pertenece a una 'Comida_Alimento'.
-// Alimento.belongsTo(Comida_Alimento, {
-//   foreignKey: "id_alimento",
-//   as: "alimento",
-// });
-
-// Una 'Comida_Alimento' tiene muchos 'Alimentos'
-// Comida_Alimento.hasMany(Alimento, {
-//   foreignKey: "id_alimento",
-//   as: "alimento",
-// });
-
 export default Alimento;
