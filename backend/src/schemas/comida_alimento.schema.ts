@@ -16,18 +16,10 @@ export const createComidaAlimentoSchema = z.object({
     cantidad_gramos: z
       .number()
       .positive("Los gramos deben ser un número positivo"),
-    carbohidratos_total: z
-      .number()
-      .positive("Los carbohidratos deben ser un número positivo"),
-    grasas_total: z
-      .number()
-      .positive("Las grasas deben ser un número positivo"),
-    proteinas_total: z
-      .number()
-      .positive("Las proteinas deben ser un número positivo"),
-    calorias_total: z
-      .number()
-      .positive("Las calorias deben ser un número positivo"),
+    carbohidratos_total: z.number().optional(),
+    grasas_total: z.number().optional(),
+    proteinas_total: z.number().optional(),
+    calorias_total: z.number().optional(),
   }),
 });
 

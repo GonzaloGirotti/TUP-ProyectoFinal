@@ -1,0 +1,3 @@
+echo "Ejecutando tests (Backend)..."
+cd backend
+npm run test:run

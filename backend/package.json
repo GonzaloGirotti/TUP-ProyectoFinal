@@ -11,7 +11,10 @@
     "db:migrate": "dotenv -e ../.env -- npx sequelize-cli db:migrate",
     "db:migrate:undo": "dotenv -e ../.env -- npx sequelize-cli db:migrate:undo",
     "db:seed": "dotenv -e ../.env -- npx sequelize-cli db:seed:all",
-    "db:model:create": "dotenv -e ../.env -- npx sequelize-cli model:generate"
+    "db:model:create": "dotenv -e ../.env -- npx sequelize-cli model:generate",
+    "test": "dotenv -e ../.env -- vitest",
+    "test:ui": "dotenv -e ../.env -- vitest --ui",
+    "test:run": "dotenv -e ../.env -- vitest run"
   },
   "keywords": [],
   "author": "",
@@ -35,6 +38,7 @@
     "@types/express": "^5.0.5",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^24.9.2",
+    "@types/supertest": "^6.0.3",
     "dotenv-cli": "^11.0.0",
     "eslint": "^9.39.1",
     "eslint-plugin-react": "^7.37.5",
@@ -44,9 +48,11 @@
     "lint-staged": "^16.2.6",
     "nodemon": "^3.1.10",
     "prettier": "^3.6.2",
+    "supertest": "^7.1.4",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.46.3"
+    "typescript-eslint": "^8.46.3",
+    "vitest": "^4.0.13"
   },
   "lint-staged": {
     "src/**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}": [
