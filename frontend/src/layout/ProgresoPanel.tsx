@@ -1,0 +1,155 @@
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import type { ChartOptions, ChartData } from "chart.js";
+import { Line } from "react-chartjs-2";
+import { useMemo } from "react";
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
+
+type EntradaPeso = {
+  fecha: string;
+  peso: number;
+};
+
+type EntradaObjetivo = {
+  fecha: string;
+  objetivo: number;
+};
+
+export function ProgresoPanel() {
+  // Entradas reales del usuario (Entries) – line chart normal
+  const entradas: EntradaPeso[] = [
+    { fecha: "2025-10-01", peso: 78 },
+    { fecha: "2025-10-10", peso: 77.5 },
+    { fecha: "2025-10-20", peso: 77 },
+    { fecha: "2025-11-01", peso: 76.8 },
+    { fecha: "2025-11-10", peso: 76.2 },
+  ];
+
+  // Progreso / objetivo – va cambiando en el tiempo – step line chart
+  const objetivos: EntradaObjetivo[] = [
+    { fecha: "2025-10-01", objetivo: 77 },
+    { fecha: "2025-10-20", objetivo: 76.5 },
+    { fecha: "2025-11-04", objetivo: 75.5 },
+  ];
+
+  const labels = useMemo(
+    () =>
+      Array.from(
+        new Set([
+          ...entradas.map((e) => e.fecha),
+          ...objetivos.map((o) => o.fecha),
+        ])
+      ).sort(),
+    [entradas, objetivos]
+  );
+
+  const data = useMemo<ChartData<"line", (number | null)[], string>>(
+    () => ({
+      labels,
+      datasets: [
+        // 🔵 Entries: line chart normal
+        {
+          label: "Peso",
+          data: labels.map((fecha) => {
+            const entrada = entradas.find((e) => e.fecha === fecha);
+            return entrada ? entrada.peso : null;
+          }),
+          borderColor: "#3b82f6",
+          backgroundColor: "rgba(59, 130, 246, 0.3)",
+          tension: 0.3,
+          fill: true,
+          pointRadius: 5,
+          pointHoverRadius: 7,
+          spanGaps: true,
+          stepped: false, // line normal
+        },
+
+        // 🟢 Progreso: step line chart
+        {
+          label: "Objetivo",
+
+          data: (() => {
+            let lastObjetivo: number | null = null;
+
+            return labels.map((fecha) => {
+              const obj = objetivos.find((o) => o.fecha === fecha);
+              if (obj) {
+                lastObjetivo = obj.objetivo; // (forward fill).
+              }
+              return lastObjetivo;
+            });
+          })(),
+          borderColor: "#22c55e",
+          backgroundColor: "rgba(34, 197, 94, 0.1)",
+          pointRadius: 4,
+          spanGaps: true,
+          // 👇 clave: literal + 'as const' para que no sea string genérico
+          stepped: "before" as const,
+          fill: false,
+          borderDash: [6, 4],
+        },
+      ],
+    }),
+    [labels, entradas, objetivos]
+  );
+
+  const options: ChartOptions<"line"> = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "top",
+        labels: {
+          color: "#555",
+          font: { size: 14 },
+          useBorderRadius: true,
+          borderRadius: 10,
+          boxWidth: 20,
+          boxHeight: 20,
+        },
+      },
+      title: {
+        display: false,
+        text: "Progreso de Peso y Objetivos",
+        color: "#111",
+        font: { size: 18, weight: "bold" },
+      },
+    },
+    scales: {
+      x: {
+        ticks: { color: "#666" },
+        grid: { color: "rgba(0,0,0,0.05)" },
+      },
+      y: {
+        ticks: {
+          color: "#666",
+          callback: (value) => `${value} kg`,
+        },
+        grid: { color: "rgba(0,0,0,0.05)" },
+      },
+    },
+  };
+
+  return (
+    <div className="panel-item p-6 w-full">
+      <h2>Progreso</h2>
+      <Line data={data} options={options} />
+    </div>
+  );
+}

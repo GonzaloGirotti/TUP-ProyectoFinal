@@ -1,0 +1,7 @@
+span{
+    @apply items-center;
+}
+
+span p {
+    @apply text-center;
+}
