@@ -1,0 +1,21 @@
+.base{
+    display: grid;
+    grid-template-columns: 20% ;
+    grid-template-rows: 10%;
+    gap: 8px;
+    height: 100vh;
+ 
+}
+
+
+aside{
+    
+     grid-row: span 2 / span 2;
+}
+
+main{
+    grid-column-start: 2;
+   
+   
+}
+
