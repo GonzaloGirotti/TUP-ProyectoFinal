@@ -1,73 +1,46 @@
-# React + TypeScript + Vite
+Nutri-App (frontend)
+====================
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Aplicación React + TypeScript para seguimiento nutricional, construida con Vite y Tailwind CSS.
 
-Currently, two official plugins are available:
+Tecnologías principales
+-----------------------
+- React 19 + TypeScript (SPA)
+- Vite 7 (build/dev server)
+- React Router DOM 7 (ruteo)
+- Tailwind CSS 4 (estilos utilitarios)
+- Axios (HTTP)
+- Chart.js + react-chartjs-2 (gráficos)
+- Vitest + ESLint (tests/lint)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Estructura de carpetas (src/)
+-----------------------------
+- main.tsx: punto de entrada, monta la app.
+- App.tsx: define rutas principales.
+- layout/: pantallas (LoginPage, RegisterPage, HoyPanel, DiarioPanel, ObjetivosPanel, ProgresoPanel, SettingsPanel, BaseLayout).
+- components/: componentes compartidos (ej. MacrosChart, menu/).
+- context/: contexto de autenticación (`AuthContext.tsx`).
+- services/: servicios y mocks (`authService.ts`, `mockUser.ts`).
+- routes/: protecciones de ruta (`ProtectedRoute.tsx`).
+- models/ y types/: contratos de datos (`registro.model.ts`, `types/registro.ts`).
+- test/: pruebas de modelos (`registoModel.test.ts`).
 
-## React Compiler
+Cómo levantar la aplicación
+---------------------------
+1) Instalar dependencias: `npm install`
+2) Desarrollo: `npm run dev` (abre Vite en http://localhost:5173)
+3) Build producción: `npm run build`
+4) Previsualizar build: `npm run preview`
+5) Tests: `npm test`
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Config necesaria (opcional)
+---------------------------
+- `VITE_API_BASE_URL`: URL del backend (por defecto `/api/v1`).
+- `VITE_USE_MOCK_AUTH=true`: fuerza autenticación mock sin backend.
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Flujo de acceso
+---------------
+- Entrada: página de login en `/login`.
+- Credenciales mock (con `VITE_USE_MOCK_AUTH=true`):
+  - Email: `mock@nutriapp.com`
+  - Contraseña: cualquier valor (se acepta sin validar en modo mock).
