@@ -1,11 +1,11 @@
-import dotenv from 'dotenv';
-import path from 'path';
+import dotenv from "dotenv";
+import path from "path";
 // Configura dotenv para que lea el .env de la CARPETA RAÍZ
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 // Importamos la app
-import app from './app';
+import app from "./app";
 // Importamos la conexión
-import { sequelize } from './config/db';
+import { sequelize } from "./config/db";
 
 const PORT = process.env.PORT || 4000;
 // Lógica de arranque
@@ -20,23 +20,20 @@ const connectWithRetry = async (retries = MAX_RETRIES) => {
       await sequelize.authenticate(); // Intenta conectar
       // eslint-disable-next-line no-console
       console.info(
-        '[db]: Conexión a la base de datos establecida exitosamente.',
+        "[db]: Conexión a la base de datos establecida exitosamente.",
       );
       return;
     } catch (error: unknown) {
-      // eslint-disable-next-line no-console
       console.warn(
         `[db]: No se pudo conectar. Reintentando en ${RETRY_DELAY / 1000}s... (Intentos restantes: ${retries - 1})`,
       );
       if (error instanceof Error) {
-        // eslint-disable-next-line no-console
         console.error(`[db]: Error: ${error.name}`);
       }
       retries--;
       if (retries === 0) {
-        // eslint-disable-next-line no-console
         console.error(
-          '[db]: No se pudo conectar a la base de datos después de varios intentos.',
+          "[db]: No se pudo conectar a la base de datos después de varios intentos.",
         );
         throw error;
       }
@@ -49,15 +46,14 @@ const startServer = async () => {
   try {
     // 1. Conectar a la base de datos (con reintentos)
     await connectWithRetry();
-    
+
     // 2. Iniciar el servidor de Express (SOLO SI LA BD CONECTÓ)
     app.listen(PORT, () => {
       // eslint-disable-next-line no-console
-      console.info(`Servidor corriendo en http://localhost:${PORT}`);
+      console.info(`Servidor corriendo en http://localhost:${PORT}/api/v1`);
     });
   } catch (error: unknown) {
-    // eslint-disable-next-line no-console
-    console.error('Error al iniciar el servidor:', error);
+    console.error("Error al iniciar el servidor:", error);
     process.exit(1);
   }
 };

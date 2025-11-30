@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import ComidaAlimento from "../models/comida_alimento.model"; // Importamos el modelo comida_alimento
+import Alimento from "../models/alimento.model"; // Importamos el modelo Alimento para calcular macros
 import { CreateComidaAlimentoInput } from "../schemas/comida_alimento.schema"; // Importamos el tipo de Zod
 
 /*
@@ -13,15 +14,9 @@ export const createComidaAlimentoHandler = async (
 ) => {
   try {
     // 1. Obtener los datos del body (ya validados por Zod)
-    const {
-      id_comida,
-      id_alimento,
-      cantidad_gramos,
-      carbohidratos_total,
-      grasas_total,
-      proteinas_total,
-      calorias_total,
-    } = req.body;
+    // Nota: No pedimos los totales porque los calcularemos aquí
+    const { id_comida, id_alimento, cantidad_gramos } = req.body;
+
     // 2. Obtener el ID del usuario (del token verificado por authMiddleware)
     // Hacemos una comprobación por si acaso, aunque el middleware ya lo hizo.
     if (!req.usuario) {
@@ -29,19 +24,26 @@ export const createComidaAlimentoHandler = async (
         message: "No se encontró información de usuario en la sesión.",
       });
     }
-    const id_usuario = req.usuario.id; // 'id' es como lo definimos en el payload del JWT
+    // const id_usuario = req.usuario.id; // (No lo usamos directamente aquí, pero está disponible)
 
-    // 1. Creamos un objeto de creación base
+    // 3. Buscar el alimento original para obtener sus macros base (por 100g)
+    const alimento = await Alimento.findByPk(id_alimento);
+    if (!alimento) {
+      return res.status(404).json({ message: "Alimento no encontrado" });
+    }
+
+    // 4. Calcular los totales basados en la cantidad (Lógica de Negocio)
+    // (Regla de tres: si 100g tiene X, 'cantidad_gramos' tiene Y)
+    const factor = cantidad_gramos / 100;
+
+    const carbohidratos_total = alimento.carbohidratos * factor;
+    const proteinas_total = alimento.proteinas * factor;
+    const grasas_total = alimento.grasas * factor;
+    const calorias_total = alimento.calorias * factor;
+
+    // 5. Creamos un objeto de creación base con los datos calculados
     // Definimos el tipo explícitamente para que TS entienda
-    const dataParaCrear: {
-      id_comida: number;
-      id_alimento: number;
-      cantidad_gramos: number;
-      carbohidratos_total: number;
-      grasas_total: number;
-      proteinas_total: number;
-      calorias_total: number;
-    } = {
+    const dataParaCrear = {
       id_comida,
       id_alimento,
       cantidad_gramos,
@@ -51,9 +53,10 @@ export const createComidaAlimentoHandler = async (
       calorias_total,
     };
 
-    // 2. Crear el nuevo registro de comida_alimento en la BD
+    // 6. Crear el nuevo registro de comida_alimento en la BD
     const nuevaComidaAlimento = await ComidaAlimento.create(dataParaCrear);
-    // 4. Enviar respuesta exitosa
+
+    // 7. Enviar respuesta exitosa
     return res.status(201).json(nuevaComidaAlimento);
   } catch (error: unknown) {
     // Usamos 'unknown' para ESlint
@@ -95,8 +98,11 @@ export const getComidasAlimentosHandler = async (
           association: "comida", // Nombre de la asociación definida en el modelo
           where: { id_usuario }, // Filtrar por id_usuario
         },
+        {
+          association: "alimento", // (Opcional) Para ver qué alimento es
+        },
       ],
-      order: [["fecha", "DESC"]],
+      order: [["fecha_creacion", "DESC"]],
     });
 
     // 3. Enviar respuesta
@@ -131,10 +137,9 @@ export const deleteComidaAlimentoHandler = async (
     const { id_comida_alimento } = req.params;
 
     // 3. Buscar el registro de comida
-    /* 
-        Buscamos una comida que coincida con el ID Y que además pertenezca al usuario que está haciendo la petición.
-        Esto evita que un usuario borre las comidas de otro.
-        */
+    /* Buscamos una comida que coincida con el ID Y que además pertenezca al usuario que está haciendo la petición.
+       Esto evita que un usuario borre las comidas de otro.
+       */
     const comida_alimento = await ComidaAlimento.findOne({
       where: {
         id_comida_alimento: Number(id_comida_alimento), // Convertimos el ID de string a número
@@ -150,11 +155,9 @@ export const deleteComidaAlimentoHandler = async (
 
     // 4. Si no se encuentra (o no le pertenece), devolver 404
     if (!comida_alimento) {
-      return res
-        .status(404)
-        .json({
-          message: "Registro de comida_alimento no encontrado o no autorizado.",
-        });
+      return res.status(404).json({
+        message: "Registro de comida_alimento no encontrado o no autorizado.",
+      });
     }
 
     // 5. Si se encontró y le pertenece, borrarlo

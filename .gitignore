@@ -3,4 +3,3 @@ node_modules/
 dist/
 postgres_data/
 postgres_data_dev/
-migrations/

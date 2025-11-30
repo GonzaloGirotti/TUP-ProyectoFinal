@@ -8,6 +8,14 @@ export default defineConfig([
   // --- 1. Configuración Global ---
   // Se aplica a todos los archivos
   {
+    ignores: [
+      'src/config/*.js',
+      'src/migrations/*.js',
+      'src/seeders/*.js',
+      'dist/**'
+    ],
+  },
+  {
     files: ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
     languageOptions: {
       ecmaVersion: "latest",

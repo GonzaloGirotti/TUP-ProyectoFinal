@@ -1,136 +1,133 @@
-# **TUP-ProyectoFinal**
+# NutriApp - Backend API
 
-# **Nutrición App \- Entorno de Desarrollo**
+Backend desarrollado para la aplicación de gestión nutricional. Provee una API RESTful construida con Node.js, Express y TypeScript, utilizando una base de datos PostgreSQL gestionada con Sequelize.
 
-Bienvenido al proyecto. Esta guía explica cómo levantar el entorno de desarrollo completo, incluyendo la base de datos, el backend y el frontend.
+## Tecnologías
 
-## **Tecnologías Principales:**
+- **Runtime:** Node.js (v20+)
+- **Framework:** Express.js
+- **Lenguaje:** TypeScript
+- **Base de Datos:** PostgreSQL
+- **ORM:** Sequelize (con Sequelize-CLI para migraciones)
+- **Validación:** Zod
+- **Autenticación:** JSON Web Tokens (JWT)
+- **Entorno:** Docker & Docker Compose
+- **Testing:** Vitest + Supertest
+- **Calidad de Código:** ESLint + Prettier + Husky (pre-commit/pre-push hooks)
 
-* **Frontend:** React, Vite, TypeScript  
-* **Backend:** Node.js, Express, Sequelize, TypeScript, Zod, Jsonwebtoken  
-* **Base de Datos:** PostgreSQL  
-* **Entorno:** Docker & Docker Compose  
-* **Automatización:** Husky con hooks pre-commit
+## Prerrequisitos
 
-## **Prerrequisitos:**
+Asegúrate de tener instalado en tu máquina:
 
-Hay que tener instalado en la maquina local:
+- [Git](https://git-scm.com/)
+- [Node.js](https://nodejs.org/) (Versión 20 o superior)
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) (Debe estar corriendo)
 
-* Git  
-* [Node.js](https://nodejs.org/es) (versión 20+ recomendada)  
-* [Docker Desktop](https://www.docker.com/products/docker-desktop/) (¡Asegúrate de que esté **corriendo** antes de empezar\!)
+## Instalación y Configuración (Paso a Paso)
 
-## **Configuración y Primer Arranque**
+Sigue este orden exacto para evitar errores de conexión.
 
-Sigue estos pasos la primera vez que clonas el repositorio.
+### Paso 1: Configurar Variables de Entorno
 
-### **1\. Configurar Variables de Entorno**
+El proyecto necesita un archivo .env en la **raíz del proyecto**.
 
-Este proyecto necesita un archivo .env en la raíz para funcionar.
+\# En la terminal raíz (si aún no lo tienes y en caso de estar en Windows debes usar Powershell)
+cp .env.example .env  
 
-1. Busca el archivo .env.example en la raíz del proyecto.  
-2. Copia ese archivo y renuévalo a .env. (El archivo .env está ignorado por Git y nunca se subirá).  
-3. Revisa el contenido. Los valores por defecto deberían funcionar para desarrollo local.
+### Paso 2: Levantar la Base de Datos (Terminal 1)
 
-\# En la terminal raíz (solo la primera vez)  
-cp .env.example .env
+Abre una terminal en la raíz del proyecto y enciende el motor de la base de datos. (Asegurarse antes de que Docker está corriendo)
 
-### **2\. Levantar la Base de Datos (Docker)**
+`docker-compose up` o `docker-compose up -d` (en segundo plano)
 
-Nos aseguramos de que la base de datos PostgreSQL esté corriendo.
+Si usas la segunda opción, hay que asegurarse de luego "remover" el contenedor con `docker-compose down`
 
-\# En la terminal raíz  
-docker-compose up \-d
+**Importante:** Espera unos 10-15 segundos después de ejecutar este comando para que PostgreSQL termine de iniciarse antes de continuar.
 
-### **3\. Instalar Dependencias del Backend**
+### Paso 3: Instalar y Migrar (Terminal 2)
 
-En una terminal separada, navega al backend e instala todo.
+Abre una **segunda terminal**, navega a la carpeta del backend y prepara el código.
 
+\# 1. Entrar al backend  
 cd backend  
+<br/>\# 2. Instalar dependencias  
 npm install
+<br/>\# 3. Crear las tablas en la base de datos (Migraciones)  
+\# (Esto requiere que el Paso 2 esté listo)  
+npm run db:migrate  
 
-### **4\. Ejecutar las Migraciones (¡Paso Clave\!)**
+_Deberías ver un mensaje de éxito indicando que se crearon las tablas Usuarios, Pesos, Alimentos, Comidas, Comidas-Alimentos_
 
-Ahora que la BD está corriendo y las dependencias están instaladas, necesitamos "construir" las tablas (Usuarios, Pesos, etc.).
+## Ejecución
+
+### Modo Desarrollo (con Hot-Reloading)
+
+Para trabajar en el código y ver cambios en tiempo real. (Asegúrate de haber completado los pasos anteriores).
 
 \# En la terminal de 'backend/'  
-npm run db:migrate
+npm run dev  
 
-*(Deberías ver un mensaje de éxito diciendo que las migraciones se ejecutaron).*
+La API estará disponible en: `<http://localhost:4000/api/v1>`
 
-## **Desarrollo Día a Día**
+## Testing
 
-Una vez que has hecho la configuración inicial, este es tu flujo de trabajo diario:
+El proyecto cuenta con tests de integración que prueban el flujo completo (Ruta -> Controlador -> BD).
 
-1. **Terminal 1 (Base de Datos):** Asegúrate de que tu contenedor esté corriendo.  
-   \# En la terminal raíz  
-   docker-compose up \-d
+\# Ejecutar todos los tests  
+npm test o npm run test
+<br/>\# Ejecutar tests con interfaz gráfica  
+npm run test:ui  
 
-2. **Terminal 2 (Backend):** Inicia el servidor de Node.js con hot-reload.  
-   \# En la terminal de 'backend/'  
-   npm run dev
+## Documentación de la API
 
-   *(Espera a que diga: "Servidor corriendo en http://localhost:4000")*  
+Todas las rutas están prefijadas con /api/v1.
 
-## **Documentación de la API (Endpoints)**
+### Autenticación (/auth)
 
-### **Módulo: Autenticación (/api/v1/auth)**
+- **POST** /auth/register: Registrar nuevo usuario.
+- **POST** /auth/login: Iniciar sesión (Devuelve Token).
 
-#### **POST /api/v1/auth/register**
+### Pesos (/pesos)
 
-Registra un nuevo usuario.
+_(Requiere Header Authorization: Bearer &lt;token&gt;)_
 
-* **Body (JSON):**  
-  {  
-    "nombre\_usuario": "Usuario de Prueba",  
-    "email": "prueba@correo.com",  
-    "password": "password123",  
-    "fecha\_nacimiento": "1995-01-01T00:00:00.000Z"  
-  }
+- **POST** /: Registrar nuevo pesaje.
+- **GET** /: Ver historial de pesos.
+- **DELETE** /:id_peso: Eliminar un registro.
 
-* **Respuesta (201):** El objeto del usuario creado (sin la contraseña).
+### Alimentos (/alimentos)
 
-#### **POST /api/v1/auth/login**
+_(Requiere Header Authorization: Bearer &lt;token&gt;)_
 
-Inicia sesión y devuelve un token JWT.
+- **POST** /: Crear un alimento base (ej. "Manzana").
+- **GET** /: Listar alimentos disponibles.
+- **DELETE** /:id_alimento: Borrar un alimento.
 
-* **Body (JSON):**  
-  {  
-    "email": "prueba@correo.com",  
-    "password": "password123"  
-  }
+### Comidas (/comidas)
 
-* **Respuesta (200):**  
-  {  
-    "message": "Inicio de sesión exitoso",  
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",  
-    "usuario": { "id": 1, "email": "prueba@correo.com", ... }  
-  }
+_(Requiere Header Authorization: Bearer &lt;token&gt;)_
 
-### **Módulo: Pesos (/api/v1/pesos)**
+- **POST** /: Crear una cabecera de comida (ej. "Almuerzo", fecha).
+- **GET** /: Listar las comidas del usuario.
+- **DELETE** /:id_comida: Borrar una comida entera.
 
-*Todas las rutas de este módulo requieren un Token (Authorization: Bearer \<token\>)*
+### Detalle de Comidas (/comidas_alimentos)
 
-#### **POST /api/v1/pesos**
+_(Requiere Header Authorization: Bearer &lt;token&gt;)_
 
-Crea un nuevo registro de peso para el usuario autenticado.
+- **POST** /: Agregar un alimento a una comida (calcula macros automáticamente según cantidad).
+- **GET** /: Ver qué alimentos tiene cada comida.
+- **DELETE** /:id_comida_alimento: Quitar un alimento de una comida.
 
-* **Body (JSON):**  
-  {  
-    "peso\_kg": 75.5,  
-    "comentario": "Mi primer peso"  
-  }
+## Estructura del Proyecto
 
-* **Respuesta (201):** El objeto del peso creado.
-
-#### **GET /api/v1/pesos**
-
-Obtiene todos los registros de peso del usuario autenticado.
-
-* **Respuesta (200):** Un array \[\] de objetos de peso.
-
-#### **DELETE /api/v1/pesos/:id\_peso**
-
-Elimina un registro de peso específico.
-
-* **Respuesta (204):** Sin contenido.
+- src/app.ts: Configuración de Express y Rutas (Cerebro).
+- src/index.ts: Punto de entrada, conexión a DB y servidor (Arrancador).
+- src/config/: Configuración de base de datos y variables.
+- src/controllers/: Lógica de negocio de cada módulo.
+- src/models/: Definición de tablas Sequelize y relaciones.
+- src/routes/: Definición de endpoints y middlewares.
+- src/schemas/: Validaciones de datos con Zod.
+- src/middlewares/: Protección de rutas (Auth) y validación.
+- src/migrations/: Historial de cambios de la Base de Datos.
+- src/tests/: Tests de integración con Vitest.

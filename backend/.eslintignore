@@ -1,5 +1,0 @@
-src/config/config.js
-
-src/migrations/*.js
-
-src/seeders/*.js
