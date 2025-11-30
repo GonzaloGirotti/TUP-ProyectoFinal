@@ -23,6 +23,8 @@ Asegúrate de tener instalado en tu máquina:
 - [Node.js](https://nodejs.org/) (Versión 20 o superior)
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) (Debe estar corriendo)
 
+---
+
 ## Instalación y Configuración (Paso a Paso)
 
 Sigue este orden exacto para evitar errores de conexión.
@@ -52,6 +54,7 @@ DB_DIALECT=postgres
 JWT_SECRET="un_secreto_muy_largo"
 JWT_EXPIRES_IN="1d"
 ```
+---
 ### Paso 2: Levantar la Base de Datos (Terminal 1)
 
 Abre una terminal en la raíz del proyecto y enciende el motor de la base de datos. (Asegurarse antes de que Docker está corriendo)
@@ -62,6 +65,7 @@ Asegurate de usar `docker-compose down` cuando hayas finalizado con cada prueba,
 
 **Importante:** Espera unos 10-15 segundos después de ejecutar este comando para que PostgreSQL termine de iniciarse antes de continuar.
 
+---
 ### Paso 3: Instalar y Migrar (Terminal 2)
 
 Abre una **segunda terminal**, navega a la carpeta del backend y prepara el código.
@@ -91,11 +95,15 @@ La API estará disponible en: `<http://localhost:4000/api/v1>`
 
 El proyecto cuenta con tests de integración que prueban el flujo completo (Ruta -> Controlador -> BD).
 
+### Nota:
+Como se está probando el sistema real, si el contenedor de docker no está activo, los tests fallarán
+
 \# Ejecutar todos los tests  
 npm test o npm run test
 <br/>\# Ejecutar tests con interfaz gráfica  
 npm run test:ui
 
+---
 ## Pruebas con Postman (Automatizadas)
 
 Hemos incluido una colección inteligente (NutriApp_Collection.json) que maneja la autenticación automaticamente con un script.
@@ -130,7 +138,8 @@ Si borra un recurso (ej: un Alimento) antes de tiempo, otras pruebas que depende
 Para esta entrega de prototipo, la carga de datos inicial se realiza manualmente utilizando esta colección de Postman.
 Para la versión final, se implementarán Seeders automáticos (npm run db:seed) que van a rellenar la base de datos instantáneamente.
 
-## Documentación de la Endpoints
+---
+## Documentación de los Endpoints
 
 Todas las rutas están prefijadas con /api/v1.
 
@@ -171,6 +180,7 @@ _(Requiere Header Authorization: Bearer &lt;token&gt;)_
 - **GET** /: Ver qué alimentos tiene cada comida.
 - **DELETE** /:id_comida_alimento: Quitar un alimento de una comida.
 
+---
 ## Estructura del Proyecto
 
 - src/app.ts: Configuración de Express y Rutas (Cerebro).
