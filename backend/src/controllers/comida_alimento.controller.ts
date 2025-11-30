@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import ComidaAlimento from "../models/comida_alimento.model"; // Importamos el modelo comida_alimento
 import Alimento from "../models/alimento.model"; // Importamos el modelo Alimento para calcular macros
+import Comida from "../models/comida.model"; // Importamos Comida para validar propiedad
 import { CreateComidaAlimentoInput } from "../schemas/comida_alimento.schema"; // Importamos el tipo de Zod
 
 /*
@@ -14,7 +15,7 @@ export const createComidaAlimentoHandler = async (
 ) => {
   try {
     // 1. Obtener los datos del body (ya validados por Zod)
-    // Nota: No pedimos los totales porque los calcularemos aquí
+    // Nota: No pedimos los totales porque los calcularemos aquí. Solo pedimos IDs y cantidad.
     const { id_comida, id_alimento, cantidad_gramos } = req.body;
 
     // 2. Obtener el ID del usuario (del token verificado por authMiddleware)
@@ -24,7 +25,21 @@ export const createComidaAlimentoHandler = async (
         message: "No se encontró información de usuario en la sesión.",
       });
     }
-    // const id_usuario = req.usuario.id; // (No lo usamos directamente aquí, pero está disponible)
+    const id_usuario = req.usuario.id; // 'id' es como lo definimos en el payload del JWT
+
+    // Verificamos que la Comida exista Y pertenezca al usuario antes de agregarle nada.
+    const comida = await Comida.findOne({
+      where: {
+        id_comida: id_comida,
+        id_usuario: id_usuario,
+      },
+    });
+
+    if (!comida) {
+      return res
+        .status(404)
+        .json({ message: "Comida no encontrada o no te pertenece." });
+    }
 
     // 3. Buscar el alimento original para obtener sus macros base (por 100g)
     const alimento = await Alimento.findByPk(id_alimento);

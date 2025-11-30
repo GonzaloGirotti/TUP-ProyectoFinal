@@ -31,16 +31,34 @@ Sigue este orden exacto para evitar errores de conexión.
 
 El proyecto necesita un archivo .env en la **raíz del proyecto**.
 
-\# En la terminal raíz (si aún no lo tienes y en caso de estar en Windows debes usar Powershell)
-cp .env.example .env  
+En la terminal raíz (si aún no lo tienes y en caso de estar en Windows debes usar Powershell)
+`cp .env.example .env`  
 
+En caso de querer crear el archivo manualmente, utiliza los siguientes datos:
+```markdown
+## Configuración del Servidor
+PORT=4000
+
+## Configuración de la Base de Datos
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=admin_nutri
+DB_PASSWORD=password_seguro_123
+DB_NAME=nutricion_db
+DB_DIALECT=postgres
+
+## Configuración de Autenticación
+## Usado por el backend
+JWT_SECRET="un_secreto_muy_largo"
+JWT_EXPIRES_IN="1d"
+```
 ### Paso 2: Levantar la Base de Datos (Terminal 1)
 
 Abre una terminal en la raíz del proyecto y enciende el motor de la base de datos. (Asegurarse antes de que Docker está corriendo)
 
 `docker-compose up` o `docker-compose up -d` (en segundo plano)
 
-Si usas la segunda opción, hay que asegurarse de luego "remover" el contenedor con `docker-compose down`
+Asegurate de usar `docker-compose down` cuando hayas finalizado con cada prueba, para asegurar que no haya conflictos con contenedores repetidos.
 
 **Importante:** Espera unos 10-15 segundos después de ejecutar este comando para que PostgreSQL termine de iniciarse antes de continuar.
 
@@ -76,9 +94,43 @@ El proyecto cuenta con tests de integración que prueban el flujo completo (Ruta
 \# Ejecutar todos los tests  
 npm test o npm run test
 <br/>\# Ejecutar tests con interfaz gráfica  
-npm run test:ui  
+npm run test:ui
 
-## Documentación de la API
+## Pruebas con Postman (Automatizadas)
+
+Hemos incluido una colección inteligente (NutriApp_Collection.json) que maneja la autenticación automaticamente con un script.
+
+### 1. Importar la Colección
+
+1. Abre Postman.
+
+2. Haz clic en "Import".
+
+3. Arrastra el archivo NutriApp_Collection.json (ubicado en la raíz).
+
+### 2. Autenticación Automática
+
+No necesitas copiar y pegar tokens manualmente. La colección tiene un script que lo hace automaticamente.
+
+1. Abre la carpeta "1. Autenticación".
+
+2. Ejecuta la petición "Login" (asegúrate de que el usuario ya esté registrado).
+
+3. Un script automático capturará el token de la respuesta y lo guardará en la variable jwt_token.
+
+4. Ahora puedes ejecutar cualquier otra petición (Pesos, Alimentos, etc.) y funcionará inmediatamente.
+
+5. Todas las peticiones son inteligentes y tienen un script para usar el ID recién creado, y no tener que modificarlo manual.
+
+### Advertencia sobre el Orden de Pruebas:
+Ejecute las pruebas de eliminación (DELETE) al final.
+Si borra un recurso (ej: un Alimento) antes de tiempo, otras pruebas que dependen de él (ej: "Agregar Alimento a Comida") fallarán con error 404 porque el recurso ya no existe.
+
+### Nota sobre Datos de Prueba (Seeders):
+Para esta entrega de prototipo, la carga de datos inicial se realiza manualmente utilizando esta colección de Postman.
+Para la versión final, se implementarán Seeders automáticos (npm run db:seed) que van a rellenar la base de datos instantáneamente.
+
+## Documentación de la Endpoints
 
 Todas las rutas están prefijadas con /api/v1.
 
