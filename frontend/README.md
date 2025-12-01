@@ -35,7 +35,8 @@ Cómo levantar la aplicación
 
 Config necesaria (opcional)
 ---------------------------
-- `VITE_API_BASE_URL`: URL del backend (por defecto `/api/v1`).
+- `VITE_API_BASE_URL`="http://localhost:4000"
+- `VITE_API_URL`="/api/v1"
 - `VITE_USE_MOCK_AUTH=true`: fuerza autenticación mock sin backend.
 
 Flujo de acceso
