@@ -6,28 +6,15 @@ import {
   Legend,
   type ChartOptions,
 } from "chart.js";
+import type { Macros } from "../types/registro";
+import { toCalories, toPercentages } from "../models/registro.model";
+
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-export type Macros = {
-  protein: number;
-  carbs: number;
-  fat: number;
-};
 
-const KCAL_PER_GRAM = {
-  protein: 4,
-  carbs: 4,
-  fat: 9,
-} as const;
 
-function toCalories(m: Macros) {
-  return {
-    protein: m.protein * KCAL_PER_GRAM.protein,
-    carbs: m.carbs * KCAL_PER_GRAM.carbs,
-    fat: m.fat * KCAL_PER_GRAM.fat,
-  };
-}
+
 
 export default function ChartPanel({
   title = "Macros (kcal)",
@@ -44,14 +31,9 @@ export default function ChartPanel({
     fat?: string;
   };
 }) {
-  const kcal = toCalories(macros);
-  const total = Math.max(1, kcal.protein + kcal.carbs + kcal.fat);
 
-  const percentages = {
-    protein: (kcal.protein / total) * 100,
-    carbs: (kcal.carbs / total) * 100,
-    fat: (kcal.fat / total) * 100,
-  };
+  const kcal = toCalories(macros);
+  const percentages = toPercentages(macros);
 
   const defaultColors = {
     protein: colors?.protein || "#3b82f6", // azul

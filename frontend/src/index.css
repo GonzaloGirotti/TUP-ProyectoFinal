@@ -7,13 +7,17 @@ body{
 }
 
 .panel-item{
-  @apply bg-zinc-900 rounded-lg place-items-center
+  @apply bg-zinc-900 rounded-lg place-items-center border border-slate-800 
 }
 
 h2{
-  @apply font-bold text-2xl
+  @apply font-bold text-2xl mb-2
 }
 
 h4{
   @apply text-base
+}
+
+.input-base {
+  @apply w-full rounded-xl border border-slate-700 bg-slate-900/60 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/70 focus:border-emerald-500;
 }
