@@ -1,0 +1,62 @@
+{
+  "usuario": {
+    "id": 1,
+    "nombre_usuario": "Usuario Mock",
+    "email": "mock@nutriapp.com"
+  },
+  "fecha": "2025-01-10",
+  "objetivo": {
+    "calorias_kcal": 2200,
+    "peso_objetivo_kg": 75,
+    "macros_kcal": {
+      "protein": 660,
+      "carbs": 990,
+      "fat": 550
+    }
+  },
+  "resumen_dia": {
+    "calorias": {
+      "objetivo": 2200,
+      "alimento": 1450,
+      "ejercicio": 320,
+      "restantes": 1070
+    },
+    "agua_total_litros": 2.3
+  },
+  "comidas": {
+    "desayuno": [
+      { "nombre": "Avena con banana", "kcal": 350, "protein": 15, "carbs": 55, "fat": 8 },
+      { "nombre": "Cafe con leche", "kcal": 90, "protein": 6, "carbs": 9, "fat": 3 },
+      { "nombre": "Tostada integral con queso", "kcal": 160, "protein": 8, "carbs": 22, "fat": 5 }
+    ],
+    "almuerzo": [
+      { "nombre": "Pollo a la plancha", "kcal": 260, "protein": 38, "carbs": 0, "fat": 10 },
+      { "nombre": "Arroz integral", "kcal": 220, "protein": 6, "carbs": 45, "fat": 3 },
+      { "nombre": "Ensalada mixta", "kcal": 80, "protein": 2, "carbs": 12, "fat": 3 }
+    ],
+    "cena": [
+      { "nombre": "Pasta con tomate", "kcal": 320, "protein": 12, "carbs": 58, "fat": 5 },
+      { "nombre": "Filete de merluza", "kcal": 190, "protein": 32, "carbs": 0, "fat": 6 },
+      { "nombre": "Yogur natural", "kcal": 100, "protein": 9, "carbs": 12, "fat": 2 }
+    ],
+    "aperitivo": [
+      { "nombre": "Frutos secos", "kcal": 180, "protein": 6, "carbs": 8, "fat": 14 },
+      { "nombre": "Manzana", "kcal": 80, "protein": 0, "carbs": 21, "fat": 0 },
+      { "nombre": "Barra de proteina", "kcal": 150, "protein": 15, "carbs": 17, "fat": 4 }
+    ]
+  },
+  "ejercicios": [
+    { "tipo": "Correr", "duracion_min": 30, "kcal": 220, "fecha": "2025-01-10T07:30:00Z" },
+    { "tipo": "Fuerza tren superior", "duracion_min": 25, "kcal": 100, "fecha": "2025-01-10T18:00:00Z" }
+  ],
+  "agua": [
+    { "fecha": "2025-01-10T10:00:00Z", "ml": 800 },
+    { "fecha": "2025-01-10T15:00:00Z", "ml": 1500 }
+  ],
+  "pesos": [
+    { "fecha": "2024-12-20", "peso_kg": 82.4, "imc": 28.5 },
+    { "fecha": "2024-12-27", "peso_kg": 81.8, "imc": 28.3 },
+    { "fecha": "2025-01-03", "peso_kg": 81.0, "imc": 28.0 },
+    { "fecha": "2025-01-10", "peso_kg": 80.6, "imc": 27.8 }
+  ]
+}
