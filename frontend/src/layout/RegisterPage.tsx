@@ -44,18 +44,19 @@ export function RegisterPage() {
         fecha_nacimiento: fechaIso,
       });
 
-      // PASO 2 (NUEVO): Auto-Login para obtener el Token 🔑
+      // PASO 2 (Esto se agregó): Auto-Login para obtener el Token
       // Usamos la misma contraseña que el usuario acaba de escribir
       await login({
         email: normalizedEmail,
         password: password
       });
 
-      // PASO 3: Ahora sí, con token en mano, vamos al panel
+      // PASO 3: con token en mano, vamos al panel (Auto-login)
       navigate('/hoy');
 
     } catch (err: any) {
       console.error(err);
+
       // Mejoramos el mensaje de error por si viene del backend
       const mensajeBackend = err.response?.data?.message || err.response?.data?.error;
       setError(mensajeBackend || 'Error al registrarse. Intenta con otro email.');
