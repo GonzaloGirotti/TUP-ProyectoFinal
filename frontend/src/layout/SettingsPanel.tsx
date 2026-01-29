@@ -367,7 +367,8 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
               type="button"
               className="px-4 py-2 rounded-xl border border-slate-600 text-slate-200 text-sm hover:bg-slate-800 transition"
               onClick={() => {
-                // Podés resetear al initialData si querés
+                // Volver a la pantalla anterior
+                window.history.back();
               }}
             >
               Cancelar
