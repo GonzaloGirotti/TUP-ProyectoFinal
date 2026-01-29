@@ -12,6 +12,7 @@ module.exports = {
       nombre_usuario: {
         type: Sequelize.TEXT,
         allowNull: false,
+        unique: true,
       },
       email: {
         type: Sequelize.TEXT,
