@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useAuth } from "../context/AuthContext";
+import { nutritionService } from "../services/nutritionService";
 
 type ActivityLevel = "sedentario" | "ligero" | "moderado" | "intenso";
 type GoalType = "mantener" | "perder" | "ganar";
@@ -72,11 +74,24 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (onSave) {
-      onSave(form);
-    }
+    (async () => {
+      try {
+        if (form.weightKg && authCtx.token) {
+          await  nutritionService.peso.registrarPeso({ peso_kg: form.weightKg, fecha: new Date() }, authCtx.token);
+        }
+        if (onSave) {
+          onSave(form);
+        }
+      } catch (err) {
+        // Puedes reemplazar por un toast o manejo de error más sofisticado
+        // eslint-disable-next-line no-console
+        console.error("Error al guardar peso:", err);
+      }
+    })();
     // Podés agregar un toast o feedback visual acá
   };
+
+  const authCtx = useAuth();
 
   return (
     <div className="w-full h-full overflow-y-auto">
@@ -121,7 +136,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                   />
                 </label>
               </div>
-              <p className="text-xs text-slate-400 text-center max-w-[10rem]">
+              <p className="text-xs text-slate-400 text-center max-w-40">
                 Sube una imagen cuadrada para mejor resultado.
               </p>
             </div>

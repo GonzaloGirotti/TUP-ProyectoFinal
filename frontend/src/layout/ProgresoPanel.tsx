@@ -33,14 +33,32 @@ type EntradaObjetivo = {
 };
 
 export function ProgresoPanel() {
-  // Entradas reales del usuario (Entries) – line chart normal
-  const entradas: EntradaPeso[] = [
-    { fecha: "2025-10-01", peso: 78 },
-    { fecha: "2025-10-10", peso: 77.5 },
-    { fecha: "2025-10-20", peso: 77 },
-    { fecha: "2025-11-01", peso: 76.8 },
-    { fecha: "2025-11-10", peso: 76.2 },
-  ];
+  // Entradas reales del usuario (fetched desde la API)
+  const [entradas, setEntradas] = useState<EntradaPeso[]>([]);
+  const auth = useAuth();
+
+  useEffect(() => {
+    let mounted = true;
+    const load = async () => {
+      try {
+        if (!auth.token) return;
+        const res = await nutritionService.peso.verHistorialPesos(auth.token);
+        // Asumimos que la API devuelve un array de objetos con 'fecha' y 'peso_kg' o 'peso'
+        const data = res.data.map((p: any) => ({
+          fecha: new Date(p.fecha).toISOString().slice(0, 10),
+          peso: p.peso_kg ?? p.peso,
+        }));
+        if (mounted) setEntradas(data);
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.error("Error cargando historial de pesos:", err);
+      }
+    };
+    load();
+    return () => {
+      mounted = false;
+    };
+  }, [auth.token]);
 
   // Progreso / objetivo – va cambiando en el tiempo – step line chart
   const objetivos: EntradaObjetivo[] = [
