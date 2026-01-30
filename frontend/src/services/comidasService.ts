@@ -1,4 +1,3 @@
-// src/services/comidasService.ts
 import { BaseService } from './baseService';
 
 export interface Comida {

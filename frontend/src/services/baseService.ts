@@ -1,4 +1,3 @@
-// src/services/baseService.ts
 import axios, { type AxiosInstance, type AxiosRequestConfig } from 'axios';
 
 export interface ApiConfig {
