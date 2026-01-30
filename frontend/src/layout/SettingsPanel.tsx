@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import { nutritionService } from "../services/nutritionService";
 
 type ActivityLevel = "sedentario" | "ligero" | "moderado" | "intenso";
 type GoalType = "mantener" | "perder" | "ganar";
@@ -12,10 +11,8 @@ export interface UserProfileSettings {
   password?: string; // solo para cambio
   avatarUrl?: string;
   birthDate?: string; // formato "YYYY-MM-DD"
-  age?: number;       // opcional si querés calcularlo
   gender?: string;
   heightCm?: number;
-  weightKg?: number;
   activityLevel: ActivityLevel;
   mainGoal: GoalType;
 }
@@ -36,10 +33,8 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
     password: "",
     avatarUrl: initialData?.avatarUrl ?? "",
     birthDate: initialData?.birthDate ?? "",
-    age: initialData?.age,
     gender: initialData?.gender ?? "",
     heightCm: initialData?.heightCm,
-    weightKg: initialData?.weightKg,
     activityLevel: initialData?.activityLevel ?? "sedentario",
     mainGoal: initialData?.mainGoal ?? "mantener",
   });
@@ -76,9 +71,9 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
     e.preventDefault();
     (async () => {
       try {
-        if (form.weightKg && authCtx.token) {
-          await  nutritionService.peso.registrarPeso({ peso_kg: form.weightKg, fecha: new Date() }, authCtx.token);
-        }
+
+        // TODO Aquí podrías llamar a la API para guardar los cambios
+
         if (onSave) {
           onSave(form);
         }
@@ -243,20 +238,26 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
 
             <div className="flex flex-col gap-1">
               <label
-                htmlFor="age"
-                className="text-sm font-medium text-slate-200"
+              htmlFor="age"
+              className="text-sm font-medium text-slate-200"
               >
-                Edad
+              Edad
               </label>
               <input
-                id="age"
-                name="age"
-                type="number"
-                min={0}
-                value={form.age ?? ""}
-                onChange={handleChange}
-                className="input-base"
-                placeholder="Ej: 35"
+              id="age"
+              name="age"
+              type="number"
+              min={0}
+              value={
+                form.birthDate
+                ? new Date().getFullYear() -
+                  new Date(form.birthDate).getFullYear()
+                : ""
+              }
+              onChange={handleChange}
+              disabled
+              className="input-base"
+              placeholder="Ej: 35"
               />
             </div>
 
@@ -279,24 +280,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
               />
             </div>
 
-            <div className="flex flex-col gap-1">
-              <label
-                htmlFor="weightKg"
-                className="text-sm font-medium text-slate-200"
-              >
-                Peso actual (kg)
-              </label>
-              <input
-                id="weightKg"
-                name="weightKg"
-                type="number"
-                min={0}
-                value={form.weightKg ?? ""}
-                onChange={handleChange}
-                className="input-base"
-                placeholder="Ej: 78"
-              />
-            </div>
+            
           </section>
 
           {/* Género, actividad, objetivo */}
