@@ -166,10 +166,30 @@ export function ProgresoPanel() {
     },
   };
 
+  function calcularIMC(peso: number, alturaM: number) {
+    return (peso / (alturaM * alturaM)).toFixed(1);
+  }
+
   return (
-    <div className="panel-item p-6 w-full">
-      <h2>Progreso</h2>
-      <Line data={data} options={options} />
+
+    <div className="flex flex-col gap-4 p-6 w-full">
+      <div className="panel-item p-6 w-full">
+        <h2>Progreso</h2>
+        <Line data={data} options={options} />
+      </div>
+
+      <div className="flex w-full justify-between gap-2">
+        <div className="panel-item w-1/2">
+          <h2>Peso</h2>
+          <h4>80kg</h4>
+        </div>
+        <div className="panel-item w-1/2">
+          <h2>IMC</h2>
+          <h4>{calcularIMC(80, 1.75)}</h4>
+        </div>
+      </div>
+
     </div>
+    
   );
 }

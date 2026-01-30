@@ -61,16 +61,7 @@ export function HoyPanel() {
       <div className="panel-item">
         <ChartPanel macros={{ protein: 300, carbs: 400, fat: 300 }} />
       </div>
-      <div className="flex w-full justify-between gap-2">
-        <div className="panel-item w-1/2">
-          <h2>Peso</h2>
-          <h4>80kg</h4>
-        </div>
-        <div className="panel-item w-1/2">
-          <h2>IMC</h2>
-          <h4>30</h4>
-        </div>
-      </div>
+
     </div>
   );
 }
