@@ -1,4 +1,4 @@
-import type { LoginResponse, Usuario } from "./authService";
+import type { LoginResponse, Usuario } from "../services/authService";
 
 export function crearUsuarioMock(data?: Partial<Usuario>): Usuario {
   return {

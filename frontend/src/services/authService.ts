@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { getApiConfig } from './baseService';
-import { crearLoginResponseMock, crearUsuarioMock } from './mockUser';
+import { crearLoginResponseMock, crearUsuarioMock } from '../mocks/mockUser';
 
 
 const { baseURL, useMockAuth } = getApiConfig();
