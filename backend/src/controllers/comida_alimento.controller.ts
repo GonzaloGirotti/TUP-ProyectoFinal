@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import ComidaAlimento from "../models/comida_alimento.model"; // Importamos el modelo comida_alimento
-import Alimento from "../models/alimento.model"; // Importamos el modelo Alimento para calcular macros
+import Alimento from "../models/alimento_consumido.model"; // Importamos el modelo Alimento para calcular macros
 import Comida from "../models/comida.model"; // Importamos Comida para validar propiedad
 import { CreateComidaAlimentoInput } from "../schemas/comida_alimento.schema"; // Importamos el tipo de Zod
 

@@ -1,7 +1,7 @@
 import { Model, DataTypes, Optional } from "sequelize";
 import { sequelize } from "../config/db"; // Importación de nuestra conexión
 import Comida from "./comida.model"; // Importacion del modelo comida para la relación
-import Alimento from "./alimento.model"; // Importacion del modelo alimento para la relación
+import Alimento from "./alimento_consumido.model"; // Importacion del modelo alimento para la relación
 
 // Interface para los atributos de Comida_Alimento
 export interface ComidaAlimentoAttributes {
