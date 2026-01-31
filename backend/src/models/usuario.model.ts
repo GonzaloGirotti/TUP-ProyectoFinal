@@ -20,7 +20,8 @@ class Usuario
     UsuarioAttributes,
     Optional<UsuarioAttributes, "id_usuario" | "fecha_creacion" | "updatedAt">
   >
-  implements UsuarioAttributes {
+  implements UsuarioAttributes
+{
   public id_usuario!: number;
   public nombre_usuario!: string;
   public email!: string;
@@ -50,12 +51,24 @@ Usuario.init(
     nombre_usuario: {
       type: DataTypes.TEXT,
       allowNull: false,
+      unique: {
+        name: "nombre_usuario_unico",
+        msg: "El nombre de usuario ya está en uso. Por favor elige otro.",
+      },
       field: "nombre_usuario",
     },
     email: {
       type: DataTypes.TEXT,
       allowNull: false,
-      unique: true,
+      unique: {
+        name: "email_unico",
+        msg: "Este correo electrónico ya está registrado.",
+      },
+      validate: {
+        isEmail: {
+          msg: "Debes ingresar un formato de email válido",
+        },
+      },
     },
     password: {
       type: DataTypes.TEXT,
