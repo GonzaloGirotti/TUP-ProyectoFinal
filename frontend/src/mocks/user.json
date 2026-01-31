@@ -1,0 +1,14 @@
+{
+    "user":{
+        "id": 1,
+        "nombre": "Pepe",
+        "email": "pepe@example.com",
+        "fecha_nacimiento": "1990-05-15",
+        "altura" : "175",
+        "sexo": "Masculino",
+        "nivel_actividad": "Moderado",
+        "objetivo_principal": "Perder peso"
+    }
+    
+}
+

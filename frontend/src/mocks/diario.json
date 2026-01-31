@@ -1,0 +1,54 @@
+{
+  "usuarioId": 1,
+  "fecha": "2025-11-15",
+  "comidas": {
+    "desayuno": [
+      {
+        "alimento": "Avena",
+        "gramos": 50,
+        "calorias": 190,
+        "proteinas": 6,
+        "grasas": 3.5,
+        "carbohidratos": 32
+      }
+    ],
+    "almuerzo": [
+      {
+        "alimento": "Pechuga de pollo",
+        "gramos": 150,
+        "calorias": 330,
+        "proteinas": 45,
+        "grasas": 7,
+        "carbohidratos": 0
+      }
+    ],
+    "cena": [
+      {
+        "alimento": "Ensalada mixta",
+        "gramos": 200,
+        "calorias": 150,
+        "proteinas": 5,
+        "grasas": 10,
+        "carbohidratos": 12
+      }
+    ],
+    "aperitivo": [
+      {
+        "alimento": "Yogur natural",
+        "gramos": 100,
+        "calorias": 60,
+        "proteinas": 3.5,
+        "grasas": 1.5,
+        "carbohidratos": 7
+      }
+    ],
+    "ejercicio": [
+      {
+        "tipo": "Correr",
+        "duracion_minutos": 30,
+        "calorias_quemadas": 300
+      }
+    ],
+    "agua_litros": [1.5, 2.0]
+  }
+}

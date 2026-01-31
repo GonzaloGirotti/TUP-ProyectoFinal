@@ -1,0 +1,22 @@
+{
+  "id_udiario": 1,
+  "calorias": [
+    {
+      "fecha": "2025-11-15",
+      "calorias_diarias": 2000,
+      "proteinas_diarias": 150,
+      "grasas_diarias": 70,
+      "carbohidratos_diarios": 250
+    }
+  ],
+  "peso_objetivo": [
+    {
+      "fecha_objetivo": "2026-01-01",
+      "peso_kg": 70
+    },
+    {
+      "fecha_objetivo": "2026-06-01",
+      "peso_kg": 65
+    }
+  ]
+}
