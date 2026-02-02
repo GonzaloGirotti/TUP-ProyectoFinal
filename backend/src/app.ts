@@ -6,12 +6,16 @@ import pesoRoutes from "./routes/peso.routes";
 import alimentoRoutes from "./routes/alimento.routes";
 import comidaRoutes from "./routes/comida.routes";
 import comidaAlimentoRoutes from "./routes/comida_alimento.routes";
+import aguaRoutes from "./routes/agua.routes";
+import ejercicioRoutes from "./routes/ejercicio.routes";
 // Importamos los modelos para que se registren en Sequelize
 import "./models/usuario.model";
 import "./models/peso.model";
 import "./models/alimento.model";
 import "./models/comida.model";
 import "./models/comida_alimento.model";
+import "./models/agua.model";
+import "./models/ejercicio.model";
 // Creamos la app de Express
 const app = express();
 
@@ -39,6 +43,12 @@ app.use("/api/v1/comidas_alimentos", comidaAlimentoRoutes);
 
 // Registra las rutas de comidas
 app.use("/api/v1/comidas", comidaRoutes);
+
+// Registra las rutas de agua
+app.use("/api/v1/agua", aguaRoutes);
+
+// Registra las rutas de ejercicios
+app.use("/api/v1/ejercicios", ejercicioRoutes);
 
 // Exportamos la 'app' para que index.ts y nuestros tests puedan importarla.
 export default app;

@@ -47,7 +47,16 @@ const startServer = async () => {
     // 1. Conectar a la base de datos (con reintentos)
     await connectWithRetry();
 
-    // 2. Iniciar el servidor de Express (SOLO SI LA BD CONECTÓ)
+    // 1.5. Sincronizar modelos con la Base de Datos (Crear tablas faltantes)
+    // alter: true - Modifica las tablas existentes para coincidir con los modelos sin borrar datos.
+    // force: false - Asegura que NO borre las tablas existentes.
+    await sequelize.sync({ alter: true, force: false });
+    // eslint-disable-next-line no-console
+    console.info(
+      "[db]: Tablas sincronizadas correctamente (Agua, Ejercicios, etc).",
+    );
+
+    // 2. Iniciar el servidor de Express (SOLO SI LA BD CONECTÓ Y SINCRONIZÓ)
     app.listen(PORT, () => {
       // eslint-disable-next-line no-console
       console.info(`Servidor corriendo en http://localhost:${PORT}/api/v1`);

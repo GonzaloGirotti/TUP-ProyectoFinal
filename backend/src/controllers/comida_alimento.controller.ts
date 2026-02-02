@@ -5,7 +5,7 @@ import Comida from "../models/comida.model"; // Importamos Comida para validar p
 import { CreateComidaAlimentoInput } from "../schemas/comida_alimento.schema"; // Importamos el tipo de Zod
 
 /*
- Controlador para crear un nuevo registro de comida_alimento.
+ Controla la creación de un nuevo registro de comida_alimento.
  Asume que ya pasó por el authMiddleware y el validate middleware.
 */
 export const createComidaAlimentoHandler = async (
@@ -15,19 +15,17 @@ export const createComidaAlimentoHandler = async (
 ) => {
   try {
     // 1. Obtener los datos del body (ya validados por Zod)
-    // Nota: No pedimos los totales porque los calcularemos aquí. Solo pedimos IDs y cantidad.
     const { id_comida, id_alimento, cantidad_gramos } = req.body;
 
     // 2. Obtener el ID del usuario (del token verificado por authMiddleware)
-    // Hacemos una comprobación por si acaso, aunque el middleware ya lo hizo.
     if (!req.usuario) {
       return res.status(401).json({
         message: "No se encontró información de usuario en la sesión.",
       });
     }
-    const id_usuario = req.usuario.id; // 'id' es como lo definimos en el payload del JWT
+    const id_usuario = req.usuario.id;
 
-    // Verificamos que la Comida exista Y pertenezca al usuario antes de agregarle nada.
+    // Verificamos que la Comida exista Y pertenezca al usuario
     const comida = await Comida.findOne({
       where: {
         id_comida: id_comida,
@@ -41,14 +39,14 @@ export const createComidaAlimentoHandler = async (
         .json({ message: "Comida no encontrada o no te pertenece." });
     }
 
-    // 3. Buscar el alimento original para obtener sus macros base (por 100g)
+    // 3. Buscar el alimento original para obtener sus macros base
     const alimento = await Alimento.findByPk(id_alimento);
     if (!alimento) {
       return res.status(404).json({ message: "Alimento no encontrado" });
     }
 
-    // 4. Calcular los totales basados en la cantidad (Lógica de Negocio)
-    // (Regla de tres: si 100g tiene X, 'cantidad_gramos' tiene Y)
+    // 4. Calcular los totales basados en la cantidad (Regla de tres simple)
+    // Asumimos que los macros del alimento base son por cada 100g
     const factor = cantidad_gramos / 100;
 
     const carbohidratos_total = alimento.carbohidratos * factor;
@@ -56,8 +54,7 @@ export const createComidaAlimentoHandler = async (
     const grasas_total = alimento.grasas * factor;
     const calorias_total = alimento.calorias * factor;
 
-    // 5. Creamos un objeto de creación base con los datos calculados
-    // Definimos el tipo explícitamente para que TS entienda
+    // 5. Objeto para crear
     const dataParaCrear = {
       id_comida,
       id_alimento,
@@ -68,17 +65,13 @@ export const createComidaAlimentoHandler = async (
       calorias_total,
     };
 
-    // 6. Crear el nuevo registro de comida_alimento en la BD
+    // 6. Crear registro
     const nuevaComidaAlimento = await ComidaAlimento.create(dataParaCrear);
 
-    // 7. Enviar respuesta exitosa
+    // 7. Responder
     return res.status(201).json(nuevaComidaAlimento);
   } catch (error: unknown) {
-    // Usamos 'unknown' para ESlint
-
     console.error("[COMIDA_ALIMENTO_CONTROLLER]:", error);
-
-    // Manejo seguro del error
     let errorMessage = "Error interno del servidor";
     if (error instanceof Error) {
       errorMessage = error.message;
@@ -87,13 +80,13 @@ export const createComidaAlimentoHandler = async (
   }
 };
 
-// Controlador para obtener todos los registros de comida_alimento del usuario logueado.
+// Controlador para obtener registros de comida_alimento.
+// AHORA SOPORTA FILTRADO POR id_comida
 export const getComidasAlimentosHandler = async (
   req: Request,
   res: Response,
 ) => {
   try {
-    // 1. Obtener el ID del usuario (del token)
     if (!req.usuario) {
       return res
         .status(401)
@@ -101,30 +94,36 @@ export const getComidasAlimentosHandler = async (
     }
     const id_usuario = req.usuario.id;
 
-    // 2. Buscar todos las comidas_alimentos que coincidan con el id_usuario
-    // Ordenamos por fecha descendente (los más nuevos primero)
+    // 1. CAPTURAR QUERY PARAM
+    const { id_comida } = req.query;
+
+    // 2. Construir filtro dinámico
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const whereClause: any = {};
+
+    // Si el frontend envía ?id_comida=5, filtramos por eso.
+    if (id_comida) {
+      whereClause.id_comida = id_comida;
+    }
+
+    // 3. Buscar con el filtro aplicado
     const comidas_alimentos = await ComidaAlimento.findAll({
-      /* Obtener solo los registros cuyos comidas pertenezcan al usuario 
-        (podría ser tambien mediante los alimentos, pero es más lógico por las comidas)
-      */
+      where: whereClause, // <--- Aplicamos el filtro aquí
       include: [
         {
-          // Incluir la asociación con Comida para filtrar por id_usuario
-          association: "comida", // Nombre de la asociación definida en el modelo
-          where: { id_usuario }, // Filtrar por id_usuario
+          // Seguridad: Aseguramos que la Comida padre pertenezca al usuario
+          association: "comida",
+          where: { id_usuario },
         },
         {
-          association: "alimento", // (Opcional) Para ver qué alimento es
+          association: "alimento",
         },
       ],
       order: [["fecha_creacion", "DESC"]],
     });
 
-    // 3. Enviar respuesta
     return res.status(200).json(comidas_alimentos);
   } catch (error: unknown) {
-    // Usamos 'unknown' para ESlint
-
     console.error("[GET_COMIDAS_ALIMENTOS_HANDLER]:", error);
     let errorMessage = "Error interno del servidor";
     if (error instanceof Error) {
@@ -140,7 +139,6 @@ export const deleteComidaAlimentoHandler = async (
   res: Response,
 ) => {
   try {
-    // 1. Obtener el ID del usuario (del token)
     if (!req.usuario) {
       return res
         .status(401)
@@ -148,43 +146,33 @@ export const deleteComidaAlimentoHandler = async (
     }
     const id_usuario = req.usuario.id;
 
-    // 2. Obtener el ID de la comida_alimento (de los parámetros de la URL)
     const { id_comida_alimento } = req.params;
 
-    // 3. Buscar el registro de comida
-    /* Buscamos una comida que coincida con el ID Y que además pertenezca al usuario que está haciendo la petición.
-       Esto evita que un usuario borre las comidas de otro.
-       */
+    // Buscamos el registro verificando que la comida asociada sea del usuario
     const comida_alimento = await ComidaAlimento.findOne({
       where: {
-        id_comida_alimento: Number(id_comida_alimento), // Convertimos el ID de string a número
+        id_comida_alimento: Number(id_comida_alimento),
       },
       include: [
         {
-          // Incluir la asociación con Comida para filtrar por id_usuario
-          association: "comida", // Nombre de la asociación definida en el modelo
-          where: { id_usuario }, // Filtrar por id_usuario
+          association: "comida",
+          where: { id_usuario }, // Candado de seguridad
         },
       ],
     });
 
-    // 4. Si no se encuentra (o no le pertenece), devolver 404
     if (!comida_alimento) {
       return res.status(404).json({
         message: "Registro de comida_alimento no encontrado o no autorizado.",
       });
     }
 
-    // 5. Si se encontró y le pertenece, borrarlo
     await comida_alimento.destroy();
 
-    // 6. Enviar respuesta (204 No Content es el estándar para un DELETE exitoso)
     return res.status(204).json({
       message: `La comida_alimento con ID ${id_comida_alimento} ha sido eliminada con éxito`,
     });
   } catch (error: unknown) {
-    // Usamos 'unknown' para ESlint
-
     console.error("[DELETE_COMIDA_ALIMENTO_HANDLER]:", error);
     let errorMessage = "Error interno del servidor";
     if (error instanceof Error) {
