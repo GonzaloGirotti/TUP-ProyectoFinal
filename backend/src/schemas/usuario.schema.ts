@@ -16,6 +16,10 @@ export const registerSchema = z.object({
     // Campos opcionales
     fecha_nacimiento: z.string().datetime().optional().or(z.literal("")), // Acepta string de fecha o vacío
     genero: z.string().optional(),
+    altura: z
+      .number()
+      .positive("La altura debe ser un número positivo")
+      .optional(),
   }),
 });
 
