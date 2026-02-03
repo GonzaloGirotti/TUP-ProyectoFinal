@@ -1,8 +1,6 @@
 import { Model, DataTypes, Optional } from "sequelize";
 import { sequelize } from "../config/db"; // Importación de nuestra conexión
-import Alimento from "./alimento.model";
 import Usuario from "./usuario.model";
-import Comida from "./comida.model";
 
 // Interface para los atributos de Objetivos
 export interface ObjetivosAttributes {
@@ -97,7 +95,7 @@ Objetivos.init(
 );
 // Definición de la Relación
 
-// Una 'Comida' pertenece a un 'Usuario'.
+// Una 'Objetivos' pertenece a un 'Usuario'.
 Objetivos.belongsTo(Usuario, {
   foreignKey: "id_usuario",
   as: "usuario",
