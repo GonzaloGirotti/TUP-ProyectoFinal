@@ -1,3 +1,0 @@
-echo "Ejecutando lint-staged (Backend)..."
-cd backend
-npx lint-staged

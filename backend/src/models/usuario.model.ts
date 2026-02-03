@@ -10,6 +10,7 @@ export interface UsuarioAttributes {
   password: string;
   fecha_nacimiento?: Date;
   genero?: string;
+  altura?: number;
   fecha_creacion: Date;
   updatedAt: Date;
 }
@@ -28,6 +29,7 @@ class Usuario
   public password!: string;
   public fecha_nacimiento?: Date;
   public genero?: string;
+  public altura?: number;
 
   // Timestamps
   public readonly fecha_creacion!: Date;
@@ -69,6 +71,7 @@ Usuario.init(
           msg: "Debes ingresar un formato de email válido",
         },
       },
+      field: "email",
     },
     password: {
       type: DataTypes.TEXT,
@@ -81,6 +84,11 @@ Usuario.init(
     },
     genero: {
       type: DataTypes.TEXT,
+      field: "genero",
+    },
+    altura: {
+      type: DataTypes.FLOAT,
+      field: "altura",
     },
     fecha_creacion: {
       type: DataTypes.DATE,
