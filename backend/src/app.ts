@@ -10,6 +10,7 @@ import objetivoCaloricoRoutes from "./routes/objetivo_calorico.routes";
 import objetivoPesoRoutes from "./routes/objetivo_peso.routes";
 import registroDiarioRoutes from "./routes/registro_diario.routes";
 import registroPesoRoutes from "./routes/registro_peso.routes";
+import aguaRoutes from "./routes/agua.routes";
 import ejercicioRoutes from "./routes/ejercicio.routes";
 
 // Importamos los modelos para que se registren en Sequelize
@@ -23,6 +24,7 @@ import "./models/objetivo_peso.model";
 import "./models/registro_diario.model";
 import "./models/registro_peso.model";
 import "./models/ejercicio.model";
+import "./models/agua.model";
 
 // Creamos la app de Express
 const app = express();
@@ -66,6 +68,9 @@ app.use("/api/v1/registroPeso", registroPesoRoutes);
 
 // Registra las rutas de ejercicios
 app.use("/api/v1/ejercicio", ejercicioRoutes);
+
+// Registra las rutas de agua
+app.use("/api/v1/agua", aguaRoutes);
 
 // Exportamos la 'app' para que index.ts y nuestros tests puedan importarla.
 export default app;
