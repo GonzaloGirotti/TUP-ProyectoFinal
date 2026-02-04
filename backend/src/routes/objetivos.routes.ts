@@ -1,6 +1,5 @@
 import { Router } from "express";
 import {
-  create,
   getObjetivosHandler,
   deleteObjetivoHandler,
   createObjetivosHandler,
@@ -8,9 +7,9 @@ import {
 import { authMiddleware } from "../middlewares/auth.middleware";
 import { validate } from "../middlewares/validate";
 import { createObjetivosSchema } from "../schemas/objetivos.schema";
-import { getAlimentosHandler } from "../controllers/alimento.controller";
 
 const router = Router();
+
 /**
  * @route POST /api/v1/objetivos
  * @desc Crear un nuevo objetivo
@@ -22,11 +21,12 @@ router.post(
   validate(createObjetivosSchema), // 2. (Validador) ¿Tus datos son válidos?
   createObjetivosHandler, // 3. (Controlador) Si todo ok, ejecuta la lógica
 );
+
 /**
- @route GET /api/v1/objetivos
- @desc Obtener todos los registros de objetivos
- @access Private (requiere token)
-*/
+ * @route GET /api/v1/objetivos
+ * @desc Obtener todos los registros de objetivos
+ * @access Private (requiere token)
+ */
 router.get(
   "/",
   authMiddleware, // (Guardia) ¿Estás logueado?
@@ -38,13 +38,12 @@ router.get(
  * @desc Eliminar un registro de objetivo específico
  * @access Private (requiere token)
  */
-// Usamos :id_objetivo para que coincida con el nombre en la BD
+// Usamos :id_objetivo para que coincida con el nombre en la BD y controlador
 router.delete(
   "/:id_objetivo",
   authMiddleware, // (Guardia) Estás logueado?
   deleteObjetivoHandler, // (Controlador) Borrar el objetivo
 );
-export default router;
 
 /**
  * @route PUT /api/v1/objetivos/:id_objetivo
@@ -53,7 +52,9 @@ export default router;
  */
 router.put(
   "/:id_objetivo",
-  authMiddleware, // (Guardia) Estás logueado?
-  validate(createObjetivosSchema), // (Validador) ¿Tus datos son válidos?
-  createObjetivosHandler, // (Controlador) Actualizar el objetivo
+  authMiddleware,
+  validate(createObjetivosSchema),
+  createObjetivosHandler,
 );
+
+export default router;
