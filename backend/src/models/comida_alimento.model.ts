@@ -7,7 +7,7 @@ import Alimento from "./alimento_consumido.model"; // Importacion del modelo ali
 export interface ComidaAlimentoAttributes {
   id_comida_alimento: number;
   id_comida: number; // Clave foránea
-  id_alimento: number; // Clave foránea
+  id_alimento_consumido: number; // Clave foránea
   cantidad_gramos: number;
   carbohidratos_total: number;
   grasas_total: number;
@@ -30,7 +30,7 @@ class ComidaAlimento
 {
   public id_comida_alimento!: number;
   public id_comida!: number;
-  public id_alimento!: number;
+  public id_alimento_consumido!: number;
   public cantidad_gramos!: number;
   public carbohidratos_total!: number;
   public grasas_total!: number;
@@ -60,13 +60,13 @@ ComidaAlimento.init(
         key: "id_comida", // La columna en la tabla Comidas
       },
     },
-    id_alimento: {
+    id_alimento_consumido: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      field: "id_alimento",
+      field: "id_alimento_consumido",
       references: {
         model: Alimento, // Referencia al modelo Alimento
-        key: "id_alimento", // La columna en la tabla Alimentos
+        key: "id_alimento_consumido", // La columna en la tabla Alimentos
       },
     },
     cantidad_gramos: {
@@ -123,7 +123,7 @@ ComidaAlimento.belongsTo(Comida, {
 });
 
 ComidaAlimento.belongsTo(Alimento, {
-  foreignKey: "id_alimento",
+  foreignKey: "id_alimento_consumido",
   as: "alimento",
 });
 

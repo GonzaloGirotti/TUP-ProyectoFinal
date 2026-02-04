@@ -15,7 +15,7 @@ export const createComidaAlimentoHandler = async (
 ) => {
   try {
     // 1. Obtener los datos del body (ya validados por Zod)
-    const { id_comida, id_alimento, cantidad_gramos } = req.body;
+    const { id_comida, id_alimento_consumido, cantidad_gramos } = req.body;
 
     // 2. Obtener el ID del usuario (del token verificado por authMiddleware)
     if (!req.usuario) {
@@ -40,7 +40,7 @@ export const createComidaAlimentoHandler = async (
     }
 
     // 3. Buscar el alimento original para obtener sus macros base
-    const alimento = await Alimento.findByPk(id_alimento);
+    const alimento = await Alimento.findByPk(id_alimento_consumido);
     if (!alimento) {
       return res.status(404).json({ message: "Alimento no encontrado" });
     }
@@ -57,7 +57,7 @@ export const createComidaAlimentoHandler = async (
     // 5. Objeto para crear
     const dataParaCrear = {
       id_comida,
-      id_alimento,
+      id_alimento_consumido,
       cantidad_gramos,
       carbohidratos_total,
       grasas_total,

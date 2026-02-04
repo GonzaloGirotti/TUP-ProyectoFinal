@@ -9,7 +9,7 @@ export const createComidaAlimentoSchema = z.object({
       .number()
       .int()
       .positive("El ID de comida debe ser un número entero positivo"),
-    id_alimento: z
+    id_alimento_consumido: z
       .number()
       .int()
       .positive("El ID de alimento debe ser un número entero positivo"),
