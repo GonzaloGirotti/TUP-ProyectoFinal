@@ -1,33 +1,46 @@
-import { Sequelize } from "sequelize";
+import { Sequelize, Options } from "sequelize";
+import dotenv from "dotenv";
+import path from "path";
 
-// Lee las variables que index.ts ya cargó
+// Cargamos variables de entorno (para local)
+dotenv.config({ path: path.resolve(__dirname, "../../../.env") });
+
+// Detectamos si estamos en producción (Render pone NODE_ENV=production automáticamente)
+const isProduction = process.env.NODE_ENV === 'production';
+
 const dbName = process.env.DB_NAME as string;
 const dbUser = process.env.DB_USER as string;
 const dbHost = process.env.DB_HOST as string;
 const dbPassword = process.env.DB_PASSWORD as string;
-const dbDialect = (process.env.DB_DIALECT || "postgres") as "postgres";
+const dbDialect = "postgres";
+const dbPort = parseInt(process.env.DB_PORT || "5432");
 
-// Validar que las variables de entorno existan
+// Validar variables
 if (!dbName || !dbUser || !dbHost || !dbPassword) {
-  console.error(
-    "[db]: Faltan variables de entorno para la conexión a la base de datos.",
-  );
-
-  console.error(
-    "[db]: Asegúrate de que index.ts esté cargando .env correctamente.",
-  );
+  console.error("[db]: Faltan variables de entorno.");
 }
 
-// Inicializar Sequelize
-export const sequelize = new Sequelize(dbName, dbUser, dbPassword, {
+// Configuración dinámica
+const dbConfig: Options = {
   host: dbHost,
   dialect: dbDialect,
-  logging: false, // Desactivar logs de SQL en la consola
-  port: parseInt(process.env.DB_PORT || "5432"),
+  port: dbPort,
+  logging: false,
   pool: {
     max: 5,
     min: 0,
     acquire: 30000,
     idle: 10000,
   },
-});
+  // Configuración SSL para Render
+  dialectOptions: isProduction
+    ? {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false, // Necesario para certificados de Render
+      },
+    }
+    : {}, // En local (Docker) dejamos el objeto vacío
+};
+
+export const sequelize = new Sequelize(dbName, dbUser, dbPassword, dbConfig);
