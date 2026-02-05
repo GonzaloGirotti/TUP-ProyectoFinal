@@ -1,5 +1,5 @@
 // src/components/ObjetivosPanel.tsx
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -8,6 +8,9 @@ import {
   Legend,
   type ChartData,
 } from 'chart.js';
+
+import { nutritionService } from '../services/nutritionService';
+import { authService } from '../services/authService';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -69,6 +72,74 @@ export function ObjetivosPanel() {
         borderWidth: 0,
       },
     ],
+  };
+
+  const loadObjetivos = async () => {
+    try {
+      const token = authService.getToken();
+      if (!token) {
+        console.warn('Usuario no autenticado');
+        return;
+      }
+      
+      const objetivosService = nutritionService.objetivos;
+      const response = await objetivosService.obtenerObjetivosHoy(token);
+      const objetivos = response.data.objetivos;
+
+      console.log('Objetivos obtenidos:', response.data);
+
+      if (objetivos && objetivos.length > 0) {
+        const objetivoHoy = objetivos[0]; // El primero es el más reciente (ordenado DESC)
+
+        setCalorias(objetivoHoy.calorias);
+        setPesoDeseado(objetivoHoy.peso_deseado);
+        setMacros({
+          proteinas: objetivoHoy.proteinas_proporcion,
+          carbohidratos: objetivoHoy.carbohidratos_proporcion,
+          grasas: objetivoHoy.grasas_proporcion,
+        });
+      }
+    } catch (error) {
+      console.error('Error al cargar objetivos:', error);
+    }
+  };
+
+  // Cargar objetivos al montar el componente
+  useEffect(() => {
+    void loadObjetivos();
+  }, []);
+
+  const saveObjetivos = async () => {
+    if (!esTotalValido) {
+      alert('La suma de los porcentajes de macros debe ser 100%');
+      return;
+    }
+
+    try {
+      const token = authService.getToken();
+      if (!token) {
+        alert('Usuario no autenticado');
+        return;
+      }
+
+      const objetivosService = nutritionService.objetivos;
+      await objetivosService.registrarObjetivos(
+        {
+          id_usuario: authService.getUsuario()?.id,
+          calorias: calorias,
+          proteinas_proporcion: macros.proteinas,
+          carbohidratos_proporcion: macros.carbohidratos,
+          grasas_proporcion: macros.grasas,
+          peso_deseado: pesoDeseado,
+        },
+        token
+      );
+
+      alert('Objetivos guardados exitosamente');
+    } catch (error) {
+      console.error('Error al guardar objetivos:', error);
+      alert('Hubo un error al guardar los objetivos. Por favor, intenta nuevamente.');
+    }
   };
 
   return (
@@ -252,6 +323,7 @@ export function ObjetivosPanel() {
       </section>
 
       <button
+        onClick={async () => { await saveObjetivos(); }}
         className="bg-blue-600 text-white px-4 py-2 rounded-2xl font-medium hover:bg-blue-700 disabled:bg-slate-400 disabled:cursor-not-allowed"
         disabled={!esTotalValido}
       >

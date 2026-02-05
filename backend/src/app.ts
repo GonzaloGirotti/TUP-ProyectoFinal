@@ -8,6 +8,7 @@ import comidaRoutes from "./routes/comida.routes";
 import comidaAlimentoRoutes from "./routes/comida_alimento.routes";
 import objetivoCaloricoRoutes from "./routes/objetivo_calorico.routes";
 import objetivoPesoRoutes from "./routes/objetivo_peso.routes";
+import objetivoRoutes from "./routes/objetivos.routes";
 import registroDiarioRoutes from "./routes/registro_diario.routes";
 import registroPesoRoutes from "./routes/registro_peso.routes";
 import aguaRoutes from "./routes/agua.routes";
@@ -42,6 +43,9 @@ app.get("/api/v1", (req: Request, res: Response) => {
 // Registra las rutas de autenticación
 app.use("/api/v1/auth", authRoutes);
 
+// Registra las rutas de objetivos
+app.use("/api/v1/objetivos", objetivoRoutes);
+
 // Registra las rutas de pesos
 app.use("/api/v1/pesos", pesoRoutes);
 
@@ -67,7 +71,7 @@ app.use("/api/v1/registroDiario", registroDiarioRoutes);
 app.use("/api/v1/registroPeso", registroPesoRoutes);
 
 // Registra las rutas de ejercicios
-app.use("/api/v1/ejercicio", ejercicioRoutes);
+app.use("/api/v1/ejercicios", ejercicioRoutes);
 
 // Registra las rutas de agua
 app.use("/api/v1/agua", aguaRoutes);

@@ -1,5 +1,6 @@
 // src/services/alimentosService.ts
-import { BaseService } from './baseService';
+import { BaseService, getApiConfig } from './baseService';
+const { baseURL } = getApiConfig();
 
 export interface Alimento {
   nombre: string;
@@ -16,7 +17,7 @@ export interface AlimentoConId extends Alimento {
 export class AlimentosService extends BaseService {
   async crearAlimento(alimento: Alimento, token: string) {
     return await this.axiosInstance.post(
-      '/alimentos',
+      `${baseURL}/alimentos`,
       alimento,
       this.getAuthConfig(token)
     );

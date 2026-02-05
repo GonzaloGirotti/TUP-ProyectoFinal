@@ -22,7 +22,7 @@ router.post(
   createEjercicioHandler, // 3. (Controlador) Si todo ok, ejecuta la lógica
 );
 /**
- @route GET /api/v1/ejercicio
+ @route GET /api/v1/ejercicios
   @desc Obtener todos los ejercicios
  @access Private (requiere token)
 */
@@ -33,7 +33,7 @@ router.get(
 );
 
 /**
- * @route DELETE /api/v1/ejercicio/:id_ejercicio
+ * @route DELETE /api/v1/ejercicios/:id_ejercicio
  * @desc Eliminar un Registro de Registro diario específico
  * @access Private (requiere token)
  */
@@ -46,7 +46,7 @@ router.delete(
 export default router;
 
 /**
- * @route PUT /api/v1/ejercicio/:id_ejercicio
+ * @route PUT /api/v1/ejercicios/:id_ejercicio
  * @desc Actualizar un Registro de Registro diario específico
  * @access Private (requiere token)
  */
