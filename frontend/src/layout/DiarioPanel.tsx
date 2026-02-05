@@ -4,12 +4,10 @@ import 'chart.js/auto';
 import './diarioPanel.css';
 import { nutritionService } from '../services/nutritionService';
 import { authService } from '../services/authService';
-import { ComidaCard } from '../components/ComidaCard';
-import type { ItemDiario } from '../components/ComidaCard';
+import { ComidaCard, type ItemDiario } from '../components/ComidaCard';
 
-// TIPOS
+// --- TIPOS ---
 type SectionKey = 'desayuno' | 'almuerzo' | 'cena' | 'aperitivo' | 'ejercicio' | 'agua';
-// Solo estas secciones irán al gráfico
 type MealSectionKey = 'desayuno' | 'almuerzo' | 'cena' | 'aperitivo';
 
 const SECTION_LABELS: Record<SectionKey, string> = {
@@ -39,14 +37,14 @@ interface AlimentoBackend {
 export function DiarioPanel() {
   const [loading, setLoading] = useState(true);
 
-  // Resumen de calorías (Objetivo - Alimento + Ejercicio)
+  // Resumen
   const [resumen, setResumen] = useState({
     objetivo: 2000,
     alimento: 0,
     ejercicio: 0
   });
 
-  // Items para mostrar en las tarjetas (incluye agua y ejercicio)
+  // Items visuales
   const [itemsPorSeccion, setItemsPorSeccion] = useState<Record<SectionKey, ItemDiario[]>>({
     desayuno: [], almuerzo: [], cena: [], aperitivo: [],
     ejercicio: [], agua: [],
@@ -57,26 +55,25 @@ export function DiarioPanel() {
   const [seccionActiva, setSeccionActiva] = useState<SectionKey | null>(null);
   const [guardando, setGuardando] = useState(false);
 
-  // Estados para Comidas
+  // Estados Comidas
   const [listaAlimentosDB, setListaAlimentosDB] = useState<AlimentoBackend[]>([]);
-  const [alimentoSeleccionado, setAlimentoSeleccionado] = useState<number | ''>('');
+
+  // Usamos string para el select
+  const [alimentoSeleccionado, setAlimentoSeleccionado] = useState<string>('');
+
   const [cantidadInput, setCantidadInput] = useState(1);
+
+  // Estados Crear Alimento
   const [modoCrearAlimento, setModoCrearAlimento] = useState(false);
   const [nuevoAlimento, setNuevoAlimento] = useState({
     nombre: '', calorias: 0, proteinas: 0, carbohidratos: 0, grasas: 0
   });
 
-  // Estados para Agua
+  // Estados Agua/Ejercicio
   const [aguaInput, setAguaInput] = useState(250);
+  const [ejercicioInput, setEjercicioInput] = useState({ tipo: '', calorias: 0, minutos: 0 });
 
-  // Estados para Ejercicio
-  const [ejercicioInput, setEjercicioInput] = useState({
-    tipo: '',
-    calorias: 0,
-    minutos: 0
-  });
-
-  // Efecto: Calcular calorías auto al crear alimento
+  // Efecto: Calcular calorías auto
   useEffect(() => {
     if (modoCrearAlimento) {
       const cals = (nuevoAlimento.proteinas * 4) + (nuevoAlimento.carbohidratos * 4) + (nuevoAlimento.grasas * 9);
@@ -89,7 +86,7 @@ export function DiarioPanel() {
     cargarListaAlimentos();
   }, []);
 
-  // CARGA DE DATOS (Backend Real)
+  // CARGA DE DATOS
   const cargarDiarioCompleto = async () => {
     const token = authService.getToken();
     if (!token) return;
@@ -97,7 +94,6 @@ export function DiarioPanel() {
     try {
       setLoading(true);
 
-      // 1. Pedimos TODO en paralelo: Comidas, Agua, Ejercicios
       const [resComidas, resAgua, resEjercicios] = await Promise.all([
         nutritionService.comidas.listarComidas(token),
         nutritionService.agua.obtenerAguaHoy(token),
@@ -105,20 +101,20 @@ export function DiarioPanel() {
       ]);
 
       const todasLasComidas = resComidas.data as any[];
-      const dataAgua = resAgua.data; // { total_ml, registros: [] }
-      const dataEjercicios = resEjercicios.data; // { total_calorias, ejercicios: [] }
+      const dataAgua = resAgua.data as any;
+      const dataEjercicios = resEjercicios.data as any;
 
-      // Fecha Local para filtrar comidas
       const fechaLocal = new Date().toLocaleDateString('en-CA');
 
-      // PROCESAR COMIDAS
-      const comidasHoy = todasLasComidas.filter(c => String(c.fecha).substring(0, 10) === fechaLocal);
       const tempItems: Record<SectionKey, ItemDiario[]> = {
         desayuno: [], almuerzo: [], cena: [], aperitivo: [],
         ejercicio: [], agua: []
       };
 
       let totalCaloriasComida = 0;
+
+      // 1. Procesar Comidas
+      const comidasHoy = todasLasComidas.filter(c => String(c.fecha).substring(0, 10) === fechaLocal);
 
       for (const comida of comidasHoy) {
         let seccionKey: SectionKey = 'aperitivo';
@@ -153,7 +149,9 @@ export function DiarioPanel() {
                 calCalculadas = alim.calorias;
               }
 
+              // Intentamos obtener el ID de la relación de varias formas posibles
               const idRelacion = d.id_comida_alimento || d.id;
+
               tempItems[seccionKey].push({
                 id_relacion: idRelacion,
                 texto: `${alim.nombre} (${textoCant}) - ${Math.round(calCalculadas)} kcal`
@@ -165,7 +163,7 @@ export function DiarioPanel() {
         } catch (err) { console.warn('Error detalle comida', comida.id_comida); }
       }
 
-      // PROCESAR AGUA
+      // 2. Procesar Agua
       if (dataAgua.registros) {
         dataAgua.registros.forEach((reg: any) => {
           tempItems.agua.push({
@@ -175,7 +173,7 @@ export function DiarioPanel() {
         });
       }
 
-      // PROCESAR EJERCICIO
+      // 3. Procesar Ejercicio
       if (dataEjercicios.ejercicios) {
         dataEjercicios.ejercicios.forEach((reg: any) => {
           tempItems.ejercicio.push({
@@ -199,19 +197,30 @@ export function DiarioPanel() {
     }
   };
 
+  //  Diagnóstico de datos
   const cargarListaAlimentos = async () => {
     const token = authService.getToken();
     if (token) {
       try {
         const res = await nutritionService.alimentos.listarAlimentos(token);
-        setListaAlimentosDB(res.data as AlimentoBackend[]);
-      } catch (err) { console.error(err); }
-    }
-  };
 
-  //  HANDLER DE ELIMINAR
-  const handleEliminarItem = async (seccion: string, id: number) => {
-    console.warn("Usa la función wrapper", seccion, id);
+        // Mira la consola del navegador
+        console.log("ALIMENTOS RECIBIDOS DEL BACKEND:", res.data);
+
+        // Aseguramos que sea array
+        const rawData = Array.isArray(res.data) ? res.data : [];
+
+        const listaLimpia = rawData.map((item: any) => ({
+          id_alimento: item.id_alimento_consumido || item.id_alimento || item.id,
+          nombre: item.nombre || "Sin nombre",
+          calorias: item.calorias || 0
+        })).filter((item: any) => item.id_alimento); // Eliminar si no tiene ID
+
+        setListaAlimentosDB(listaLimpia);
+      } catch (err) {
+        console.error("Error cargando lista de alimentos", err);
+      }
+    }
   };
 
   const eliminarItemReal = async (seccion: SectionKey, id: number) => {
@@ -226,7 +235,6 @@ export function DiarioPanel() {
       } else if (seccion === 'ejercicio') {
         await nutritionService.ejercicio.eliminarEjercicio(id, token);
       } else {
-        // Es comida
         await nutritionService.comidas.eliminarAlimentoDeComida(id, token);
       }
       await cargarDiarioCompleto();
@@ -237,26 +245,26 @@ export function DiarioPanel() {
     }
   };
 
-  // ABRIR MODAL
+  // ABRIR MODAL ---
   const handleAbrirAgregar = (seccion: SectionKey) => {
     setSeccionActiva(seccion);
     setModalOpen(true);
     setGuardando(false);
 
-    // Reset inputs según sección
     if (seccion === 'agua') setAguaInput(250);
     if (seccion === 'ejercicio') setEjercicioInput({ tipo: '', calorias: 0, minutos: 0 });
-    // Reset comidas
+
     setModoCrearAlimento(false);
     setAlimentoSeleccionado('');
     setCantidadInput(1);
     setNuevoAlimento({ nombre: '', calorias: 0, proteinas: 0, carbohidratos: 0, grasas: 0 });
   };
 
-  // GUARDADO: COMIDAS
+  // HANDLERS DE GUARDADO
   const handleGuardarComida = async (e: React.FormEvent) => {
     e.preventDefault();
     const token = authService.getToken();
+    // Validar string no vacío
     if (!token || !seccionActiva || !alimentoSeleccionado) return;
 
     setGuardando(true);
@@ -280,35 +288,50 @@ export function DiarioPanel() {
         idComida = resNueva.data.id_comida;
       }
 
+      // Usamos 'as any' para bypassear la restricción de TS si el servicio aún no está actualizado
       await nutritionService.comidas.agregarAlimentoAComida({
         id_comida: idComida,
+        id_alimento_consumido: Number(alimentoSeleccionado),
         id_alimento: Number(alimentoSeleccionado),
         cantidad_gramos: cantidadInput
-      }, token);
+      } as any, token);
 
       setModalOpen(false);
       cargarDiarioCompleto();
-    } catch (err) { alert("Error al guardar comida"); }
+    } catch (err) {
+      console.error(err);
+      alert("Error al guardar comida. Verifica la consola.");
+    }
     finally { setGuardando(false); }
   };
 
-  // GUARDADO: NUEVO ALIMENTO
   const handleCrearAlimento = async (e: React.FormEvent) => {
     e.preventDefault();
     const token = authService.getToken();
     if (!token) return;
     setGuardando(true);
     try {
-      const res = await nutritionService.alimentos.crearAlimento(nuevoAlimento, token);
+      const payloadAlimento = {
+        ...nuevoAlimento,
+        gramos: 100
+      };
+
+      const res = await nutritionService.alimentos.crearAlimento(payloadAlimento as any, token);
       const nuevo = res.data as any;
       await cargarListaAlimentos();
-      setAlimentoSeleccionado(nuevo.id_alimento);
+
+      // Convertir ID a string para el estado. Buscamos el ID correcto.
+      const nuevoId = nuevo.id_alimento_consumido || nuevo.id_alimento || nuevo.id;
+      setAlimentoSeleccionado(String(nuevoId));
+
       setModoCrearAlimento(false);
-    } catch (err) { alert("Error creando alimento"); }
+    } catch (err) {
+      console.error(err);
+      alert("Error creando alimento.");
+    }
     finally { setGuardando(false); }
   };
 
-  // GUARDADO: AGUA
   const handleGuardarAgua = async (e: React.FormEvent) => {
     e.preventDefault();
     const token = authService.getToken();
@@ -322,7 +345,6 @@ export function DiarioPanel() {
     finally { setGuardando(false); }
   };
 
-  // GUARDADO: EJERCICIO
   const handleGuardarEjercicio = async (e: React.FormEvent) => {
     e.preventDefault();
     const token = authService.getToken();
@@ -340,33 +362,26 @@ export function DiarioPanel() {
     finally { setGuardando(false); }
   };
 
-  // DATOS PARA EL CHART (Solo Comidas)
-  const mealSections: MealSectionKey[] = ['desayuno', 'almuerzo', 'cena', 'aperitivo'];
+  // RENDER 
+  const mealSections: SectionKey[] = ['desayuno', 'almuerzo', 'cena', 'aperitivo'];
   const valoresPie = mealSections.map(sec => itemsPorSeccion[sec].length || 0);
   const totalItems = valoresPie.reduce((a, b) => a + b, 0);
 
   const pieData = {
     labels: mealSections.map(sec => SECTION_LABELS[sec]),
-    datasets: [{
-      data: valoresPie,
-      backgroundColor: ['#4ade80', '#60a5fa', '#f97373', '#fbbf24'],
-      borderWidth: 0
-    }],
+    datasets: [{ data: valoresPie, backgroundColor: ['#4ade80', '#60a5fa', '#f97373', '#fbbf24'], borderWidth: 0 }],
   };
 
   const pieOptions = {
     maintainAspectRatio: false,
-    plugins: {
-      legend: { position: 'bottom' as const, labels: { color: '#cbd5e1' } }
-    }
+    plugins: { legend: { position: 'bottom' as const, labels: { color: '#cbd5e1' } } }
   };
 
   if (loading && resumen.alimento === 0) return <div className="p-10 text-center text-slate-400">Cargando diario...</div>;
 
   return (
     <section className="w-full diario-panel relative flex flex-col gap-4">
-
-      {/* RESUMEN */}
+      {/* ... RESUMEN ... */}
       <div className="bg-slate-800 rounded-lg p-5 shadow-lg border border-slate-700">
         <div className="flex w-full justify-between items-center mb-3">
           <h2 className="text-lg font-semibold text-white">Resumen Diario</h2>
@@ -396,7 +411,7 @@ export function DiarioPanel() {
         </div>
       </div>
 
-      {/* GRÁFICO (Solo Comidas) */}
+      {/* ... GRÁFICO ... */}
       <div className="bg-slate-800 rounded-lg p-5 shadow-lg border border-slate-700">
         <h3 className="text-base font-semibold mb-3 text-center text-white">Distribución de comidas</h3>
         <div className="max-w-xs mx-auto h-48">
@@ -408,7 +423,7 @@ export function DiarioPanel() {
         </div>
       </div>
 
-      {/* SECCIONES (Incluye Agua y Ejercicio) */}
+      {/* SECCIONES */}
       <div className="grid gap-4 md:grid-cols-2">
         {(Object.keys(SECTION_LABELS) as SectionKey[]).map(section => (
           <ComidaCard
@@ -433,7 +448,8 @@ export function DiarioPanel() {
             </div>
 
             <div className="p-6">
-              {/* FORMULARIO AGUA */}
+
+              {/* FORM AGUA */}
               {seccionActiva === 'agua' && (
                 <form onSubmit={handleGuardarAgua} className="space-y-4">
                   <div>
@@ -448,7 +464,7 @@ export function DiarioPanel() {
                 </form>
               )}
 
-              {/* FORMULARIO EJERCICIO */}
+              {/* FORM EJERCICIO */}
               {seccionActiva === 'ejercicio' && (
                 <form onSubmit={handleGuardarEjercicio} className="space-y-4">
                   <div>
@@ -475,19 +491,29 @@ export function DiarioPanel() {
                 </form>
               )}
 
-              {/* FORMULARIO COMIDAS (Default) */}
+              {/* FORM COMIDAS */}
               {['desayuno', 'almuerzo', 'cena', 'aperitivo'].includes(seccionActiva) && (
                 !modoCrearAlimento ? (
                   <form onSubmit={handleGuardarComida} className="space-y-4">
                     <div>
                       <label className="block text-sm font-medium text-slate-300 mb-1">Selecciona un alimento</label>
+
+                      {/* FIX: Select robusto que maneja strings y vacíos correctamente */}
                       <select className="w-full border border-slate-600 rounded-lg p-2.5 bg-slate-900 text-white focus:ring-emerald-500 outline-none"
-                        value={alimentoSeleccionado} onChange={e => setAlimentoSeleccionado(Number(e.target.value))} required>
+                        value={alimentoSeleccionado}
+                        onChange={(e) => setAlimentoSeleccionado(e.target.value)}
+                        required>
                         <option value="" className="text-slate-500">-- Buscar --</option>
-                        {listaAlimentosDB.map(ali => (
-                          <option key={ali.id_alimento} value={ali.id_alimento}>{ali.nombre} ({ali.calorias} kcal)</option>
-                        ))}
+                        {/* Filtro de seguridad y Mapeo de ID correcto */}
+                        {listaAlimentosDB
+                          .filter(ali => ali.id_alimento) // Asegura que tenga ID
+                          .map(ali => (
+                            <option key={ali.id_alimento} value={String(ali.id_alimento)}>
+                              {ali.nombre} ({ali.calorias} kcal)
+                            </option>
+                          ))}
                       </select>
+
                       <div className="mt-2 text-right">
                         <button type="button" onClick={() => setModoCrearAlimento(true)} className="text-xs text-emerald-400 hover:underline">¿No está? Crear nuevo</button>
                       </div>

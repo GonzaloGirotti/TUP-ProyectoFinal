@@ -62,7 +62,7 @@ ComidaAlimento.init(
     },
     id_alimento_consumido: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
       field: "id_alimento_consumido",
       references: {
         model: Alimento, // Referencia al modelo Alimento
@@ -71,27 +71,27 @@ ComidaAlimento.init(
     },
     cantidad_gramos: {
       type: DataTypes.REAL, // Tipo 'real' para números con decimales
-      allowNull: false,
+      allowNull: true,
       field: "cantidad_gramos",
     },
     carbohidratos_total: {
       type: DataTypes.REAL,
-      allowNull: false,
+      allowNull: true,
       field: "carbohidratos_total",
     },
     grasas_total: {
       type: DataTypes.REAL,
-      allowNull: false,
+      allowNull: true,
       field: "grasas_total",
     },
     proteinas_total: {
       type: DataTypes.REAL,
-      allowNull: false,
+      allowNull: true,
       field: "proteinas_total",
     },
     calorias_total: {
       type: DataTypes.REAL,
-      allowNull: false,
+      allowNull: true,
       field: "calorias_total",
     },
     fecha_creacion: {
