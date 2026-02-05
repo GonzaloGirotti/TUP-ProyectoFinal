@@ -34,7 +34,7 @@ const startServer = async () => {
 
     // Comento el sync temporalmente para evitar que se borren datos.
     
-    // await sequelize.sync({ alter: false, force: false });
+     await sequelize.sync({ alter: true, force: true });
 
     // eslint-disable-next-line no-console
     console.info("[db]: Sync desactivado por seguridad (Tablas ya existen).");

@@ -1,8 +1,10 @@
-import React, { useState } from "react";
-import { useAuth } from "../context/AuthContext";
+import React, {useEffect, useState } from "react";
 
 type ActivityLevel = "sedentario" | "ligero" | "moderado" | "intenso";
 type GoalType = "mantener" | "perder" | "ganar";
+
+import { nutritionService } from "../services/nutritionService";
+import { authService } from "../services/authService";
 
 export interface UserProfileSettings {
   firstName: string;
@@ -24,7 +26,6 @@ interface SettingsPanelProps {
 
 export const SettingsPanel: React.FC<SettingsPanelProps> = ({
   initialData,
-  onSave,
 }) => {
   const [form, setForm] = useState<UserProfileSettings>({
     firstName: initialData?.firstName ?? "",
@@ -70,23 +71,87 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     (async () => {
-      try {
+          try {
+            const token = authService.getToken();
+            if (!token) {
+              alert('Usuario no autenticado');
+              return;
+            }
+      
+            const id_usuario = authService.getUsuario()?.id;
+            if (!id_usuario) {
+              alert('No se pudo identificar el usuario');
+              return;
+            }
 
-        // TODO Aquí podrías llamar a la API para guardar los cambios
-
-        if (onSave) {
-          onSave(form);
-        }
-      } catch (err) {
-        // Puedes reemplazar por un toast o manejo de error más sofisticado
-        // eslint-disable-next-line no-console
-        console.error("Error al guardar peso:", err);
-      }
+            const settingsService = nutritionService.settings;
+            await settingsService.registrarSettings(
+              id_usuario,
+              {
+                nombre_usuario: authService.getUsuario()?.nombre_usuario || "",
+                nombre: form.firstName,
+                apellido: form.lastName,
+                email: form.email,
+                password: form.password,
+                urlAvatar: form.avatarUrl || "",
+                fecha_nacimiento: form.birthDate || "",
+                genero: form.gender || "",
+                altura: form.heightCm || 0,
+                nivel_actividad: form.activityLevel,
+                tipo_objetivo: form.mainGoal,
+              },
+              token
+            );
+      
+            alert('Settings guardados exitosamente');
+          } catch (error) {
+            console.error('Error al guardar settings:', error);
+            alert('Hubo un error al guardar los settings. Por favor, intenta nuevamente.');
+          }
     })();
-    // Podés agregar un toast o feedback visual acá
   };
 
-  const authCtx = useAuth();
+    const loadSettings = async () => {
+    try {
+      const token = authService.getToken();
+      if (!token) {
+        console.warn('Usuario no autenticado');
+        return;
+      }
+      
+      const settingsService = nutritionService.settings;
+      const id_usuario = authService.getUsuario()?.id;
+      const response = await settingsService.obtenerSettings(id_usuario, token);
+      const settings = response.data.settings;
+
+      console.log('Settings obtenidos:', response.data);
+
+      if (settings && settings.length > 0) {
+        const settingsItem = settings[settings.length - 1]; // El ultimo registro de settings obtenido (si hay varios)
+        const normalizedBirthDate = settingsItem.fecha_nacimiento
+          ? settingsItem.fecha_nacimiento.slice(0, 10)
+          : "";
+
+        setForm({
+          firstName: settingsItem.nombre ?? "",
+          lastName: settingsItem.apellido ?? "",
+          email: settingsItem.email ?? "",
+          avatarUrl: settingsItem.urlAvatar ?? "",
+          birthDate: normalizedBirthDate,
+          gender: settingsItem.genero ?? "",
+          heightCm: settingsItem.altura ?? undefined,
+          activityLevel: (settingsItem.nivel_actividad as ActivityLevel) ?? "sedentario",
+          mainGoal: (settingsItem.tipo_objetivo as GoalType) ?? "mantener",
+        });
+      }
+    } catch (error) {
+      console.error('Error al cargar settings:', error);
+    }
+  };
+
+  useEffect(() => {
+    void loadSettings();
+  }, []);
 
   return (
     <div className="w-full h-full overflow-y-auto">
@@ -358,6 +423,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
               Cancelar
             </button>
             <button
+            onClick={handleSubmit}
               type="submit"
               className="px-4 py-2 rounded-xl bg-emerald-500 text-slate-950 text-sm font-semibold hover:bg-emerald-400 transition shadow-md"
             >

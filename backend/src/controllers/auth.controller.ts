@@ -25,10 +25,7 @@ export const registerHandler = async (
       nombre_usuario,
       email,
       password,
-      // Convertimos el string (si existe) a un objeto Date
-      fecha_nacimiento: fecha_nacimiento
-        ? new Date(fecha_nacimiento)
-        : undefined,
+      fecha_nacimiento,
       genero: genero || undefined,
       altura: altura || undefined,
     });
