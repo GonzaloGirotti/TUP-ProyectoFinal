@@ -38,6 +38,7 @@ interface AlimentoBackend {
 
 export function DiarioPanel() {
   const [loading, setLoading] = useState(true);
+  const [registro_diario_id, setRegistro_diario_id] = useState<number | null>(null);
 
   // Resumen de calorías (Objetivo - Alimento + Ejercicio)
   const [resumen, setResumen] = useState({
@@ -88,18 +89,37 @@ export function DiarioPanel() {
 
     const userId = authService.getUsuario()?.id;
     const token = authService.getToken();
-    console.log("Obteniendo registro diario para usuario ID:", userId);
-    console.log("token: ",token);
 
     const diarioID = nutritionService.registroDiario.obtenerRegistroDiario(userId!, token!);
     diarioID.then(res => {
       console.log("Registro Diario ID:", res.data.id_registro_diario);
+      setRegistro_diario_id(res.data.id_registro_diario);
     }).catch(err => {
       console.error("Error obteniendo registro diario:", err);
     });
-    cargarDiarioCompleto();
-    cargarListaAlimentos();
+
+    if (registro_diario_id){
+      cargarDiarioCompleto();
+      cargarListaAlimentos();
+    }
   }, []);
+
+
+  const iniciarRegistroDiario = async () => {
+    const userId = authService.getUsuario()?.id;
+    const token = authService.getToken();
+    if (!userId || !token) {
+      alert("Usuario no autenticado");
+      return;
+    }
+    try {
+      const res = await nutritionService.registroDiario.iniciarRegistroDiario(userId!, token!);
+      console.log("Registro Diario Iniciado:", res.data);
+      setRegistro_diario_id(res.data.id_registro_diario);
+    } catch (err) {
+      console.error("Error iniciando registro diario:", err);
+    }
+  };
 
   // CARGA DE DATOS (Backend Real)
   const cargarDiarioCompleto = async () => {
@@ -372,6 +392,10 @@ export function DiarioPanel() {
       legend: { position: 'bottom' as const, labels: { color: '#cbd5e1' } }
     }
   };
+
+  if(registro_diario_id === null) return <div className="p-10 text-center text-slate-400">
+    <button className="text-xl text-emerald-400 hover:underline" onClick={() => iniciarRegistroDiario()}>Iniciar registro</button>
+  </div>;
 
   if (loading && resumen.alimento === 0) return <div className="p-10 text-center text-slate-400">Cargando diario...</div>;
 
