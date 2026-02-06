@@ -6,8 +6,6 @@ import Usuario from "./usuario.model";
 export interface Registro_Diario_Attributes {
   id_registro_diario: number;
   id_usuario: number;
-  fecha: Date;
-  agua_total_litros: number;
   fecha_creacion?: Date;
   updatedAt?: Date;
 }
@@ -25,8 +23,6 @@ class Registro_Diario
 {
   public id_registro_diario!: number;
   public id_usuario!: number;
-  public fecha!: Date;
-  public agua_total_litros!: number;
   public fecha_creacion?: Date;
   public updatedAt?: Date;
 }
@@ -45,16 +41,7 @@ Registro_Diario.init(
       allowNull: false,
       field: "id_usuario",
     },
-    fecha: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      field: "fecha",
-    },
-    agua_total_litros: {
-      type: DataTypes.REAL,
-      allowNull: false,
-      field: "agua_total_litros",
-    },
+
     fecha_creacion: {
       type: DataTypes.DATE,
       allowNull: false,
