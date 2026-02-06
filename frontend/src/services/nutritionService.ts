@@ -5,6 +5,7 @@ import { ComidasService } from './comidasService';
 import { AguaService } from './aguaService';
 import { EjercicioService } from './ejercicioService';
 import { ObjetivosService } from './objetivosService';
+import { RegistroDiarioService } from './registroDiarioService';
 
 class NutritionService {
   // Instancias privadas
@@ -14,6 +15,7 @@ class NutritionService {
   private _aguaService: AguaService;
   private _ejercicioService: EjercicioService;
   private _objetivosService: ObjetivosService;
+  private _registroDiarioService: RegistroDiarioService;
 
   constructor() {
     const { baseURL } = getApiConfig();
@@ -24,6 +26,7 @@ class NutritionService {
     this._aguaService = new AguaService(baseURL);
     this._ejercicioService = new EjercicioService(baseURL);
     this._objetivosService = new ObjetivosService(baseURL);
+    this._registroDiarioService = new RegistroDiarioService(baseURL);
   }
 
   // Getters para acceso a los servicios
@@ -49,6 +52,10 @@ class NutritionService {
 
   get objetivos(): ObjetivosService {
     return this._objetivosService;
+  }
+
+  get registroDiario() {
+    return this._registroDiarioService;
   }
 }
 

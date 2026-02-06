@@ -1,9 +1,11 @@
 import { Router } from "express";
 import {
-  getRegistroDiarioHandler,
+  getAllRegistroDiariByIdHandler,
+  getAllRegistroDiarioByUserBodyHandler,
   deleteRegistroDiarioHandler,
   createRegistroDiarioHandler,
   updateRegistroDiarioHandler,
+  getRegistroDiarioHoyByUserIdHandler,
 } from "../controllers/registro_diario.controller";
 import { authMiddleware } from "../middlewares/auth.middleware";
 import { validate } from "../middlewares/validate";
@@ -21,15 +23,33 @@ router.post(
   validate(createRegistroDiarioSchema), // 2. (Validador) ¿Tus datos son válidos?
   createRegistroDiarioHandler, // 3. (Controlador) Si todo ok, ejecuta la lógica
 );
+
 /**
  @route GET /api/v1/registroDiario
-  @desc Obtener todos los Registros de Registros diario
+ @desc Obtener todos los Registros diarios para un usuario (desde body)
  @access Private (requiere token)
 */
 router.get(
   "/",
   authMiddleware, // (Guardia) ¿Estás logueado?
-  getRegistroDiarioHandler, // (Controlador) Obtener todos los Registros peso
+  getAllRegistroDiarioByUserBodyHandler, // (Controlador) Obtener todos los registros por usuario
+);
+
+/**
+ @route GET /api/v1/registroDiario/all/:id_usuario
+ @desc Obtener todos los Registros diarios para un usuario (desde path param)
+ @access Private (requiere token)
+*/
+router.get(
+  "/all/:id_usuario",
+  authMiddleware, // (Guardia) ¿Estás logueado?
+  getAllRegistroDiariByIdHandler, // (Controlador) Obtener todos los registros por usuario
+);
+
+router.get(
+  "/:id_usuario",
+  authMiddleware, // (Guardia) ¿Estás logueado?
+  getRegistroDiarioHoyByUserIdHandler, // (Controlador) Obtener registro de hoy
 );
 
 /**

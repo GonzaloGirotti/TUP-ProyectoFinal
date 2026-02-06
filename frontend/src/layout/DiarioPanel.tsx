@@ -36,6 +36,7 @@ interface AlimentoBackend {
 
 export function DiarioPanel() {
   const [loading, setLoading] = useState(true);
+  const [registro_diario_id, setRegistro_diario_id] = useState<number | null>(null);
 
   // Resumen
   const [resumen, setResumen] = useState({
@@ -82,11 +83,42 @@ export function DiarioPanel() {
   }, [nuevoAlimento.proteinas, nuevoAlimento.carbohidratos, nuevoAlimento.grasas, modoCrearAlimento]);
 
   useEffect(() => {
-    cargarDiarioCompleto();
-    cargarListaAlimentos();
+
+    const userId = authService.getUsuario()?.id;
+    const token = authService.getToken();
+
+    const diarioID = nutritionService.registroDiario.obtenerRegistroDiario(userId!, token!);
+    diarioID.then(res => {
+      console.log("Registro Diario ID:", res.data.id_registro_diario);
+      setRegistro_diario_id(res.data.id_registro_diario);
+    }).catch(err => {
+      console.error("Error obteniendo registro diario:", err);
+    });
+
+    if (registro_diario_id){
+      cargarDiarioCompleto();
+      cargarListaAlimentos();
+    }
   }, []);
 
-  // CARGA DE DATOS
+
+  const iniciarRegistroDiario = async () => {
+    const userId = authService.getUsuario()?.id;
+    const token = authService.getToken();
+    if (!userId || !token) {
+      alert("Usuario no autenticado");
+      return;
+    }
+    try {
+      const res = await nutritionService.registroDiario.iniciarRegistroDiario(userId!, token!);
+      console.log("Registro Diario Iniciado:", res.data);
+      setRegistro_diario_id(res.data.id_registro_diario);
+    } catch (err) {
+      console.error("Error iniciando registro diario:", err);
+    }
+  };
+
+  // CARGA DE DATOS (Backend Real)
   const cargarDiarioCompleto = async () => {
     const token = authService.getToken();
     if (!token) return;
@@ -376,6 +408,10 @@ export function DiarioPanel() {
     maintainAspectRatio: false,
     plugins: { legend: { position: 'bottom' as const, labels: { color: '#cbd5e1' } } }
   };
+
+  if(registro_diario_id === null) return <div className="p-10 text-center text-slate-400">
+    <button className="text-xl text-emerald-400 hover:underline" onClick={() => iniciarRegistroDiario()}>Iniciar registro</button>
+  </div>;
 
   if (loading && resumen.alimento === 0) return <div className="p-10 text-center text-slate-400">Cargando diario...</div>;
 
