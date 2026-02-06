@@ -25,19 +25,19 @@ export class EjercicioService extends BaseService {
 
     console.log('Registrando ejercicio con payload:', payload);
     return await this.axiosInstance.post(
-      '/ejercicio',
+      '/ejercicios',
       payload,
       this.getAuthConfig(token)
     );
   }
 
   async obtenerEjerciciosHoy(token: string) {
-    return await this.axiosInstance.get<EjercicioResponse>('/ejercicio', this.getAuthConfig(token));
+    return await this.axiosInstance.get<EjercicioResponse>('/ejercicios', this.getAuthConfig(token));
   }
 
   async eliminarEjercicio(id: number, token: string) {
     return await this.axiosInstance.delete(
-      `/ejercicio/${id}`,
+      `/ejercicios/${id}`,
       this.getAuthConfig(token)
     );
   }
