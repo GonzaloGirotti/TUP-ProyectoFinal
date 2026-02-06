@@ -85,6 +85,18 @@ export function DiarioPanel() {
   }, [nuevoAlimento.proteinas, nuevoAlimento.carbohidratos, nuevoAlimento.grasas, modoCrearAlimento]);
 
   useEffect(() => {
+
+    const userId = authService.getUsuario()?.id;
+    const token = authService.getToken();
+    console.log("Obteniendo registro diario para usuario ID:", userId);
+    console.log("token: ",token);
+
+    const diarioID = nutritionService.registroDiario.obtenerRegistroDiario(userId!, token!);
+    diarioID.then(res => {
+      console.log("Registro Diario ID:", res.data.id_registro_diario);
+    }).catch(err => {
+      console.error("Error obteniendo registro diario:", err);
+    });
     cargarDiarioCompleto();
     cargarListaAlimentos();
   }, []);
