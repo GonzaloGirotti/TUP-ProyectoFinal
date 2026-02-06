@@ -22,20 +22,22 @@ export interface EjercicioResponse {
 
 export class EjercicioService extends BaseService {
   async registrarEjercicio(payload: EjercicioPayload, token: string) {
+
+    console.log('Registrando ejercicio con payload:', payload);
     return await this.axiosInstance.post(
-      '/ejercicios',
+      '/ejercicio',
       payload,
       this.getAuthConfig(token)
     );
   }
 
   async obtenerEjerciciosHoy(token: string) {
-    return await this.axiosInstance.get<EjercicioResponse>('/ejercicios', this.getAuthConfig(token));
+    return await this.axiosInstance.get<EjercicioResponse>('/ejercicio', this.getAuthConfig(token));
   }
 
   async eliminarEjercicio(id: number, token: string) {
     return await this.axiosInstance.delete(
-      `/ejercicios/${id}`,
+      `/ejercicio/${id}`,
       this.getAuthConfig(token)
     );
   }
