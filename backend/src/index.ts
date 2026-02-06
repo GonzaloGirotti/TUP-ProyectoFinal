@@ -48,9 +48,10 @@ const startServer = async () => {
     await connectWithRetry();
 
     // 1.5. Sincronizar modelos con la Base de Datos (Crear tablas faltantes)
-    // alter: true - Modifica las tablas existentes para coincidir con los modelos sin borrar datos.
-    // force: false - Asegura que NO borre las tablas existentes.
-    await sequelize.sync({ alter: true, force: false });
+    // NOTE: Disabling `alter` to avoid Sequelize attempting to add NOT NULL
+    // columns to existing tables that contain NULLs (causes startup failure).
+    // Use explicit migrations to change schema safely.
+    await sequelize.sync({ alter: false, force: false });
     // eslint-disable-next-line no-console
     console.info(
       "[db]: Tablas sincronizadas correctamente (Agua, Ejercicios, etc).",
