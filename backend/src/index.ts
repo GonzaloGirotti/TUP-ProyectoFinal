@@ -16,7 +16,7 @@ const connectWithRetry = async (retries = MAX_RETRIES) => {
       return;
     } catch (error: unknown) {
       console.warn(
-        `[db]: Falló la conexión. Reintentando en ${RETRY_DELAY / 1000}s... (Quedan ${retries - 1} intentos)`
+        `[db]: Falló la conexión. Reintentando en ${RETRY_DELAY / 1000}s... (Quedan ${retries - 1} intentos)`,
       );
       retries--;
       if (retries === 0) {

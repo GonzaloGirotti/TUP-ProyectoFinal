@@ -6,6 +6,8 @@ import { AguaService } from './aguaService';
 import { EjercicioService } from './ejercicioService';
 import { ObjetivosService } from './objetivosService';
 import { RegistroDiarioService } from './registroDiarioService';
+import { SettingsService } from './settingsService';
+
 
 class NutritionService {
   // Instancias privadas
@@ -16,6 +18,7 @@ class NutritionService {
   private _ejercicioService: EjercicioService;
   private _objetivosService: ObjetivosService;
   private _registroDiarioService: RegistroDiarioService;
+  private _settingsService: SettingsService;
 
   constructor() {
     const { baseURL } = getApiConfig();
@@ -27,6 +30,7 @@ class NutritionService {
     this._ejercicioService = new EjercicioService(baseURL);
     this._objetivosService = new ObjetivosService(baseURL);
     this._registroDiarioService = new RegistroDiarioService(baseURL);
+    this._settingsService = new SettingsService(baseURL);
   }
 
   // Getters para acceso a los servicios
@@ -57,10 +61,13 @@ class NutritionService {
   get registroDiario() {
     return this._registroDiarioService;
   }
+  get settings(): SettingsService {
+    return this._settingsService;
+  }
 }
 
 // Exportar una instancia única (singleton)
 export const nutritionService = new NutritionService();
 
 // También exportar los servicios individuales por si se necesitan por separado
-export { PesoService, AlimentosService, ComidasService, ObjetivosService };
+export { PesoService, AlimentosService, ComidasService, ObjetivosService, SettingsService };

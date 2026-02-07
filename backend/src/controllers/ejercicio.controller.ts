@@ -5,7 +5,7 @@ import { Op } from "sequelize";
 
 export const createEjercicioHandler = async (
   req: Request<unknown, unknown, CreateEjercicioInput>,
-  res: Response
+  res: Response,
 ) => {
   try {
     const { tipo, calorias_quemadas, duracion_minutos, fecha } = req.body;
@@ -64,4 +64,4 @@ export const deleteEjercicioHandler = async (req: Request, res: Response) => {
   } catch (error) {
     return res.status(500).json({ message: "Error al eliminar ejercicio" });
   }
-}
+};
