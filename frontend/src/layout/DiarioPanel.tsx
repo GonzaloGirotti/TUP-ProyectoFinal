@@ -16,7 +16,7 @@ import { authService } from '../services/authService';
 
 export function DiarioPanel() {
   const [loading, setLoading] = useState(true);
-  
+
   const {
     registroDiarioId,
     resumen,
@@ -63,7 +63,7 @@ export function DiarioPanel() {
 
   const handleEliminarItem = async (seccion: SectionKey, id: number) => {
     if (!confirm("¿Eliminar este registro?")) return;
-    
+
     try {
       setLoading(true);
       await eliminarItem(seccion, id);
@@ -132,7 +132,7 @@ export function DiarioPanel() {
   const handleGuardarAgua = async (cantidadMl: number) => {
     const token = authService.getToken();
     if (!token) return;
-    
+
     setGuardando(true);
     try {
       await nutritionService.agua.registrarAgua({ cantidad_ml: cantidadMl }, token);
@@ -148,7 +148,7 @@ export function DiarioPanel() {
   const handleGuardarEjercicio = async (tipo: string, calorias: number, minutos: number) => {
     const token = authService.getToken();
     if (!token) return;
-    
+
     setGuardando(true);
     try {
       await nutritionService.ejercicio.registrarEjercicio({
@@ -168,8 +168,8 @@ export function DiarioPanel() {
   if (registroDiarioId === null) {
     return (
       <div className="p-10 text-center text-slate-400">
-        <button 
-          className="text-xl text-emerald-400 hover:underline" 
+        <button
+          className="text-xl text-emerald-400 hover:underline"
           onClick={handleIniciarRegistro}
         >
           Iniciar registro
@@ -232,6 +232,7 @@ export function DiarioPanel() {
                   onGuardar={handleGuardarComida}
                   onCancelar={cerrarModal}
                   guardando={guardando}
+                  onAlimentoCreado={cargarListaAlimentos}
                 />
               )}
             </div>

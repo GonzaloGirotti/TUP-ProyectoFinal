@@ -7,15 +7,15 @@ export const createAlimentoSchema = z.object({
 
     //     El constructor z.number() debe ir VACÍO.
     //     Zod manejará el error de tipo automáticamente.
-    //     .positive() ya implica que es requerido y > 0
+    //     .nonnegative() permite 0 o valores positivos
     carbohidratos: z
       .number()
-      .positive("Los carbohidratos deben ser un número positivo"),
+      .nonnegative("Los carbohidratos deben ser un número no negativo"),
     proteinas: z
       .number()
-      .positive("Las proteinas deben ser un número positivo"),
-    grasas: z.number().positive("Las grasas deben ser un número positivo"),
-    calorias: z.number().positive("Las calorias deben ser un número positivo"),
+      .nonnegative("Las proteinas deben ser un número no negativo"),
+    grasas: z.number().nonnegative("Las grasas deben ser un número no negativo"),
+    calorias: z.number().nonnegative("Las calorias deben ser un número no negativo"),
   }),
 });
 

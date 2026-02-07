@@ -3,7 +3,7 @@ import cors from "cors";
 // Importamos TODAS las rutas
 import authRoutes from "./routes/auth.routes";
 import pesoRoutes from "./routes/peso.routes";
-import alimentoRoutes from "./routes/alimento_consumido.routes";
+import alimentoRoutes from "./routes/alimento.routes";
 import comidaRoutes from "./routes/comida.routes";
 import comidaAlimentoRoutes from "./routes/comida_alimento.routes";
 import objetivoCaloricoRoutes from "./routes/objetivo_calorico.routes";
@@ -18,6 +18,7 @@ import settingsRoutes from "./routes/settings.routes";
 // Importamos los modelos para que se registren en Sequelize
 import "./models/usuario.model";
 import "./models/peso.model";
+import "./models/alimento.model";
 import "./models/alimento_consumido.model";
 import "./models/comida.model";
 import "./models/comida_alimento.model";

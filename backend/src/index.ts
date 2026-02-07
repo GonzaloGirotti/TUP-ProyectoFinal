@@ -36,7 +36,7 @@ const startServer = async () => {
     // NOTE: Disabling `alter` to avoid Sequelize attempting to add NOT NULL
     // columns to existing tables that contain NULLs (causes startup failure).
     // Use explicit migrations to change schema safely.
-    await sequelize.sync({ alter: false, force: false });
+    //await sequelize.sync({ alter: true, force: true });
     // eslint-disable-next-line no-console
     console.info("[db]: Sync desactivado por seguridad (Tablas ya existen).");
 

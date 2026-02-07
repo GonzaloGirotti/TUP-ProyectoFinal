@@ -32,10 +32,9 @@ export const createRegistroDiarioHandler = async (
     });
 
     if (registroExistente) {
-      return res.status(400).json({ message: "Ya existe un registro diario para este usuario en la fecha actual." });
+      // Si ya existe un registro para hoy, devolverlo en lugar de dar error
+      return res.status(200).json(registroExistente);
     }
-
- 
 
     // 3. Crear el nuevo registro de registro diario en la BD
     const nuevoRegistroDiario = await Registro_Diario.create({ id_usuario });

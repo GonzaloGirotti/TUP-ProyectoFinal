@@ -25,7 +25,7 @@ export const useAlimentos = () => {
       const rawData = Array.isArray(res.data) ? res.data : [];
       const listaLimpia = rawData
         .map((item: any) => ({
-          id_alimento: item.id_alimento_consumido || item.id_alimento || item.id,
+          id_alimento: item.id_alimento || item.id,
           nombre: item.nombre || "Sin nombre",
           calorias: item.calorias || 0
         }))
@@ -42,28 +42,40 @@ export const useAlimentos = () => {
     const token = authService.getToken();
     if (!token) throw new Error('No hay token');
 
+    // Asegurarse de que las calorías estén calculadas antes de enviar
+    const caloriasFinales = nuevoAlimento.calorias > 0
+      ? nuevoAlimento.calorias
+      : Math.round(
+        (nuevoAlimento.proteinas * 4) +
+        (nuevoAlimento.carbohidratos * 4) +
+        (nuevoAlimento.grasas * 9)
+      );
+
     const payloadAlimento = {
-      ...nuevoAlimento,
-      gramos: 100
+      nombre: nuevoAlimento.nombre,
+      carbohidratos: nuevoAlimento.carbohidratos,
+      proteinas: nuevoAlimento.proteinas,
+      grasas: nuevoAlimento.grasas,
+      calorias: caloriasFinales
     };
 
-    const res = await nutritionService.alimentos.crearAlimento(payloadAlimento as any, token);
+    const res = await nutritionService.alimentos.crearAlimento(payloadAlimento, token);
     const nuevo = res.data as any;
-    const nuevoId = nuevo.id_alimento_consumido || nuevo.id_alimento || nuevo.id;
+    const nuevoId = nuevo.id_alimento || nuevo.id;
 
     await cargarListaAlimentos();
-    
+
     return {
       id: nuevoId,
       nombre: nuevoAlimento.nombre,
-      calorias: nuevoAlimento.calorias
+      calorias: caloriasFinales
     };
   };
 
   const calcularCaloriasAuto = () => {
-    const cals = (nuevoAlimento.proteinas * 4) + 
-                 (nuevoAlimento.carbohidratos * 4) + 
-                 (nuevoAlimento.grasas * 9);
+    const cals = (nuevoAlimento.proteinas * 4) +
+      (nuevoAlimento.carbohidratos * 4) +
+      (nuevoAlimento.grasas * 9);
     setNuevoAlimento(prev => ({ ...prev, calorias: Math.round(cals) }));
   };
 
