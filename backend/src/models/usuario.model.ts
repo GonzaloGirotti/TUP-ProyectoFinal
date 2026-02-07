@@ -6,10 +6,16 @@ import bcrypt from "bcryptjs";
 export interface UsuarioAttributes {
   id_usuario: number;
   nombre_usuario: string;
+  nombre?: string;
+  apellido?: string;
   email: string;
+  urlAvatar?: string;
   password: string;
-  fecha_nacimiento?: Date;
+  fecha_nacimiento?: string;
   genero?: string;
+  altura?: number;
+  nivel_actividad?: string;
+  tipo_objetivo?: string;
   fecha_creacion: Date;
   updatedAt: Date;
 }
@@ -20,13 +26,20 @@ class Usuario
     UsuarioAttributes,
     Optional<UsuarioAttributes, "id_usuario" | "fecha_creacion" | "updatedAt">
   >
-  implements UsuarioAttributes {
+  implements UsuarioAttributes
+{
   public id_usuario!: number;
   public nombre_usuario!: string;
+  public nombre?: string;
+  public apellido?: string;
   public email!: string;
+  public urlAvatar?: string;
   public password!: string;
-  public fecha_nacimiento?: Date;
+  public fecha_nacimiento?: string;
   public genero?: string;
+  public altura?: number;
+  public nivel_actividad?: string;
+  public tipo_objetivo?: string;
 
   // Timestamps
   public readonly fecha_creacion!: Date;
@@ -50,12 +63,37 @@ Usuario.init(
     nombre_usuario: {
       type: DataTypes.TEXT,
       allowNull: false,
+      unique: {
+        name: "nombre_usuario_unico",
+        msg: "El nombre de usuario ya está en uso. Por favor elige otro.",
+      },
       field: "nombre_usuario",
+    },
+    nombre: {
+      type: DataTypes.TEXT,
+      field: "nombre",
+    },
+    apellido: {
+      type: DataTypes.TEXT,
+      field: "apellido",
     },
     email: {
       type: DataTypes.TEXT,
       allowNull: false,
-      unique: true,
+      unique: {
+        name: "email_unico",
+        msg: "Este correo electrónico ya está registrado.",
+      },
+      validate: {
+        isEmail: {
+          msg: "Debes ingresar un formato de email válido",
+        },
+      },
+      field: "email",
+    },
+    urlAvatar: {
+      type: DataTypes.TEXT,
+      field: "urlAvatar",
     },
     password: {
       type: DataTypes.TEXT,
@@ -63,11 +101,24 @@ Usuario.init(
       field: "password",
     },
     fecha_nacimiento: {
-      type: DataTypes.DATE,
+      type: DataTypes.STRING,
       field: "fecha_nacimiento",
     },
     genero: {
       type: DataTypes.TEXT,
+      field: "genero",
+    },
+    altura: {
+      type: DataTypes.FLOAT,
+      field: "altura",
+    },
+    nivel_actividad: {
+      type: DataTypes.TEXT,
+      field: "nivel_actividad",
+    },
+    tipo_objetivo: {
+      type: DataTypes.TEXT,
+      field: "tipo_objetivo",
     },
     fecha_creacion: {
       type: DataTypes.DATE,

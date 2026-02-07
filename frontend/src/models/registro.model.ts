@@ -36,7 +36,7 @@ export function macrosTotales(registro: Registro): Macros {
 }
 
 
-const KCAL_PER_GRAM = {
+export const KCAL_PER_GRAM = {
   protein: 4,
   carbs: 4,
   fat: 9,

@@ -10,7 +10,9 @@ import {
 } from "chart.js";
 import type { ChartOptions, ChartData } from "chart.js";
 import { Line } from "react-chartjs-2";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useAuth } from "../context/AuthContext";
+import { nutritionService } from "../services/nutritionService";
 
 ChartJS.register(
   CategoryScale,
@@ -33,14 +35,32 @@ type EntradaObjetivo = {
 };
 
 export function ProgresoPanel() {
-  // Entradas reales del usuario (Entries) – line chart normal
-  const entradas: EntradaPeso[] = [
-    { fecha: "2025-10-01", peso: 78 },
-    { fecha: "2025-10-10", peso: 77.5 },
-    { fecha: "2025-10-20", peso: 77 },
-    { fecha: "2025-11-01", peso: 76.8 },
-    { fecha: "2025-11-10", peso: 76.2 },
-  ];
+  // Entradas reales del usuario (fetched desde la API)
+  const [entradas, setEntradas] = useState<EntradaPeso[]>([]);
+  const auth = useAuth();
+
+  useEffect(() => {
+    let mounted = true;
+    const load = async () => {
+      try {
+        if (!auth.token) return;
+        const res = await nutritionService.peso.verHistorialPesos(auth.token);
+        // Asumimos que la API devuelve un array de objetos con 'fecha' y 'peso_kg' o 'peso'
+        const data = res.data.map((p: any) => ({
+          fecha: new Date(p.fecha).toISOString().slice(0, 10),
+          peso: p.peso_kg ?? p.peso,
+        }));
+        if (mounted) setEntradas(data);
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.error("Error cargando historial de pesos:", err);
+      }
+    };
+    load();
+    return () => {
+      mounted = false;
+    };
+  }, [auth.token]);
 
   // Progreso / objetivo – va cambiando en el tiempo – step line chart
   const objetivos: EntradaObjetivo[] = [
@@ -146,10 +166,30 @@ export function ProgresoPanel() {
     },
   };
 
+  function calcularIMC(peso: number, alturaM: number) {
+    return (peso / (alturaM * alturaM)).toFixed(1);
+  }
+
   return (
-    <div className="panel-item p-6 w-full">
-      <h2>Progreso</h2>
-      <Line data={data} options={options} />
+
+    <div className="flex flex-col gap-4 p-6 w-full">
+      <div className="panel-item p-6 w-full">
+        <h2>Progreso</h2>
+        <Line data={data} options={options} />
+      </div>
+
+      <div className="flex w-full justify-between gap-2">
+        <div className="panel-item w-1/2">
+          <h2>Peso</h2>
+          <h4>80kg</h4>
+        </div>
+        <div className="panel-item w-1/2">
+          <h2>IMC</h2>
+          <h4>{calcularIMC(80, 1.75)}</h4>
+        </div>
+      </div>
+
     </div>
+    
   );
 }

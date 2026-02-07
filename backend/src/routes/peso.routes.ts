@@ -43,3 +43,15 @@ router.delete(
   deletePesoHandler, // (Controlador) Borrar el peso
 );
 export default router;
+
+/**
+ * @route PUT /api/v1/pesos/:id_peso
+ * @desc Actualizar un registro de peso específico
+ * @access Private (requiere token)
+ */
+router.put(
+  "/:id_peso",
+  authMiddleware, // (Guardia) Estás logueado?
+  validate(createPesoSchema), // (Validador) ¿Tus datos son válidos?
+  createPesoHandler, // (Controlador) Actualizar el peso
+);

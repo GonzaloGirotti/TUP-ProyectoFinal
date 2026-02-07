@@ -1,7 +1,10 @@
-import React, { useState } from "react";
+import React, {useEffect, useState } from "react";
 
 type ActivityLevel = "sedentario" | "ligero" | "moderado" | "intenso";
 type GoalType = "mantener" | "perder" | "ganar";
+
+import { nutritionService } from "../services/nutritionService";
+import { authService } from "../services/authService";
 
 export interface UserProfileSettings {
   firstName: string;
@@ -10,10 +13,8 @@ export interface UserProfileSettings {
   password?: string; // solo para cambio
   avatarUrl?: string;
   birthDate?: string; // formato "YYYY-MM-DD"
-  age?: number;       // opcional si querés calcularlo
   gender?: string;
   heightCm?: number;
-  weightKg?: number;
   activityLevel: ActivityLevel;
   mainGoal: GoalType;
 }
@@ -25,7 +26,6 @@ interface SettingsPanelProps {
 
 export const SettingsPanel: React.FC<SettingsPanelProps> = ({
   initialData,
-  onSave,
 }) => {
   const [form, setForm] = useState<UserProfileSettings>({
     firstName: initialData?.firstName ?? "",
@@ -34,10 +34,8 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
     password: "",
     avatarUrl: initialData?.avatarUrl ?? "",
     birthDate: initialData?.birthDate ?? "",
-    age: initialData?.age,
     gender: initialData?.gender ?? "",
     heightCm: initialData?.heightCm,
-    weightKg: initialData?.weightKg,
     activityLevel: initialData?.activityLevel ?? "sedentario",
     mainGoal: initialData?.mainGoal ?? "mantener",
   });
@@ -72,11 +70,88 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (onSave) {
-      onSave(form);
-    }
-    // Podés agregar un toast o feedback visual acá
+    (async () => {
+          try {
+            const token = authService.getToken();
+            if (!token) {
+              alert('Usuario no autenticado');
+              return;
+            }
+      
+            const id_usuario = authService.getUsuario()?.id;
+            if (!id_usuario) {
+              alert('No se pudo identificar el usuario');
+              return;
+            }
+
+            const settingsService = nutritionService.settings;
+            await settingsService.registrarSettings(
+              id_usuario,
+              {
+                nombre_usuario: authService.getUsuario()?.nombre_usuario || "",
+                nombre: form.firstName,
+                apellido: form.lastName,
+                email: form.email,
+                password: form.password,
+                urlAvatar: form.avatarUrl || "",
+                fecha_nacimiento: form.birthDate || "",
+                genero: form.gender || "",
+                altura: form.heightCm || 0,
+                nivel_actividad: form.activityLevel,
+                tipo_objetivo: form.mainGoal,
+              },
+              token
+            );
+      
+            alert('Settings guardados exitosamente');
+          } catch (error) {
+            console.error('Error al guardar settings:', error);
+            alert('Hubo un error al guardar los settings. Por favor, intenta nuevamente.');
+          }
+    })();
   };
+
+    const loadSettings = async () => {
+    try {
+      const token = authService.getToken();
+      if (!token) {
+        console.warn('Usuario no autenticado');
+        return;
+      }
+      
+      const settingsService = nutritionService.settings;
+      const id_usuario = authService.getUsuario()?.id;
+      const response = await settingsService.obtenerSettings(id_usuario, token);
+      const settings = response.data.settings;
+
+      console.log('Settings obtenidos:', response.data);
+
+      if (settings && settings.length > 0) {
+        const settingsItem = settings[settings.length - 1]; // El ultimo registro de settings obtenido (si hay varios)
+        const normalizedBirthDate = settingsItem.fecha_nacimiento
+          ? settingsItem.fecha_nacimiento.slice(0, 10)
+          : "";
+
+        setForm({
+          firstName: settingsItem.nombre ?? "",
+          lastName: settingsItem.apellido ?? "",
+          email: settingsItem.email ?? "",
+          avatarUrl: settingsItem.urlAvatar ?? "",
+          birthDate: normalizedBirthDate,
+          gender: settingsItem.genero ?? "",
+          heightCm: settingsItem.altura ?? undefined,
+          activityLevel: (settingsItem.nivel_actividad as ActivityLevel) ?? "sedentario",
+          mainGoal: (settingsItem.tipo_objetivo as GoalType) ?? "mantener",
+        });
+      }
+    } catch (error) {
+      console.error('Error al cargar settings:', error);
+    }
+  };
+
+  useEffect(() => {
+    void loadSettings();
+  }, []);
 
   return (
     <div className="w-full h-full overflow-y-auto">
@@ -121,7 +196,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                   />
                 </label>
               </div>
-              <p className="text-xs text-slate-400 text-center max-w-[10rem]">
+              <p className="text-xs text-slate-400 text-center max-w-40">
                 Sube una imagen cuadrada para mejor resultado.
               </p>
             </div>
@@ -228,20 +303,26 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
 
             <div className="flex flex-col gap-1">
               <label
-                htmlFor="age"
-                className="text-sm font-medium text-slate-200"
+              htmlFor="age"
+              className="text-sm font-medium text-slate-200"
               >
-                Edad
+              Edad
               </label>
               <input
-                id="age"
-                name="age"
-                type="number"
-                min={0}
-                value={form.age ?? ""}
-                onChange={handleChange}
-                className="input-base"
-                placeholder="Ej: 35"
+              id="age"
+              name="age"
+              type="number"
+              min={0}
+              value={
+                form.birthDate
+                ? new Date().getFullYear() -
+                  new Date(form.birthDate).getFullYear()
+                : ""
+              }
+              onChange={handleChange}
+              disabled
+              className="input-base"
+              placeholder="Ej: 35"
               />
             </div>
 
@@ -264,24 +345,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
               />
             </div>
 
-            <div className="flex flex-col gap-1">
-              <label
-                htmlFor="weightKg"
-                className="text-sm font-medium text-slate-200"
-              >
-                Peso actual (kg)
-              </label>
-              <input
-                id="weightKg"
-                name="weightKg"
-                type="number"
-                min={0}
-                value={form.weightKg ?? ""}
-                onChange={handleChange}
-                className="input-base"
-                placeholder="Ej: 78"
-              />
-            </div>
+            
           </section>
 
           {/* Género, actividad, objetivo */}
@@ -359,6 +423,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
               Cancelar
             </button>
             <button
+            onClick={handleSubmit}
               type="submit"
               className="px-4 py-2 rounded-xl bg-emerald-500 text-slate-950 text-sm font-semibold hover:bg-emerald-400 transition shadow-md"
             >

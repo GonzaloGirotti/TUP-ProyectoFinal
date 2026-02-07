@@ -1,10 +1,9 @@
-// src/services/authService.ts
 import axios from 'axios';
+import { getApiConfig } from './baseService';
+import { crearLoginResponseMock, crearUsuarioMock } from './mockUser';
 
-const API_BASE_URL =
-  (import.meta.env.VITE_API_BASE_URL as string | undefined) ?? '/api/v1';
 
-const USE_MOCK_AUTH = import.meta.env.VITE_USE_MOCK_AUTH === 'true';
+const { baseURL, useMockAuth } = getApiConfig();
 
 export interface Usuario {
   id: number;
@@ -31,33 +30,11 @@ export interface LoginPayload {
   password: string;
 }
 
-// --- helpers mock ---
-function crearUsuarioMock(data?: Partial<Usuario>): Usuario {
-  return {
-    id: 1,
-    nombre_usuario: data?.nombre_usuario ?? 'Usuario Mock',
-    email: data?.email ?? 'mock@nutriapp.com',
-    fecha_nacimiento: data?.fecha_nacimiento ?? '1990-01-01T00:00:00.000Z',
-  };
-}
-
-function crearLoginResponseMock(data?: { email?: string; nombre_usuario?: string }): LoginResponse {
-  const usuario = crearUsuarioMock({
-    email: data?.email,
-    nombre_usuario: data?.nombre_usuario,
-  });
-
-  return {
-    message: 'Inicio de sesión exitoso (MOCK)',
-    token: 'mock-token-123',
-    usuario,
-  };
-}
 
 // --- service ---
 export const authService = {
   async register(data: RegisterPayload): Promise<Usuario> {
-    if (USE_MOCK_AUTH) {
+    if (useMockAuth) {
       const usuario = crearUsuarioMock({
         email: data.email,
         nombre_usuario: data.nombre_usuario,
@@ -67,18 +44,18 @@ export const authService = {
       return usuario;
     }
 
-    const res = await axios.post<Usuario>(`${API_BASE_URL}/auth/register`, data);
+    const res = await axios.post<Usuario>(`${baseURL}/auth/register`, data);
     return res.data;
   },
 
   async login(data: LoginPayload): Promise<LoginResponse> {
-    if (USE_MOCK_AUTH) {
+    if (useMockAuth) {
       const response = crearLoginResponseMock({ email: data.email });
       console.log('[AUTH MOCK] login', response);
       return response;
     }
 
-    const res = await axios.post<LoginResponse>(`${API_BASE_URL}/auth/login`, data);
+    const res = await axios.post<LoginResponse>(`${baseURL}/auth/login`, data);
     return res.data;
   },
 
