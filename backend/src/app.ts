@@ -32,7 +32,14 @@ import "./models/agua.model";
 const app = express();
 
 // Middlewares
-app.use(cors()); // Habilita CORS
+app.use(cors({
+  origin: [
+    'http://localhost:5173',                    // entorno local
+    'https://nutri-backend-p42n.onrender.com',  // backend
+    'https://nutri-app-front-1jn2qlsu8-marcos-projects-2d86d060.vercel.app' // frontend
+  ],
+  credentials: true
+})); // Habilita CORS
 app.use(express.json()); // Permite a Express entender JSON
 
 // RUTAS
