@@ -26,6 +26,7 @@ import "./models/registro_peso.model";
 import "./models/ejercicio.model";
 import "./models/agua.model";
 import usuarioRoutes from "./routes/usuario.routes";
+import objetivosRoutes from "./routes/objetivos.routes";
 
 // Creamos la app de Express
 const app = express();
@@ -46,7 +47,7 @@ app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/usuarios", usuarioRoutes);   // /api/v1/usuarios/*
 
 // Registra las rutas de objetivos
-app.use("/api/v1/objetivos", objetivoRoutes);
+app.use("/api/v1/objetivos", objetivosRoutes);
 
 // Registra las rutas de pesos
 app.use("/api/v1/pesos", pesoRoutes);

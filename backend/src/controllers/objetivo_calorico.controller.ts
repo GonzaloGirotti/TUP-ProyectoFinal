@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import { CreateObjetivoCaloricoInput } from "../schemas/objetivo_calorico.schema";
+import Objetivo_Calorico from "../models/objetivo_calorico.model";
+import { CreateObjetivosInput } from "../schemas/objetivos.schema";
 
 
 /*

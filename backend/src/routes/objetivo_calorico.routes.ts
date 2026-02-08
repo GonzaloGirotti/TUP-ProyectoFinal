@@ -7,7 +7,7 @@ import {
 } from "../controllers/objetivo_calorico.controller";
 import { authMiddleware } from "../middlewares/auth.middleware";
 import { validate } from "../middlewares/validate";
-import { createObjetivoCaloricoInput } from "../schemas/objetivo_calorico.schema";
+import { createObjetivoCaloricoSchema } from "../schemas/objetivo_calorico.schema";
 
 const router = Router();
 /**
@@ -18,7 +18,7 @@ const router = Router();
 router.post(
   "/",
   authMiddleware, // 1. (Guardia) ¿Estás logueado?
-  validate(createObjetivoCaloricoInput), // 2. (Validador) ¿Tus datos son válidos?
+  validate(createObjetivoCaloricoSchema), // 2. (Validador) ¿Tus datos son válidos?
   createObjetivoCaloricoHandler, // 3. (Controlador) Si todo ok, ejecuta la lógica
 );
 /**

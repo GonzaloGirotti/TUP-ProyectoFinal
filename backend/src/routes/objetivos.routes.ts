@@ -1,6 +1,5 @@
 import { Router } from "express";
 import {
-  create,
   getObjetivosHandler,
   deleteObjetivoHandler,
   createObjetivosHandler,
@@ -44,7 +43,7 @@ router.delete(
   authMiddleware, // (Guardia) Estás logueado?
   deleteObjetivoHandler, // (Controlador) Borrar el objetivo
 );
-export default router;
+
 
 /**
  * @route PUT /api/v1/objetivos/:id_objetivo
