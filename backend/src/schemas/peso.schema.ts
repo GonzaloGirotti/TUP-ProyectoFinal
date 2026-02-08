@@ -15,5 +15,14 @@ export const createPesoSchema = z.object({
   }),
 });
 
+// Schema para actualización (todos los campos opcionales)
+export const updatePesoSchema = z.object({
+  peso_kg: z.number().positive().optional(),
+  fecha: z.coerce.date().optional(),
+  comentario: z.string().max(500).optional().nullable(),
+});
+
 // Tipo para inferir del schema (lo usaremos en el controlador)
 export type CreatePesoInput = z.infer<typeof createPesoSchema>["body"];
+
+export type UpdatePesoInput = z.infer<typeof updatePesoSchema>;

@@ -3,35 +3,137 @@ import { z } from "zod";
 // Esquema para el registro de un nuevo usuario
 export const registerSchema = z.object({
   body: z.object({
-    nombre_usuario: z.string().min(1, "El nombre de usuario es requerido"),
+    nombre_usuario: z.string()
+      .min(1, "El nombre de usuario es requerido")
+      .max(50, "El nombre de usuario no puede exceder 50 caracteres")
+      .regex(/^[a-zA-Z0-9_]+$/, "Solo se permiten letras, números y guiones bajos"),
 
-    email: z
-      .string()
+    email: z.string()
       .min(1, "El email es requerido")
-      .email("El formato del email no es válido"),
+      .email("El formato del email no es válido")
+      .max(100, "El email no puede exceder 100 caracteres")
+      .toLowerCase(), // Normalizar a minúsculas
 
-    password: z
-      .string()
-      .min(6, "La contraseña debe tener al menos 6 caracteres"),
-    // Campos opcionales
-    fecha_nacimiento: z.string().datetime().optional().or(z.literal("")), // Acepta string de fecha o vacío
-    genero: z.string().optional(),
-    altura: z.number().optional(),
+    password: z.string()
+      .min(8, "La contraseña debe tener al menos 8 caracteres")
+      .max(100, "La contraseña no puede exceder 100 caracteres")
+      .regex(/[a-z]/, "Debe contener al menos una letra minúscula")
+      .regex(/[A-Z]/, "Debe contener al menos una letra mayúscula")
+      .regex(/[0-9]/, "Debe contener al menos un número")
+      .regex(/[^a-zA-Z0-9]/, "Debe contener al menos un carácter especial"),
+
+    // Campos opcionales con validaciones específicas
+    fecha_nacimiento: z.string()
+      .datetime({ message: "Formato de fecha inválido. Use ISO 8601" })
+      .optional()
+      .or(z.literal(""))
+      .transform((val) => val === "" ? undefined : val),
+
+    genero: z.enum(["masculino", "femenino", "otro", "prefiero_no_decir"], {
+    }).optional(),
+
+    altura: z.number()
+      .positive("La altura debe ser un número positivo")
+      .min(50, "La altura mínima es 50 cm")
+      .max(250, "La altura máxima es 250 cm")
+      .optional(),
   }),
 });
 
-// Esquema para el inicio de sesión
-export const loginSchema = z.object({
+
+// Esquema para actualizar perfil de usuario (sin password)
+
+
+
+export const updateUsuarioSchema = z.object({
   body: z.object({
-    email: z
-      .string()
-      .min(1, "El email es requerido")
-      .email("El formato del email no es válido"),
+    nombre_usuario: z.string()
+      .min(1, "El nombre de usuario es requerido")
+      .max(50, "El nombre de usuario no puede exceder 50 caracteres")
+      .regex(/^[a-zA-Z0-9_]+$/, "Solo se permiten letras, números y guiones bajos")
+      .optional(),
 
-    password: z.string().min(1, "La contraseña es requerida"),
+    email: z.string()
+      .email("El formato del email no es válido")
+      .max(100, "El email no puede exceder 100 caracteres")
+      .toLowerCase()
+      .optional(),
+
+    fecha_nacimiento: z.string()
+      .datetime({ message: "Formato de fecha inválido. Use ISO 8601" })
+      .optional()
+      .or(z.literal(""))
+      .transform((val) => val === "" ? undefined : val),
+
+    genero: z.enum(["masculino", "femenino", "otro", "prefiero_no_decir"] as const).optional(),
+
+    altura: z.number()
+      .positive("La altura debe ser un número positivo")
+      .min(50, "La altura mínima es 50 cm")
+      .max(250, "La altura máxima es 250 cm")
+      .optional(),
+  }).strict() // No permite campos extraños
+});
+
+// Esquema para cambio de contraseña
+export const changePasswordSchema = z.object({
+  body: z.object({
+    currentPassword: z.string()
+      .min(1, "La contraseña actual es requerida"),
+
+    newPassword: z.string()
+      .min(8, "La nueva contraseña debe tener al menos 8 caracteres")
+      .max(100, "La contraseña no puede exceder 100 caracteres")
+      .regex(/[a-z]/, "Debe contener al menos una letra minúscula")
+      .regex(/[A-Z]/, "Debe contener al menos una letra mayúscula")
+      .regex(/[0-9]/, "Debe contener al menos un número")
+      .regex(/[^a-zA-Z0-9]/, "Debe contener al menos un carácter especial"),
+    
+    confirmPassword: z.string()
+      .min(1, "La confirmación de contraseña es requerida"),
+  }).refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Las contraseñas no coinciden",
+    path: ["confirmPassword"],
+  }).refine((data) => data.currentPassword !== data.newPassword, {
+    message: "La nueva contraseña debe ser diferente a la actual",
+    path: ["newPassword"],
   }),
 });
 
-// Tipo para inferir del schema de registro
+// Esquema para reset de contraseña (olvidé mi contraseña)
+export const resetPasswordRequestSchema = z.object({
+  body: z.object({
+    email: z.string()
+      .min(1, "El email es requerido")
+      .email("El formato del email no es válido")
+      .toLowerCase(),
+  }),
+});
+
+export const resetPasswordSchema = z.object({
+  body: z.object({
+    token: z.string()
+      .min(1, "El token es requerido"),
+    
+    newPassword: z.string()
+      .min(8, "La nueva contraseña debe tener al menos 8 caracteres")
+      .max(100, "La contraseña no puede exceder 100 caracteres")
+      .regex(/[a-z]/, "Debe contener al menos una letra minúscula")
+      .regex(/[A-Z]/, "Debe contener al menos una letra mayúscula")
+      .regex(/[0-9]/, "Debe contener al menos un número")
+      .regex(/[^a-zA-Z0-9]/, "Debe contener al menos un carácter especial"),
+    
+    confirmPassword: z.string()
+      .min(1, "La confirmación de contraseña es requerida"),
+  }).refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Las contraseñas no coinciden",
+    path: ["confirmPassword"],
+  }),
+});
+
+// Tipos para inferir
 export type RegisterInput = z.infer<typeof registerSchema>["body"];
-export type LoginInput = z.infer<typeof loginSchema>["body"];
+export type UpdateUsuarioInput = z.infer<typeof updateUsuarioSchema>["body"];
+export type ChangePasswordInput = z.infer<typeof changePasswordSchema>["body"];
+export type ResetPasswordRequestInput = z.infer<typeof resetPasswordRequestSchema>["body"];
+export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>["body"];

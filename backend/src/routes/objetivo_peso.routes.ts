@@ -43,7 +43,7 @@ router.delete(
   authMiddleware, // (Guardia) Estás logueado?
   deleteObjetivoPesoHandler, // (Controlador) Borrar el objetivo peso
 );
-export default router;
+
 
 /**
  * @route PUT /api/v1/objetivoPeso/:id_objetivoPeso
@@ -56,3 +56,5 @@ router.put(
   validate(createObjetivoPesoSchema), // (Validador) ¿Tus datos son válidos?
   updateObjetivoPesoHandler, // (Controlador) Actualizar el objetivo peso
 );
+
+export default router;

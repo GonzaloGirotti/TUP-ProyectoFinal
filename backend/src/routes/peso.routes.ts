@@ -3,10 +3,11 @@ import {
   createPesoHandler,
   getPesosHandler,
   deletePesoHandler,
+  updatePesoHandler,
 } from "../controllers/peso.controller";
 import { authMiddleware } from "../middlewares/auth.middleware";
 import { validate } from "../middlewares/validate";
-import { createPesoSchema } from "../schemas/peso.schema";
+import { createPesoSchema, updatePesoSchema } from "../schemas/peso.schema";
 
 const router = Router();
 /**
@@ -42,7 +43,7 @@ router.delete(
   authMiddleware, // (Guardia) Estás logueado?
   deletePesoHandler, // (Controlador) Borrar el peso
 );
-export default router;
+
 
 /**
  * @route PUT /api/v1/pesos/:id_peso
@@ -51,7 +52,9 @@ export default router;
  */
 router.put(
   "/:id_peso",
-  authMiddleware, // (Guardia) Estás logueado?
-  validate(createPesoSchema), // (Validador) ¿Tus datos son válidos?
-  createPesoHandler, // (Controlador) Actualizar el peso
+  authMiddleware,
+  validate(updatePesoSchema), // Usar schema de actualización
+  updatePesoHandler, // Usar handler correcto
 );
+
+export default router;

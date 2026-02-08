@@ -12,4 +12,11 @@ export const createAguaSchema = z.object({
   }),
 });
 
+export const updateAguaSchema = z.object({
+  cantidad_ml: z.number().min(1).optional(),
+  fecha: z.string().datetime().optional().or(z.date().optional()),
+});
+
+
 export type CreateAguaInput = z.infer<typeof createAguaSchema>["body"];
+export type UpdateAguaInput = z.infer<typeof updateAguaSchema>;

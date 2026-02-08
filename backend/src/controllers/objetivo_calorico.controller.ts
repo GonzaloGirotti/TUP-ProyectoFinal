@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { CreateObjetivosInput } from "../schemas/objetivo_calorico.schema"; // Importamos el tipo de Zod
-import Objetivo_Calorico from "../models/objetivo_calorico.model";
+import { CreateObjetivoCaloricoInput } from "../schemas/objetivo_calorico.schema";
+
 
 /*
  Controlador para crear un nuevo objetivo.
@@ -8,23 +8,22 @@ import Objetivo_Calorico from "../models/objetivo_calorico.model";
 */
 export const createObjetivoCaloricoHandler = async (
   // Usamos 'unknown' para los genéricos que no usamos y el tipo de Zod para el body
-  req: Request<unknown, unknown, CreateObjetivosInput>,
+  req: Request<unknown, unknown, CreateObjetivoCaloricoInput>,
   res: Response,
 ) => {
+
   try {
-    // 1. Obtener los datos del body (ya validados por Zod)
-    const {
-      id_usuario,
-      calorias_diarias,
-      proteinas_diarias,
-      carbohidratos_diarios,
-      grasas_diarias,
-    } = req.body;
+    // OBTENER id_usuario DEL TOKEN, NO DEL BODY
+    if (!req.usuario) return res.status(401).json({ message: "No autorizado" });
+    const id_usuario = req.usuario.id; // ← Del token
+    
+    const { calorias_diarias, proteinas_diarias, carbohidratos_diarios, grasas_diarias } = req.body;
+
 
     // 2. Creamos un objeto de creación base
     // Definimos el tipo explícitamente para que TS entienda
     const dataParaCrear: {
-      id_usuario: number;
+      id_usuario: number;  // ← Usar del token
       calorias_diarias: number;
       proteinas_diarias: number;
       carbohidratos_diarios: number;

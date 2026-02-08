@@ -19,5 +19,14 @@ export const createAlimentoSchema = z.object({
   }),
 });
 
+export const updateAlimentoSchema = z.object({
+  nombre: z.string().min(3).optional(),
+  carbohidratos: z.number().positive().optional(),
+  proteinas: z.number().positive().optional(),
+  grasas: z.number().positive().optional(),
+  calorias: z.number().positive().optional(),
+});
+
 // Tipo para inferir del schema (lo usaremos en el controlador)
 export type CreateAlimentoInput = z.infer<typeof createAlimentoSchema>["body"];
+export type UpdateAlimentoInput = z.infer<typeof updateAlimentoSchema>;

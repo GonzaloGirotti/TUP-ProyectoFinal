@@ -7,7 +7,7 @@ import {
 } from "../controllers/objetivo_calorico.controller";
 import { authMiddleware } from "../middlewares/auth.middleware";
 import { validate } from "../middlewares/validate";
-import { createObjetivoCaloricoSchema } from "../schemas/objetivo_calorico.schema";
+import { createObjetivoCaloricoInput } from "../schemas/objetivo_calorico.schema";
 
 const router = Router();
 /**
@@ -18,7 +18,7 @@ const router = Router();
 router.post(
   "/",
   authMiddleware, // 1. (Guardia) ¿Estás logueado?
-  validate(createObjetivoCaloricoSchema), // 2. (Validador) ¿Tus datos son válidos?
+  validate(createObjetivoCaloricoInput), // 2. (Validador) ¿Tus datos son válidos?
   createObjetivoCaloricoHandler, // 3. (Controlador) Si todo ok, ejecuta la lógica
 );
 /**
@@ -43,7 +43,7 @@ router.delete(
   authMiddleware, // (Guardia) Estás logueado?
   deleteObjetivoCaloricoHandler, // (Controlador) Borrar el objetivo calorico
 );
-export default router;
+
 
 /**
  * @route PUT /api/v1/objetivoCalorico/:id_objetivoCalorico
@@ -53,6 +53,8 @@ export default router;
 router.put(
   "/:id_objetivoCalorico",
   authMiddleware, // (Guardia) Estás logueado?
-  validate(createObjetivoCaloricoSchema), // (Validador) ¿Tus datos son válidos?
+  validate(createObjetivoCaloricoSchema), // TODO ESUEMA DE ACTUALIZACION para ojbetivo calorico
   updateObjetivoCaloricoHandler, // (Controlador) Actualizar el objetivo calorico
 );
+
+export default router;

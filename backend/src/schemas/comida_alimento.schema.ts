@@ -23,7 +23,18 @@ export const createComidaAlimentoSchema = z.object({
   }),
 });
 
+export const updateComidaAlimentoSchema = z.object({
+  id_comida: z.number().int().positive().optional(),
+  id_alimento_consumido: z.number().int().positive().optional(),
+  cantidad_gramos: z.number().positive().optional(),
+  carbohidratos_total: z.number().optional(),
+  grasas_total: z.number().optional(),
+  proteinas_total: z.number().optional(),
+  calorias_total: z.number().optional(),
+});
+
 // Tipo para inferir del schema (lo usaremos en el controlador)
 export type CreateComidaAlimentoInput = z.infer<
   typeof createComidaAlimentoSchema
 >["body"];
+export type UpdateComidaAlimentoInput = z.infer<typeof updateComidaAlimentoSchema>;

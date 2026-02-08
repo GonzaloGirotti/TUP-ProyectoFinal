@@ -18,7 +18,17 @@ export const createObjetivoPesoSchema = z.object({
   }),
 });
 
+export const updateObjetivoPesoSchema = z.object({
+  fecha_objetivo: z.date()
+    .refine((date) => date instanceof Date && !isNaN(date.getTime()), {
+      message: "La fecha objetivo debe ser una fecha válida",
+    })
+    .optional(),
+  peso_kg: z.number().positive().optional(),
+});
+
 // Tipo para inferir del schema (lo usaremos en el controlador)
 export type CreateObjetivoPesoInput = z.infer<
   typeof createObjetivoPesoSchema
 >["body"];
+export type UpdateObjetivoPesoInput = z.infer<typeof updateObjetivoPesoSchema>;

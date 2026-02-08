@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import Peso from "../models/peso.model"; // Importamos el modelo Peso
 import { CreatePesoInput } from "../schemas/peso.schema"; // Importamos el tipo de Zod
+import { UpdatePesoInput } from "../schemas/peso.schema"; 
 
 /*
  Controlador para crear un nuevo registro de peso.
@@ -85,6 +86,70 @@ export const getPesosHandler = async (req: Request, res: Response) => {
     // Usamos 'unknown' para ESlint
 
     console.error("[GET_PESOS_HANDLER]:", error);
+    let errorMessage = "Error interno del servidor";
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+    return res.status(500).json({ message: errorMessage });
+  }
+};
+
+/**
+ * Controlador para actualizar un registro de peso existente
+ */
+export const updatePesoHandler = async (
+  req: Request<{ id_peso: string }, unknown, UpdatePesoInput>,
+  res: Response,
+) => {
+  try {
+    const { id_peso } = req.params;
+    
+    // Verificar autenticación
+    if (!req.usuario) {
+      return res.status(401).json({ message: "No autorizado" });
+    }
+    const id_usuario = req.usuario.id;
+
+    // Buscar el registro de peso
+    const peso = await Peso.findOne({
+      where: {
+        id_peso: Number(id_peso),
+        id_usuario: id_usuario, // Solo puede actualizar sus propios registros
+      },
+    });
+
+    if (!peso) {
+      return res.status(404).json({ 
+        message: "Registro de peso no encontrado o no tienes permiso para modificarlo" 
+      });
+    }
+
+    // Preparar datos para actualizar
+    const datosActualizados: Partial<{
+      peso_kg: number;
+      fecha: Date;
+      comentario: string | null;
+    }> = {};
+
+    // Solo actualizar campos que se envían en el body
+    if (req.body.peso_kg !== undefined) datosActualizados.peso_kg = req.body.peso_kg;
+    if (req.body.fecha !== undefined) datosActualizados.fecha = req.body.fecha;
+    if (req.body.comentario !== undefined) {
+      datosActualizados.comentario = req.body.comentario || null;
+    }
+
+    // Actualizar el registro
+    await peso.update(datosActualizados);
+
+    // Obtener el registro actualizado
+    const pesoActualizado = await Peso.findByPk(peso.id_peso);
+
+    return res.status(200).json({
+      message: "Registro de peso actualizado exitosamente",
+      peso: pesoActualizado,
+    });
+  } catch (error: unknown) {
+    console.error("[UPDATE_PESO_HANDLER]:", error);
     let errorMessage = "Error interno del servidor";
     if (error instanceof Error) {
       errorMessage = error.message;

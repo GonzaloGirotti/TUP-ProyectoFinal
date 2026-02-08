@@ -17,7 +17,12 @@ export const createEjercicioSchema = z.object({
   }),
 });
 
-// Tipo para inferir del schema (lo usaremos en el controlador)
-export type CreateEjercicioInput = z.infer<
-  typeof createEjercicioSchema
->["body"];
+export const updateEjercicioSchema = z.object({
+  tipo: z.string().min(1).optional(),
+  calorias_quemadas: z.number().min(1).optional(),
+  duracion_minutos: z.number().optional(),
+  fecha: z.string().datetime().optional().or(z.date().optional()),
+});
+
+export type CreateEjercicioInput = z.infer<typeof createEjercicioSchema>["body"];
+export type UpdateEjercicioInput = z.infer<typeof updateEjercicioSchema>;

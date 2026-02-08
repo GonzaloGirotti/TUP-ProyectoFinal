@@ -1,16 +1,35 @@
 import { Router } from "express";
-import { registerHandler, loginHandler } from "../controllers/auth.controller";
+import { 
+  registerHandler, 
+  loginHandler,
+  refreshTokenHandler,
+  logoutHandler,
+  verifyEmailHandler,
+  resendVerificationHandler
+} from "../controllers/auth.controller";
 import { validate } from "../middlewares/validate";
-import { registerSchema, loginSchema } from "../schemas/usuario.schema";
+import { 
+  registerSchema
+} from "../schemas/usuario.schema";
+import { 
+  loginSchema,
+  refreshTokenSchema,
+  logoutSchema,
+  verifyEmailSchema,
+  resendVerificationSchema
+} from "../schemas/auth.schema";
+import { authMiddleware } from "../middlewares/auth.middleware";
 
 const router = Router();
 
-// Ruta de Registro
-// POST /api/v1/auth/register
+// Rutas públicas de autenticación
 router.post("/register", validate(registerSchema), registerHandler);
-
-// Ruta de Login
-// POST /api/v1/auth/login
 router.post("/login", validate(loginSchema), loginHandler);
+router.post("/refresh-token", validate(refreshTokenSchema), refreshTokenHandler);
+router.post("/verify-email", validate(verifyEmailSchema), verifyEmailHandler);
+router.post("/resend-verification", validate(resendVerificationSchema), resendVerificationHandler);
+
+// Ruta protegida de autenticación
+router.post("/logout", authMiddleware, validate(logoutSchema), logoutHandler);
 
 export default router;

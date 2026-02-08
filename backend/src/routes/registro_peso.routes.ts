@@ -43,7 +43,6 @@ router.delete(
   authMiddleware, // (Guardia) Estás logueado?
   deleteRegistroPesoHandler, // (Controlador) Borrar el Registro peso
 );
-export default router;
 
 /**
  * @route PUT /api/v1/registroPeso/:id_registroPeso
@@ -56,3 +55,5 @@ router.put(
   validate(createRegistroPesoSchema), // (Validador) ¿Tus datos son válidos?
   updateRegistroPesoHandler, // (Controlador) Actualizar el Registro peso
 );
+
+export default router;

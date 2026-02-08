@@ -147,6 +147,13 @@ Todas las rutas están prefijadas con /api/v1.
 
 - **POST** /auth/register: Registrar nuevo usuario.
 - **POST** /auth/login: Iniciar sesión (Devuelve Token).
+- **POST** /auth/logout: Cerrar sesión
+
+#### Gestión de Usuario
+- **GET**    /usuarios/profile   Obtener perfil
+- **PUT**    /usuarios/profile    Actualizar perfil
+- **PUT**    /usuarios/change-password  Cambiar contraseña
+- **DELETE** /usuarios/account   Eliminar cuenta
 
 ### Pesos (/pesos)
 

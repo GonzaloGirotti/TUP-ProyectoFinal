@@ -11,48 +11,31 @@ import { createAlimentoConsumidoSchema } from "../schemas/alimento_consumido.sch
 
 const router = Router();
 /**
- * @route POST /api/v1/alimentos
+ * @route POST /api/v1/alimentos_consumidos
  * @desc Crear un nuevo alimento
  * @access Private (requiere token)
  */
-router.post(
-  "/",
-  authMiddleware, // 1. (Guardia) ¿Estás logueado?
-  validate(createAlimentoConsumidoSchema), // 2. (Validador) ¿Tus datos son válidos?
-  createAlimentoConsumidoHandler, // 3. (Controlador) Si todo ok, ejecuta la lógica
-);
+router.post("/", authMiddleware, validate(createAlimentoConsumidoSchema), createAlimentoConsumidoHandler);
 /**
- @route GET /api/v1/alimentos
- @desc Obtener todos los registros de alimentos
+ @route GET /api/v1/alimentos_consumidos
+ @desc Obtener todos los registros de alimentos consumidos
  @access Private (requiere token)
 */
-router.get(
-  "/",
-  authMiddleware, // (Guardia) ¿Estás logueado?
-  getAlimentosConsumidosHandler, // (Controlador) Obtener todos los alimentos
-);
+router.get("/", authMiddleware, getAlimentosConsumidosHandler);
 
 /**
- * @route DELETE /api/v1/alimentos/:id
+ * @route DELETE /api/v1/alimentos_consumidos/:id_alimento_consumido
  * @desc Eliminar un registro de alimento específico
  * @access Private (requiere token)
  */
-// Usamos :id_alimento para que coincida con el nombre en la BD
-router.delete(
-  "/:id_alimento",
-  authMiddleware, // (Guardia) Estás logueado?
-  deleteAlimentoConsumidoHandler, // (Controlador) Borrar el alimento
-);
-export default router;
+
+router.delete("/:id_alimento_consumido", authMiddleware, deleteAlimentoConsumidoHandler);
 
 /**
- * @route PUT /api/v1/alimentos/:id_alimento
+ * @route PUT /api/v1/alimentos_consumidos/:id_alimento_consumido
  * @desc Actualizar un registro de alimento específico
  * @access Private (requiere token)
  */
-router.put(
-  "/:id_alimento",
-  authMiddleware, // (Guardia) Estás logueado?
-  validate(createAlimentoConsumidoSchema), // (Validador) ¿Tus datos son válidos?
-  updateAlimentoConsumidoHandler, // (Controlador) Actualizar el alimento
-);
+router.put("/:id_alimento_consumido", authMiddleware, validate(createAlimentoConsumidoSchema), updateAlimentoConsumidoHandler);
+
+export default router;

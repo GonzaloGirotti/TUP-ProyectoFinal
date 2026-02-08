@@ -32,17 +32,9 @@ router.get(
   getEjercicioHandler, // (Controlador) Obtener todos los ejercicios
 );
 
-/**
- * @route DELETE /api/v1/ejercicio/:id_ejercicio
- * @desc Eliminar un Registro de Registro diario específico
- * @access Private (requiere token)
- */
-// Usamos :id_ejercicio para que coincida con el nombre en la BD
-router.delete(
-  "/:id_ejercicio",
-  authMiddleware, // (Guardia) Estás logueado?
-  deleteEjercicioHandler, // (Controlador) Borrar el Registro peso
-);
+// Eliminar
+router.delete("/:id_ejercicio", deleteEjercicioHandler);
+
 export default router;
 
 /**

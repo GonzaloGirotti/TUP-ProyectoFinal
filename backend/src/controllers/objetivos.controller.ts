@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import { CreateObjetivosInput } from "../schemas/objetivos.schema"; // Importamos el tipo de Zod
 import Objetivos from "../models/objetivos.model";
 
+import { UpdateObjetivosInput } from "../schemas/objetivos.schema"; 
+
 /*
  Controlador para crear un nuevo objetivo.
  Asume que ya pasó por el authMiddleware y el validate middleware.
@@ -69,6 +71,72 @@ export const getObjetivosHandler = async (req: Request, res: Response) => {
     // Usamos 'unknown' para ESlint
 
     console.error("[GET_OBJETIVOS_HANDLER]:", error);
+    let errorMessage = "Error interno del servidor";
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+    return res.status(500).json({ message: errorMessage });
+  }
+};
+
+/**
+ * Controlador para actualizar un objetivo existente
+ */
+export const updateObjetivoHandler = async (
+  req: Request<{ id_objetivo: string }, unknown, UpdateObjetivosInput>,
+  res: Response,
+) => {
+  try {
+    const { id_objetivo } = req.params;
+    
+    // Verificar autenticación
+    if (!req.usuario) {
+      return res.status(401).json({ message: "No autorizado" });
+    }
+    const id_usuario = req.usuario.id;
+
+    // Buscar el objetivo
+    const objetivo = await Objetivos.findOne({
+      where: {
+        id_objetivos: Number(id_objetivo),
+        id_usuario: id_usuario, // Solo puede actualizar sus propios objetivos
+      },
+    });
+
+    if (!objetivo) {
+      return res.status(404).json({ 
+        message: "Objetivo no encontrado o no tienes permiso para modificarlo" 
+      });
+    }
+
+    // Preparar datos para actualizar
+    const datosActualizados: Partial<{
+      calorias: number;
+      proteinas_proporcion: number;
+      carbohidratos_proporcion: number;
+      grasas_proporcion: number;
+      peso_deseado: number;
+    }> = {};
+
+    // Solo actualizar campos que se envían en el body
+    if (req.body.calorias !== undefined) datosActualizados.calorias = req.body.calorias;
+    if (req.body.proteinas_proporcion !== undefined) datosActualizados.proteinas_proporcion = req.body.proteinas_proporcion;
+    if (req.body.carbohidratos_proporcion !== undefined) datosActualizados.carbohidratos_proporcion = req.body.carbohidratos_proporcion;
+    if (req.body.grasas_proporcion !== undefined) datosActualizados.grasas_proporcion = req.body.grasas_proporcion;
+    if (req.body.peso_deseado !== undefined) datosActualizados.peso_deseado = req.body.peso_deseado;
+
+    // Actualizar el registro
+    await objetivo.update(datosActualizados);
+
+    // Obtener el registro actualizado
+    const objetivoActualizado = await Objetivos.findByPk(objetivo.id_objetivos);
+
+    return res.status(200).json({
+      message: "Objetivo actualizado exitosamente",
+      objetivo: objetivoActualizado,
+    });
+  } catch (error: unknown) {
+    console.error("[UPDATE_OBJETIVO_HANDLER]:", error);
     let errorMessage = "Error interno del servidor";
     if (error instanceof Error) {
       errorMessage = error.message;

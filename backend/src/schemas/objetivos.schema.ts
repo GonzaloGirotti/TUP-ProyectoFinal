@@ -15,7 +15,17 @@ export const createObjetivosSchema = z.object({
   }),
 });
 
+export const updateObjetivosSchema = z.object({
+  calorias: z.number().positive().optional(),
+  proteinas_proporcion: z.number().min(0).max(100).optional(),
+  carbohidratos_proporcion: z.number().min(0).max(100).optional(),
+  grasas_proporcion: z.number().min(0).max(100).optional(),
+  peso_deseado: z.number().positive().optional(),
+});
+
 // Tipo para inferir del schema (lo usaremos en el controlador)
 export type CreateObjetivosInput = z.infer<
   typeof createObjetivosSchema
 >["body"];
+
+export type UpdateObjetivosInput = z.infer<typeof updateObjetivosSchema>;

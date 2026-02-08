@@ -4,11 +4,11 @@ import {
   getObjetivosHandler,
   deleteObjetivoHandler,
   createObjetivosHandler,
+  updateObjetivoHandler,
 } from "../controllers/objetivos.controller";
 import { authMiddleware } from "../middlewares/auth.middleware";
 import { validate } from "../middlewares/validate";
-import { createObjetivosSchema } from "../schemas/objetivos.schema";
-import { getAlimentosHandler } from "../controllers/alimento.controller";
+import { createObjetivosSchema, updateObjetivosSchema } from "../schemas/objetivos.schema";
 
 const router = Router();
 /**
@@ -53,7 +53,9 @@ export default router;
  */
 router.put(
   "/:id_objetivo",
-  authMiddleware, // (Guardia) Estás logueado?
-  validate(createObjetivosSchema), // (Validador) ¿Tus datos son válidos?
-  createObjetivosHandler, // (Controlador) Actualizar el objetivo
+  authMiddleware,
+  validate(updateObjetivosSchema), // Usar schema de actualización
+  updateObjetivoHandler, // Usar handler correcto
 );
+
+export default router;

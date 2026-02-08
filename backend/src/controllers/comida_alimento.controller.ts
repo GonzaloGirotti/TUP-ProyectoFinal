@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import ComidaAlimento from "../models/comida_alimento.model"; // Importamos el modelo comida_alimento
-import Alimento from "../models/alimento_consumido.model"; // Importamos el modelo Alimento para calcular macros
-import Comida from "../models/comida.model"; // Importamos Comida para validar propiedad
-import { CreateComidaAlimentoInput } from "../schemas/comida_alimento.schema"; // Importamos el tipo de Zod
+import ComidaAlimento from "../models/comida_alimento.model"; 
+import AlimentoConsumido from "../models/alimento_consumido.model";    //Cambiar POR: import AlimentoConsumido from "../models/alimento_consumido.model"
+import Comida from "../models/comida.model"; 
+import { CreateComidaAlimentoInput } from "../schemas/comida_alimento.schema"; 
 
 /*
  Controla la creación de un nuevo registro de comida_alimento.
@@ -40,7 +40,7 @@ export const createComidaAlimentoHandler = async (
     }
 
     // 3. Buscar el alimento original para obtener sus macros base
-    const alimento = await Alimento.findByPk(id_alimento_consumido);
+    const alimento = await AlimentoConsumido.findByPk(id_alimento_consumido);
     if (!alimento) {
       return res.status(404).json({ message: "Alimento no encontrado" });
     }

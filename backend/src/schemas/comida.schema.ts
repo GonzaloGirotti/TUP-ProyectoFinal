@@ -10,5 +10,11 @@ export const createComidaSchema = z.object({
   }),
 });
 
+export const updateComidaSchema = z.object({
+  fecha: z.coerce.date().optional(),
+  nombre_comida: z.string().optional(),
+});
+
 // Tipo para inferir del schema (lo usaremos en el controlador)
 export type CreateComidaInput = z.infer<typeof createComidaSchema>["body"];
+export type UpdateComidaInput = z.infer<typeof updateComidaSchema>;
