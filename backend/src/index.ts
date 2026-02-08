@@ -32,10 +32,11 @@ const startServer = async () => {
   try {
     await connectWithRetry();
 
-    // Comento el sync temporalmente para evitar que se borren datos.
-    
-    await sequelize.sync({ alter: true, force: false });
-
+    // 1.5. Sincronizar modelos con la Base de Datos (Crear tablas faltantes)
+    // NOTE: Disabling `alter` to avoid Sequelize attempting to add NOT NULL
+    // columns to existing tables that contain NULLs (causes startup failure).
+    // Use explicit migrations to change schema safely.
+    //await sequelize.sync({ alter: true, force: true });
     // eslint-disable-next-line no-console
     console.info("[db]: Sync activado");
 

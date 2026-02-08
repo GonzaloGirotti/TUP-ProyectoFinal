@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import ComidaAlimento from "../models/comida_alimento.model"; // Importamos el modelo comida_alimento
-import Alimento from "../models/alimento_consumido.model"; // Importamos el modelo Alimento para calcular macros
+import AlimentoConsumido from "../models/alimento_consumido.model"; // Importamos el modelo Alimento Consumido
+import Alimento from "../models/alimento.model"; // Importamos el modelo Alimento base para buscar
 import Comida from "../models/comida.model"; // Importamos Comida para validar propiedad
 import { CreateComidaAlimentoInput } from "../schemas/comida_alimento.schema"; // Importamos el tipo de Zod
 
@@ -39,14 +40,19 @@ export const createComidaAlimentoHandler = async (
         .json({ message: "Comida no encontrada o no te pertenece." });
     }
 
-    // 3. Buscar el alimento original para obtener sus macros base
-    const alimento = await Alimento.findByPk(id_alimento_consumido);
+    // 3. Buscar el alimento base en la tabla Alimentos
+    const alimento = await Alimento.findOne({
+      where: {
+        id_alimento: id_alimento_consumido
+      }
+    });
+
     if (!alimento) {
       return res.status(404).json({ message: "Alimento no encontrado" });
     }
 
     // 4. Calcular los totales basados en la cantidad (Regla de tres simple)
-    // Asumimos que los macros del alimento base son por cada 100g
+    // Los macros del alimento base son por cada 100g
     const factor = cantidad_gramos / 100;
 
     const carbohidratos_total = alimento.carbohidratos * factor;
@@ -54,10 +60,20 @@ export const createComidaAlimentoHandler = async (
     const grasas_total = alimento.grasas * factor;
     const calorias_total = alimento.calorias * factor;
 
-    // 5. Objeto para crear
+    // 5. Crear primero un Alimento_Consumido con los datos específicos
+    const alimentoConsumido = await AlimentoConsumido.create({
+      nombre: alimento.nombre,
+      gramos: cantidad_gramos,
+      carbohidratos: alimento.carbohidratos,
+      proteinas: alimento.proteinas,
+      grasas: alimento.grasas,
+      calorias: alimento.calorias
+    });
+
+    // 6. Objeto para crear la relación Comida_Alimento
     const dataParaCrear = {
       id_comida,
-      id_alimento_consumido,
+      id_alimento_consumido: alimentoConsumido.id_alimento_consumido,
       cantidad_gramos,
       carbohidratos_total,
       grasas_total,
@@ -65,10 +81,10 @@ export const createComidaAlimentoHandler = async (
       calorias_total,
     };
 
-    // 6. Crear registro
+    // 7. Crear registro
     const nuevaComidaAlimento = await ComidaAlimento.create(dataParaCrear);
 
-    // 7. Responder
+    // 8. Responder
     return res.status(201).json(nuevaComidaAlimento);
   } catch (error: unknown) {
     console.error("[COMIDA_ALIMENTO_CONTROLLER]:", error);
