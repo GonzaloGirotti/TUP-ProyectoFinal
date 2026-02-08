@@ -3,7 +3,7 @@ import cors from "cors";
 // Importamos TODAS las rutas
 import authRoutes from "./routes/auth.routes";
 import pesoRoutes from "./routes/peso.routes";
-import alimentoRoutes from "./routes/alimento.routes";
+import alimentoRoutes from "./routes/alimento_consumido.routes";
 import comidaRoutes from "./routes/comida.routes";
 import comidaAlimentoRoutes from "./routes/comida_alimento.routes";
 import objetivoCaloricoRoutes from "./routes/objetivo_calorico.routes";
@@ -18,7 +18,6 @@ import settingsRoutes from "./routes/settings.routes";
 // Importamos los modelos para que se registren en Sequelize
 import "./models/usuario.model";
 import "./models/peso.model";
-import "./models/alimento.model";
 import "./models/alimento_consumido.model";
 import "./models/comida.model";
 import "./models/comida_alimento.model";
@@ -33,14 +32,37 @@ import "./models/agua.model";
 const app = express();
 
 // Middlewares
+// Configuración CORS avanzada para aceptar Vercel dinámicamente
+const allowedOrigins = [
+  'http://localhost:5173',                    // Tu entorno local
+  'https://nutri-backend-p42n.onrender.com',  // Tu backend mismo
+  'https://nutri-app-front.vercel.app',       // Tu URL de producción (Fija)
+];
+
 app.use(cors({
-  origin: [
-    'http://localhost:5173',                    // entorno local
-    'https://nutri-backend-p42n.onrender.com',  // backend
-    'https://nutri-app-front-1jn2qlsu8-marcos-projects-2d86d060.vercel.app' // frontend
-  ],
+  origin: (origin, callback) => {
+    // Permitir peticiones sin origen (como Postman o curl)
+    if (!origin) return callback(null, true);
+
+    // 1. Verificar si está en la lista blanca exacta
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      return callback(null, true);
+    }
+
+    // 2. Verificar si es una URL de preview de Vercel (Regex dinámica)
+    // Esto permite cualquier URL que empiece con 'https://nutri-app-front' y termine en '.vercel.app'
+    const vercelPreviewPattern = /^https:\/\/nutri-app-front.*\.vercel\.app$/;
+    if (vercelPreviewPattern.test(origin)) {
+      return callback(null, true);
+    }
+
+    // Si no cumple nada, bloquear
+    const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+    return callback(new Error(msg), false);
+  },
   credentials: true
-})); // Habilita CORS
+}));
+
 app.use(express.json()); // Permite a Express entender JSON
 
 // RUTAS
