@@ -1,5 +1,20 @@
 import { z } from "zod";
 
+
+const fechaNacimientoSchema = z.preprocess(
+  (val) => {
+    if (!val || val === "") return undefined;
+    if (val instanceof Date) return val;
+    if (typeof val === 'string') return new Date(val);
+    return undefined;
+  },
+  z.date()
+    .max(new Date(), { message: "La fecha no puede ser futura" })
+    .min(new Date('1900-01-01'), { message: "Fecha demasiado antigua" })
+    .optional()
+);
+
+
 // Esquema para el registro de un nuevo usuario
 export const registerSchema = z.object({
   body: z.object({
@@ -22,12 +37,7 @@ export const registerSchema = z.object({
       .regex(/[0-9]/, "Debe contener al menos un número")
       .regex(/[^a-zA-Z0-9]/, "Debe contener al menos un carácter especial"),
 
-    // Campos opcionales con validaciones específicas
-    fecha_nacimiento: z.string()
-      .datetime({ message: "Formato de fecha inválido. Use ISO 8601" })
-      .optional()
-      .or(z.literal(""))
-      .transform((val) => val === "" ? undefined : val),
+  fecha_nacimiento: fechaNacimientoSchema,
 
     genero: z.enum(["masculino", "femenino", "otro", "prefiero_no_decir"], {
     }).optional(),
@@ -59,11 +69,7 @@ export const updateUsuarioSchema = z.object({
       .toLowerCase()
       .optional(),
 
-    fecha_nacimiento: z.string()
-      .datetime({ message: "Formato de fecha inválido. Use ISO 8601" })
-      .optional()
-      .or(z.literal(""))
-      .transform((val) => val === "" ? undefined : val),
+    fecha_nacimiento: fechaNacimientoSchema,
 
     genero: z.enum(["masculino", "femenino", "otro", "prefiero_no_decir"] as const).optional(),
 

@@ -12,6 +12,7 @@ import jwt from "jsonwebtoken";
 // Variables de entorno
 const JWT_SECRET = process.env.JWT_SECRET as string;
 const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET as string;
+const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "1h";
 
 // Simulación de almacenamiento de refresh tokens (mover a Redis en producción)
 const refreshTokens = new Map<string, { userId: number, expiresAt: Date }>();
@@ -75,7 +76,7 @@ export const updateProfileHandler = async (
       const existingUser = await Usuario.findOne({ 
         where: { 
           email: updateData.email,
-          id_usuario: { [Op.ne]: id } // Diferente al usuario actual
+          id_usuario: { [Op.ne]: id }
         } 
       });
       
@@ -84,7 +85,7 @@ export const updateProfileHandler = async (
       }
     }
 
-    // Verificar si el nombre de usuario ya existe (si se está actualizando)
+    // Verificar si el nombre de usuario ya existe
     if (updateData.nombre_usuario && updateData.nombre_usuario !== usuario.nombre_usuario) {
       const existingUser = await Usuario.findOne({ 
         where: { 
@@ -115,7 +116,7 @@ export const updateProfileHandler = async (
     
     return res.json({
       message: "Perfil actualizado exitosamente",
-      token, // Enviar nuevo token si cambió el email o nombre
+      token,
       usuario: userResponse,
     });
   } catch (error: unknown) {
