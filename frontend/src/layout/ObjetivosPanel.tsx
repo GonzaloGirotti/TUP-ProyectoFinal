@@ -83,7 +83,7 @@ export function ObjetivosPanel() {
       }
       
       const objetivosService = nutritionService.objetivos;
-      const response = await objetivosService.obtenerObjetivosHoy(token);
+      const response = await objetivosService.obtenerObjetivos(token);
       const objetivos = response.data.objetivos;
 
       console.log('Objetivos obtenidos:', response.data);

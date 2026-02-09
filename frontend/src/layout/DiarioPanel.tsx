@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import './diarioPanel.css';
 import { ComidaCard } from '../components/ComidaCard';
 import { useNutritionData } from '../hooks/useNutritionData';
@@ -13,6 +13,17 @@ import type { SectionKey } from './types';
 import { SECTION_LABELS } from './types';
 import { nutritionService } from '../services/nutritionService';
 import { authService } from '../services/authService';
+import axios from 'axios';
+
+// Interface para la respuesta de comidas
+interface ComidaResponse {
+  id_comida: number;
+  nombre_comida: string;
+  fecha: string;
+  id_usuario?: number;
+}
+
+const MEAL_SECTIONS = ['desayuno', 'almuerzo', 'cena', 'aperitivo'];
 
 export function DiarioPanel() {
   const [loading, setLoading] = useState(true);
@@ -41,8 +52,43 @@ export function DiarioPanel() {
     cargarListaAlimentos,
   } = useAlimentos();
 
-  // Cargar datos iniciales
+  // Helper function para obtener o crear una comida
+  const obtenerOCrearComida = useCallback(async (
+    token: string, 
+    seccion: string
+  ): Promise<number> => {
+    try {
+      const resComidas = await nutritionService.comidas.listarComidas(token);
+      const hoy = new Date().toISOString().split('T')[0];
+      
+      const comidas: ComidaResponse[] = resComidas.data as ComidaResponse[];
+      const comidaExistente = comidas.find(c => {
+        const fechaComida = new Date(c.fecha).toISOString().split('T')[0];
+        return fechaComida === hoy && 
+               c.nombre_comida.toLowerCase().includes(seccion);
+      });
+      
+      if (comidaExistente) {
+        return comidaExistente.id_comida;
+      }
+      
+      // Crear nueva comida si no existe
+      const resNueva = await nutritionService.comidas.crearComida({
+        nombre_comida: SECTION_LABELS[seccion as SectionKey],
+        fecha: new Date().toISOString()
+      }, token);
+      
+      return (resNueva.data as any).id_comida;
+    } catch (error) {
+      console.error('Error en obtenerOCrearComida:', error);
+      throw error;
+    }
+  }, []);
+
+  // Cargar datos iniciales con cleanup
   useEffect(() => {
+    let isMounted = true;
+    
     const cargarDatos = async () => {
       try {
         if (registroDiarioId) {
@@ -52,14 +98,22 @@ export function DiarioPanel() {
           ]);
         }
       } catch (error) {
-        console.error("Error cargando datos:", error);
+        if (isMounted) {
+          console.error("Error cargando datos:", error);
+        }
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
     cargarDatos();
-  }, [registroDiarioId]);
+    
+    return () => {
+      isMounted = false;
+    };
+  }, [registroDiarioId, cargarDiarioCompleto, cargarListaAlimentos]);
 
   const handleEliminarItem = async (seccion: SectionKey, id: number) => {
     if (!confirm("¿Eliminar este registro?")) return;
@@ -93,42 +147,49 @@ export function DiarioPanel() {
     setGuardando(true);
     
     try {
-      const resComidas = await nutritionService.comidas.listarComidas(token);
-      const hoy = new Date().toLocaleDateString('en-CA');
-      const nombreSeccion = SECTION_LABELS[seccionActiva as SectionKey];
-
-      let comidaTarget = (resComidas.data as any[]).find(c =>
-        String(c.fecha).substring(0, 10) === hoy &&
-        c.nombre_comida.toLowerCase().includes(seccionActiva)
-      );
+    
       
-      let idComida = comidaTarget?.id_comida;
+      const idComida = await obtenerOCrearComida(token, seccionActiva);
       
-      if (!idComida) {
-        const fechaHoraHoy = new Date().toISOString();
-        const resNueva = await nutritionService.comidas.crearComida({
-          nombre_comida: nombreSeccion,
-          fecha: fechaHoraHoy
-        }, token);
-        idComida = resNueva.data.id_comida;
-      }
-      
+      // Payload corregido según la interfaz ComidaAlimentoPayload
       await nutritionService.comidas.agregarAlimentoAComida({
         id_comida: idComida,
-        id_alimento_consumido: idAlimento,
-        id_alimento: idAlimento,
+        id_alimento: idAlimento, // Solo este campo, no id_alimento_consumido
         cantidad_gramos: cantidad
-      } as any, token);
+      }, token);
 
       cerrarModal();
       await cargarDiarioCompleto();
-    } catch (err) {
-      console.error(err);
-      alert("Error al guardar comida. Verifica la consola.");
-    } finally {
-      setGuardando(false);
+    } catch (err: unknown) {
+    console.error("Error detallado al guardar comida:", err);
+    
+    // CORRECCIÓN: Hacer type narrowing
+    let mensajeError = "Error al guardar comida.";
+    
+    // Verificar si es un error de axios
+    if (axios.isAxiosError(err)) {
+      // Ahora TypeScript sabe que err es AxiosError
+      if (err.response?.status === 404) {
+        mensajeError = "Ruta no encontrada. Verificar configuración de endpoints.";
+      } else if (err.response?.status === 400) {
+        mensajeError = "Datos inválidos. Verificar los campos enviados.";
+      } else if (err.response?.status === 401) {
+        mensajeError = "Sesión expirada. Por favor, inicia sesión nuevamente.";
+      } else if (err.response?.status === 500) {
+        mensajeError = "Error interno del servidor. Intenta nuevamente más tarde.";
+      } else if (err.message) {
+        mensajeError = err.message;
+      }
+    } else if (err instanceof Error) {
+      // Es un Error estándar de JavaScript
+      mensajeError = err.message;
     }
-  };
+    
+    alert(mensajeError);
+  } finally {
+    setGuardando(false);
+  }
+};
 
   const handleGuardarAgua = async (cantidadMl: number) => {
     const token = authService.getToken();
@@ -137,17 +198,25 @@ export function DiarioPanel() {
     setGuardando(true);
     
     try {
-      await nutritionService.agua.registrarAgua({ cantidad_ml: cantidadMl }, token);
+      await nutritionService.agua.registrarAgua({ 
+        cantidad_ml: cantidadMl 
+      }, token);
+      
       cerrarModal();
       await cargarDiarioCompleto();
     } catch (err) {
+      console.error("Error guardando agua:", err);
       alert("Error guardando agua");
     } finally {
       setGuardando(false);
     }
   };
 
-  const handleGuardarEjercicio = async (tipo: string, calorias: number, minutos: number) => {
+  const handleGuardarEjercicio = async (
+    tipo: string, 
+    calorias: number, 
+    minutos: number
+  ) => {
     const token = authService.getToken();
     if (!token) return;
 
@@ -159,9 +228,11 @@ export function DiarioPanel() {
         calorias_quemadas: calorias,
         duracion_minutos: minutos
       }, token);
+      
       cerrarModal();
       await cargarDiarioCompleto();
     } catch (err) {
+      console.error("Error guardando ejercicio:", err);
       alert("Error guardando ejercicio");
     } finally {
       setGuardando(false);
@@ -229,7 +300,7 @@ export function DiarioPanel() {
                 />
               )}
 
-              {['desayuno', 'almuerzo', 'cena', 'aperitivo'].includes(seccionActiva) && (
+              {MEAL_SECTIONS.includes(seccionActiva) && (
                 <ModalAgregarComida
                   listaAlimentos={listaAlimentosDB}
                   onGuardar={handleGuardarComida}
@@ -241,54 +312,7 @@ export function DiarioPanel() {
             </div>
           </div>
         </div>
-        <ModalButtons
-          onCancel={onToggleModoCrear}
-          guardando={guardando}
-          cancelText="Volver"
-          submitText="Crear"
-        />
-      </form>
-    );
-  };
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
-      <div className="bg-slate-800 rounded-xl shadow-2xl w-full max-w-md overflow-hidden animate-fade-in border border-slate-700">
-        <div className="bg-emerald-700/20 p-4 border-b border-emerald-500/20">
-          <h3 className="text-emerald-400 font-bold text-lg">
-            Agregar a {SECTION_LABELS[seccionActiva]}
-          </h3>
-        </div>
-        <div className="p-6">
-          {seccionActiva === 'agua' && renderFormAgua()}
-          {seccionActiva === 'ejercicio' && renderFormEjercicio()}
-          {MEAL_SECTIONS.includes(seccionActiva) && renderFormComida()}
-        </div>
-      </div>
-    </div>
+      )}
+    </section>
   );
-};
-
-const ModalButtons: React.FC<{
-  onCancel: () => void;
-  guardando: boolean;
-  cancelText?: string;
-  submitText?: string;
-}> = ({ onCancel, guardando, cancelText = "Cancelar", submitText = "Guardar" }) => (
-  <div className="flex justify-end gap-3 mt-6">
-    <button
-      type="button"
-      onClick={onCancel}
-      className="px-4 py-2 text-slate-400 hover:text-white hover:bg-slate-700 rounded-lg transition-colors"
-    >
-      {cancelText}
-    </button>
-    <button
-      type="submit"
-      disabled={guardando}
-      className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors disabled:opacity-50"
-    >
-      {guardando ? '...' : submitText}
-    </button>
-  </div>
-);
+}

@@ -1,4 +1,5 @@
-import axios, { type AxiosInstance, type AxiosRequestConfig } from 'axios';
+import axiosInstance from '../config/axiosInstance'; // Usar la instancia configurada
+import { type AxiosInstance, type AxiosRequestConfig } from 'axios';
 
 export interface ApiConfig {
   baseURL: string;
@@ -17,9 +18,7 @@ export abstract class BaseService {
 
   constructor(baseURL: string) {
     this.baseURL = baseURL;
-    this.axiosInstance = axios.create({
-      baseURL: baseURL,
-    });
+    this.axiosInstance = axiosInstance;
   }
 
   protected getAuthHeaders(token: string): AuthHeaders {
