@@ -145,7 +145,7 @@ Usuario.init(
     timestamps: true, // Habilitar timestamps
     createdAt: "fecha_creacion", // Mapear createdAt a 'fecha_creacion'
     updatedAt: "updatedAt", // Mapear updatedAt a 'updatedAt'
-    hooks: {
+    hooks: {  
       // Hook de "antes de crear" para hashear la contraseña
       beforeCreate: async (usuario) => {
         if (usuario.password) {

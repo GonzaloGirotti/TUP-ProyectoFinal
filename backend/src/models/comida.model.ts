@@ -1,6 +1,7 @@
 import { Model, DataTypes, Optional } from "sequelize";
 import { sequelize } from "../config/db"; // Importación de nuestra conexión
 import Usuario from "./usuario.model"; // Importacion del modelo Usuario para la relación
+import Alimento from "./alimento.model"; // Importacion del modelo Alimento para la relación
 
 // Interface para los atributos de Comida
 export interface ComidaAttributes {
@@ -95,4 +96,10 @@ Usuario.hasMany(Comida, {
   as: "comidas", // Un alias para cuando consultemos el usuario
 });
 
+Alimento.belongsToMany(Comida, {
+  through: "Comidas_Alimentos",
+  foreignKey: "id_alimento",
+  otherKey: "id_comida",
+  as: "comidas",
+});
 export default Comida;

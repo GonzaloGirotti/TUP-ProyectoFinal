@@ -36,9 +36,10 @@ const app = express();
 // Middlewares
 // Configuración CORS avanzada para aceptar Vercel dinámicamente
 const allowedOrigins = [
-  'http://localhost:5173',                    // Tu entorno local
-  'https://nutri-backend-p42n.onrender.com',  // Tu backend mismo
-  'https://nutri-app-front.vercel.app',       // Tu URL de producción (Fija)
+  'http://localhost:5173',    
+  'http://localhost:5174',
+  'https://nutri-backend-p42n.onrender.com', 
+  'https://nutri-app-front.vercel.app', 
 ];
 
 app.use(cors({
