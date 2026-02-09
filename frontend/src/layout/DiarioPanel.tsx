@@ -112,6 +112,11 @@ export function DiarioPanel() {
         idComida = resNueva.data.id_comida;
       }
 
+      if(cantidad < 100) {
+        alert("Cantidad muy baja, ingresa al menos 100 gramos");
+        return;
+      }
+
       await nutritionService.comidas.agregarAlimentoAComida({
         id_comida: idComida,
         id_alimento_consumido: idAlimento,

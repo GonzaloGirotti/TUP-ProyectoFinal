@@ -63,11 +63,32 @@ export function ProgresoPanel() {
   }, [auth.token]);
 
   // Progreso / objetivo – va cambiando en el tiempo – step line chart
-  const objetivos: EntradaObjetivo[] = [
-    { fecha: "2025-10-01", objetivo: 77 },
-    { fecha: "2025-10-20", objetivo: 76.5 },
-    { fecha: "2025-11-04", objetivo: 75.5 },
-  ];
+  // Obtener de la API los objetivos peso (fecha + valor) y mapear a este formato:
+  const [objetivos, setObjetivos] = useState<EntradaObjetivo[]>([]);
+
+  useEffect(() => {
+    let mounted = true;
+    const load = async () => {
+      try {
+        if (!auth.token) return;
+        const res = await nutritionService.peso.verHistorialObjetivosPeso(auth.token);
+        // Asumimos que la API devuelve un array de objetos con 'fecha' y 'peso_deseado' o 'objetivo'
+        const data = res.data.map((o: any) => ({
+          fecha: new Date(o.fecha_creacion).toISOString().slice(0, 10),
+          objetivo: o.peso_kg ?? o.objetivo,
+        }));
+        console.log("Objetivos peso obtenidos:", data);
+        if (mounted) setObjetivos(data);
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.error("Error cargando objetivos peso:", err);
+      }
+    };
+    load();
+    return () => {
+      mounted = false;
+    };
+  }, [auth.token]);
 
   const labels = useMemo(
     () =>
@@ -180,8 +201,10 @@ export function ProgresoPanel() {
 
       <div className="flex w-full justify-between gap-2">
         <div className="panel-item w-1/2">
+        {/* Peso obtenido de la última entrada de settings */}
           <h2>Peso</h2>
-          <h4>80kg</h4>
+          
+
         </div>
         <div className="panel-item w-1/2">
           <h2>IMC</h2>

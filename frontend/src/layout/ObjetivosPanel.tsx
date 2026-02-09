@@ -135,11 +135,26 @@ export function ObjetivosPanel() {
         token
       );
 
-      alert('Objetivos guardados exitosamente');
+      const pesosService = nutritionService.peso;
+      await pesosService.registrarObjetivoPeso(
+        {
+          id_usuario: authService.getUsuario()?.id,
+          fecha: new Date(),
+          peso_kg: pesoDeseado,
+        },
+        token
+      );
+      alert('Objetivos y objetivo peso guardados exitosamente');
     } catch (error) {
-      console.error('Error al guardar objetivos:', error);
-      alert('Hubo un error al guardar los objetivos. Por favor, intenta nuevamente.');
+        console.log('Objetivo peso: ', {
+        id_usuario: authService.getUsuario()?.id,
+        fecha: new Date().toISOString(),
+        peso_kg: pesoDeseado,
+      });
+      console.error('Error al guardar objetivos / objetivo peso:', error);
+      alert('Hubo un error al guardar los objetivos / objetivo peso. Por favor, intenta nuevamente.');
     }
+    
   };
 
   return (

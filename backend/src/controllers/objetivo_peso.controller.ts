@@ -13,17 +13,17 @@ export const createObjetivoPesoHandler = async (
 ) => {
   try {
     // 1. Obtener los datos del body (ya validados por Zod)
-    const { id_usuario, fecha_objetivo, peso_kg } = req.body;
+    const { id_usuario, fecha, peso_kg } = req.body;
 
     // 2. Creamos un objeto de creación base
     // Definimos el tipo explícitamente para que TS entienda
     const dataParaCrear: {
       id_usuario: number;
-      fecha_objetivo: Date;
+      fecha?: Date;
       peso_kg: number;
     } = {
       id_usuario,
-      fecha_objetivo,
+      fecha,
       peso_kg,
     };
 
@@ -116,7 +116,7 @@ export const updateObjetivoPesoHandler = async (
     const { id_objetivo_peso } = req.params;
 
     // 2. Obtener los datos actualizados del body (ya validados por Zod)
-    const { id_usuario, fecha_objetivo, peso_kg } = req.body;
+    const { id_usuario, fecha, peso_kg } = req.body;
 
     // 3. Buscar el registro existente en la BD
     const objetivo_peso = await Objetivo_Peso.findOne({
@@ -130,7 +130,9 @@ export const updateObjetivoPesoHandler = async (
 
     // 5. Actualizar los campos con los datos del body
     objetivo_peso.id_usuario = id_usuario;
-    objetivo_peso.fecha_objetivo = fecha_objetivo;
+    if (fecha !== undefined) {
+      objetivo_peso.fecha = fecha;
+    }
     objetivo_peso.peso_kg = peso_kg;
 
     // 6. Guardar los cambios en la BD
