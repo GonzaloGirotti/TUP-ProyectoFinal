@@ -4,19 +4,55 @@ import {
   UpdateUsuarioInput,
   ChangePasswordInput,
   ResetPasswordRequestInput,
-  ResetPasswordInput 
+  ResetPasswordInput, 
+  RegisterInput
 } from "../schemas/usuario.schema";
 import { Op } from "sequelize";
 import jwt from "jsonwebtoken";
 
 // Variables de entorno
 const JWT_SECRET = process.env.JWT_SECRET as string;
-const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET as string;
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "1h";
 
 // Simulación de almacenamiento de refresh tokens (mover a Redis en producción)
 const refreshTokens = new Map<string, { userId: number, expiresAt: Date }>();
 
+export const createProfileHandler = async (
+  req: Request<unknown, unknown, RegisterInput>,
+  res: Response,
+) => {
+  try {
+    const { nombre, apellido, email, password, fecha_nacimiento, genero, altura, nivel_actividad, tipo_objetivo } = req.body;
+
+    // Usamos el ID del usuario logueado (Token)
+    if (!req.usuario) return res.status(401).json({ message: "No autorizado" });
+    const id_usuario = req.usuario.id;
+
+    const updateData: Partial<RegisterInput> = {
+      nombre,
+      apellido,
+      email,
+      fecha_nacimiento,
+      genero,
+      altura,
+      nivel_actividad,
+      tipo_objetivo,
+    };
+
+    if (password) {
+      updateData.password = password;
+    }
+
+    const nuevoSettings = await Usuario.update(updateData, {
+      where: { id_usuario },
+    });
+
+    return res.status(201).json(nuevoSettings);
+  } catch (error) {
+    console.error("[SETTINGS_CONTROLLER_CREATE]", error);
+    return res.status(500).json({ message: "Error al registrar settings" });
+  }
+};
 
 
 // Handler para obtener perfil del usuario autenticado
@@ -86,16 +122,16 @@ export const updateProfileHandler = async (
     }
 
     // Verificar si el nombre de usuario ya existe
-    if (updateData.nombre_usuario && updateData.nombre_usuario !== usuario.nombre_usuario) {
+    if (updateData.nombre && updateData.nombre !== usuario.nombre) {
       const existingUser = await Usuario.findOne({ 
         where: { 
-          nombre_usuario: updateData.nombre_usuario,
+          nombre_usuario: updateData.nombre,
           id_usuario: { [Op.ne]: id }
         } 
       });
       
       if (existingUser) {
-        return res.status(409).json({ message: "El nombre de usuario ya está en uso" });
+        return res.status(409).json({ message: "El nombre ya está en uso por otro usuario" });
       }
     }
 
