@@ -7,7 +7,7 @@ export const createSettingsHandler = async (
   res: Response,
 ) => {
   try {
-    const { nombre, apellido, email, password, fecha_nacimiento, genero, altura, nivel_actividad, tipo_objetivo } = req.body;
+    const { nombre, apellido, email, password, fecha_nacimiento, genero, altura, peso, nivel_actividad, tipo_objetivo } = req.body;
 
     // Usamos el ID del usuario logueado (Token)
     if (!req.usuario) return res.status(401).json({ message: "No autorizado" });
@@ -20,6 +20,7 @@ export const createSettingsHandler = async (
       fecha_nacimiento,
       genero,
       altura,
+      peso,
       nivel_actividad,
       tipo_objetivo,
     };
@@ -62,7 +63,7 @@ export const updateSettingsHandler = async (
   res: Response,
 ) => {
   try {
-    const { nombre, apellido, email, password, fecha_nacimiento, genero, altura, nivel_actividad, tipo_objetivo } = req.body;
+    const { nombre, apellido, email, password, fecha_nacimiento, genero, altura, peso, nivel_actividad, tipo_objetivo } = req.body;
 
     // Usamos el ID del usuario logueado (Token)
     if (!req.usuario) return res.status(401).json({ message: "No autorizado" });
@@ -75,6 +76,7 @@ export const updateSettingsHandler = async (
       fecha_nacimiento,
       genero,
       altura,
+      peso,
       nivel_actividad,
       tipo_objetivo,
     };

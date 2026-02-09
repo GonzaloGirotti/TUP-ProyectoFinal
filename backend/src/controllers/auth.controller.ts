@@ -10,7 +10,7 @@ export const registerHandler = async (
   res: Response,
 ) => {
   try {
-    const { nombre_usuario, email, password, fecha_nacimiento, genero, altura } =
+    const { nombre_usuario, email, password, fecha_nacimiento, genero, altura, peso } =
       req.body;
 
     // 1. Verificar si el email ya existe
@@ -28,6 +28,7 @@ export const registerHandler = async (
       fecha_nacimiento,
       genero: genero || undefined,
       altura: altura || undefined,
+      peso: peso || undefined,
     });
 
     // 3. Omitir la contraseña de la respuesta

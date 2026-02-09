@@ -10,6 +10,7 @@ export interface SettingsPayLoad {
     fecha_nacimiento: string;
     genero: string;
     altura: number;
+    peso: number;
     nivel_actividad: string;
     tipo_objetivo: string;
 }
@@ -25,6 +26,7 @@ export interface SettingsRecord { // Representa la respuesta del servidor al obt
     fecha_nacimiento: string;
     genero: string;
     altura: number;
+    peso: number;
     nivel_actividad: string;
     tipo_objetivo: string;
 }
