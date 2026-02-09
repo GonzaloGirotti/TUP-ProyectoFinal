@@ -180,6 +180,70 @@ _(Requiere Header Authorization: Bearer &lt;token&gt;)_
 - **GET** /: Ver qué alimentos tiene cada comida.
 - **DELETE** /:id_comida_alimento: Quitar un alimento de una comida.
 
+### Detalle de Objetivo Calorico (/objetivoCalorico)
+
+_(Requiere Header Authorization: Bearer &lt;token&gt;)_
+
+- **POST** /: Crear un objetivo calórico del usuario.
+- **GET** /: Obtener todos los objetivos calóricos del usuario.
+- **DELETE** /:id_objetivoCalorico: Eliminar un objetivo calórico.
+- **PUT** /:id_objetivoCalorico: Actualizar un objetivo calórico existente.
+  
+### Detalle de Objetivo Peso (/objetivoPeso)
+
+_(Requiere Header Authorization: Bearer &lt;token&gt;)_
+
+- **POST** /: Crear un objetivo de peso del usuario.
+- **GET** /: Obtener todos los objetivos de peso del usuario.
+- **DELETE** /:id_objetivoPeso: Eliminar un objetivo de peso.
+- **PUT** /:id_objetivoPeso: Actualizar un objetivo de peso existente
+
+### Detalle de Registro Diario (/registroDiario)
+
+_(Requiere Header Authorization: Bearer &lt;token&gt;)_
+
+- **POST** /: Crear un registro diario del usuario.
+- **GET** /: Obtener todos los registros diarios de un usuario desde el body.
+- **GET** /all/:id_usuario: Obtener todos los registros diarios de un usuario desde el path param.
+- **GET** /:id_usuario: Obtener el registro diario de un usuario específico de hoy.
+- **DELETE** /:id_registroDiario: Eliminar un registro diario.
+- **PUT** /:id_registroDiario: Actualizar un registro diario existente.
+
+### Detalle de Registro Peso (/registroPeso)
+
+_(Requiere Header Authorization: Bearer &lt;token&gt;)_
+
+- **POST** /: Crear un registro de peso del usuario.
+- **GET** /: Obtener todos los registros de peso de un usuario.
+- **DELETE** /:id_registroPeso: Eliminar un registro de peso.
+- **PUT** /:id_registroPeso: Actualizar un registro de peso existente.
+
+
+### Detalle de Ejercicio (/ejercicios)
+
+_(Requiere Header Authorization: Bearer &lt;token&gt;)_
+
+- **POST** /: Crear un registro de ejercicio del usuario.
+- **GET** /: Obtener todos los registros de ejercicio de hoy de un usuario.
+- **DELETE** /:id_ejercicio: Eliminar un registro de ejercicio.
+- **PUT** /:id_ejercicio: Actualizar un registro de ejercicio existente.
+
+### Detalle de Agua (/agua)
+
+_(Requiere Header Authorization: Bearer &lt;token&gt;)_
+
+- **POST** /: Crear un registro de agua del usuario.
+- **GET** /: Obtener todos los registros de agua de hoy de un usuario.
+- **DELETE** /:id_agua: Eliminar un registro de agua.
+
+### Detalle de Settings (/settings)
+
+_(Requiere Header Authorization: Bearer &lt;token&gt;)_
+
+- **POST** /: Crear o actualizar la configuración del usuario.
+- **GET** /: Obtener la configuración actual del usuario.
+- **PUT** /:id_settings: Actualizar la configuración del usuario existente.
+
 ---
 ## Estructura del Proyecto
 
