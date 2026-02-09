@@ -76,7 +76,7 @@ export const loginHandler = async (
     }
 
     // 3. Generar el JWT
-    const jwtSecret = process.env.JWT_SECRET;
+    const jwtSecret = process.env.JWT_SECRET?.trim();
 
     if (typeof jwtSecret !== "string") {
       throw new Error(

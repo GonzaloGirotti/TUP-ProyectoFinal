@@ -28,12 +28,14 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
         }
 
         // 3. Obtener el secreto del JWT de las variables de entorno
-        const jwtSecret = process.env.JWT_SECRET;
-        if (typeof jwtSecret !== 'string') {
-            throw new Error('JWT_SECRET no está definido en las variables de entorno');
+        const jwtSecret = process.env.JWT_SECRET?.trim();
+
+        if (!jwtSecret) {
+            console.error("CRÍTICO: JWT_SECRET es undefined en el entorno");
+            return res.status(500).json({ message: 'Error de configuración del servidor' });
         }
 
-        // 4. Verificar el token
+        // Verificar el token
         const payload = jwt.verify(token, jwtSecret) as CustomJwtPayload;
 
         // 5. ¡Éxito! Adjuntar el payload del usuario a la request
