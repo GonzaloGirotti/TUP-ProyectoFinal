@@ -5,8 +5,7 @@ import bcrypt from "bcryptjs";
 // Interface para los atributos del Usuario
 export interface UsuarioAttributes {
   id_usuario: number;
-  nombre_usuario: string;
-  nombre?: string;
+  nombre: string;
   apellido?: string;
   email: string;
   urlAvatar?: string;
@@ -29,8 +28,7 @@ class Usuario
   implements UsuarioAttributes
 {
   public id_usuario!: number;
-  public nombre_usuario!: string;
-  public nombre?: string;
+  public nombre!: string;
   public apellido?: string;
   public email!: string;
   public urlAvatar?: string;
@@ -60,19 +58,16 @@ Usuario.init(
       primaryKey: true,
       field: "id_usuario", // Mapeo a la columna de la BD
     },
-    nombre_usuario: {
+    nombre: {
       type: DataTypes.TEXT,
       allowNull: false,
       unique: {
-        name: "nombre_usuario_unico",
-        msg: "El nombre de usuario ya está en uso. Por favor elige otro.",
+        name: "nombre_unico",
+        msg: "El nombre ya está en uso. Por favor elige otro.",
       },
-      field: "nombre_usuario",
-    },
-    nombre: {
-      type: DataTypes.TEXT,
       field: "nombre",
     },
+
     apellido: {
       type: DataTypes.TEXT,
       field: "apellido",

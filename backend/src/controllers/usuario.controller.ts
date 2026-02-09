@@ -125,7 +125,7 @@ export const updateProfileHandler = async (
     if (updateData.nombre && updateData.nombre !== usuario.nombre) {
       const existingUser = await Usuario.findOne({ 
         where: { 
-          nombre_usuario: updateData.nombre,
+          nombre: updateData.nombre,
           id_usuario: { [Op.ne]: id }
         } 
       });
@@ -142,7 +142,7 @@ export const updateProfileHandler = async (
     const payload = {
       id: usuario.id_usuario,
       email: usuario.email,
-      nombre: usuario.nombre_usuario,
+      nombre: usuario.nombre,
     };
 
     const token = jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN as any });
