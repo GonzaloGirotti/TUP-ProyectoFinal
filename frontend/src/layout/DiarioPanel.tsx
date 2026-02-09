@@ -46,12 +46,15 @@ export function DiarioPanel() {
   useEffect(() => {
     const cargarDatos = async () => {
       try {
-        if (registroDiarioId) {
-          await Promise.all([
-            cargarDiarioCompleto(),
-            cargarListaAlimentos()
-          ]);
-        }
+        // Si no hay id, no cargamos nada
+        if (!registroDiarioId) return;
+
+        setLoading(true);
+        // Ejecutamos las cargas
+        await Promise.all([
+          cargarDiarioCompleto(),
+          cargarListaAlimentos()
+        ]);
       } catch (error) {
         console.error("Error cargando datos:", error);
       } finally {
@@ -60,7 +63,8 @@ export function DiarioPanel() {
     };
 
     cargarDatos();
-  }, [registroDiarioId, cargarDiarioCompleto, cargarListaAlimentos]);
+
+  }, [registroDiarioId]);
 
   const handleEliminarItem = async (seccion: SectionKey, id: number) => {
     if (!confirm("¿Eliminar este registro?")) return;
@@ -113,7 +117,7 @@ export function DiarioPanel() {
         idComida = resNueva.data.id_comida;
       }
 
-      if(cantidad < 100) {
+      if (cantidad < 100) {
         alert("Cantidad muy baja, ingresa al menos 100 gramos");
         return;
       }
