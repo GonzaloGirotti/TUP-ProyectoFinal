@@ -14,6 +14,7 @@ export interface UsuarioAttributes {
   fecha_nacimiento?: string;
   genero?: string;
   altura?: number;
+  peso?: number;
   nivel_actividad?: string;
   tipo_objetivo?: string;
   fecha_creacion: Date;
@@ -38,6 +39,7 @@ class Usuario
   public fecha_nacimiento?: string;
   public genero?: string;
   public altura?: number;
+  public peso?: number;
   public nivel_actividad?: string;
   public tipo_objetivo?: string;
 
@@ -111,6 +113,10 @@ Usuario.init(
     altura: {
       type: DataTypes.FLOAT,
       field: "altura",
+    },
+    peso: {
+      type: DataTypes.FLOAT,
+      field: "peso",
     },
     nivel_actividad: {
       type: DataTypes.TEXT,

@@ -15,6 +15,7 @@ export interface UserProfileSettings {
   birthDate?: string; // formato "YYYY-MM-DD"
   gender?: string;
   heightCm?: number;
+  weightKg?: number;
   activityLevel: ActivityLevel;
   mainGoal: GoalType;
 }
@@ -36,6 +37,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
     birthDate: initialData?.birthDate ?? "",
     gender: initialData?.gender ?? "",
     heightCm: initialData?.heightCm,
+    weightKg: initialData?.weightKg,
     activityLevel: initialData?.activityLevel ?? "sedentario",
     mainGoal: initialData?.mainGoal ?? "mantener",
   });
@@ -97,8 +99,19 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                 fecha_nacimiento: form.birthDate || "",
                 genero: form.gender || "",
                 altura: form.heightCm || 0,
+                peso: form.weightKg || 0,
                 nivel_actividad: form.activityLevel,
                 tipo_objetivo: form.mainGoal,
+              },
+              token
+            );
+
+            const pesosService = await nutritionService.peso;
+            pesosService.registrarPeso(
+              {
+                peso_kg: form.weightKg || 0,
+                fecha: new Date().toISOString(),
+                comentario: "Peso inicial registrado desde settings",
               },
               token
             );
@@ -140,6 +153,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
           birthDate: normalizedBirthDate,
           gender: settingsItem.genero ?? "",
           heightCm: settingsItem.altura ?? undefined,
+          weightKg: settingsItem.peso ?? undefined,
           activityLevel: (settingsItem.nivel_actividad as ActivityLevel) ?? "sedentario",
           mainGoal: (settingsItem.tipo_objetivo as GoalType) ?? "mantener",
         });
@@ -342,6 +356,25 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                 onChange={handleChange}
                 className="input-base"
                 placeholder="Ej: 175"
+              />
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <label
+                htmlFor="weightKg"
+                className="text-sm font-medium text-slate-200"
+              >
+                Peso (kg)
+              </label>
+              <input
+                id="weightKg"
+                name="weightKg"
+                type="number"
+                min={0}
+                value={form.weightKg ?? ""}
+                onChange={handleChange}
+                className="input-base"
+                placeholder="Ej: 80"
               />
             </div>
 
