@@ -5,7 +5,7 @@ import { createEjercicioSchema } from "../schemas/ejercicio.schema";
 import {
   createEjercicioHandler,
   getEjerciciosHoyHandler,
-  deleteEjercicioHandler
+  deleteEjercicioHandler,
 } from "../controllers/ejercicio.controller";
 
 const router = Router();
@@ -20,6 +20,6 @@ router.post("/", validate(createEjercicioSchema), createEjercicioHandler);
 router.get("/", getEjerciciosHoyHandler);
 
 // Eliminar
-router.delete("/:id, deleteEjercicioHandler);
+router.delete("/:id", deleteEjercicioHandler);
 
 export default router;

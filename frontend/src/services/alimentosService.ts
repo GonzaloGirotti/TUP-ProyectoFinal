@@ -10,21 +10,33 @@ export interface Alimento {
   calorias: number;
 }
 
+export interface AlimentoConsumido extends Alimento {
+  gramos: number; // en gramos
+}
+
 export interface AlimentoConId extends Alimento {
   id_alimento: number;
 }
 
 export class AlimentosService extends BaseService {
-  async crearAlimento(alimento: Alimento, token: string) {
+  async crearAlimentoConsumido(alimentoConsumido: AlimentoConsumido, token: string) {
     return await this.axiosInstance.post(
       `${baseURL}/alimentos`,
+      alimentoConsumido,
+      this.getAuthConfig(token)
+    );
+  }
+
+  async crearAlimento(alimento: Alimento, token: string) {
+    return await this.axiosInstance.post(
+      `${baseURL}/alimentos_normales`,
       alimento,
       this.getAuthConfig(token)
     );
   }
 
   async listarAlimentos(token: string) {
-    return await this.axiosInstance.get('/alimentos', this.getAuthConfig(token));
+    return await this.axiosInstance.get('/alimentos_normales', this.getAuthConfig(token));
   }
 
   async eliminarAlimento(id_alimento: number, token: string) {

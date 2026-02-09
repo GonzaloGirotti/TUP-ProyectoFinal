@@ -4,6 +4,7 @@ import cors from "cors";
 import authRoutes from "./routes/auth.routes";
 import pesoRoutes from "./routes/peso.routes";
 import alimentoRoutes from "./routes/alimento_consumido.routes";
+import alimentos_n_Routes from "./routes/alimento.routes";
 import comidaRoutes from "./routes/comida.routes";
 import comidaAlimentoRoutes from "./routes/comida_alimento.routes";
 import objetivoCaloricoRoutes from "./routes/objetivo_calorico.routes";
@@ -82,6 +83,9 @@ app.use("/api/v1/pesos", pesoRoutes);
 
 // Registra las rutas de alimentos
 app.use("/api/v1/alimentos", alimentoRoutes);
+
+// Registra las rutas de alimentos normales
+app.use("/api/v1/alimentos_normales", alimentos_n_Routes);
 
 // Registra las rutas de comidas_alimentos
 app.use("/api/v1/comidas_alimentos", comidaAlimentoRoutes);

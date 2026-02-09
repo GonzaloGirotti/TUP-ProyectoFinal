@@ -52,12 +52,15 @@ const handleCrearAlimento = async (e: React.FormEvent) => {
 
   try {
     const nuevo = await crearAlimento();
-    setAlimentoSeleccionado(String(nuevo.id));
-    setCreandoAlimento(false);
-    // Recargar la lista del padre
+    
+    // Recargar la lista del padre ANTES de cerrar el modal
     if (onAlimentoCreado) {
       await onAlimentoCreado();
     }
+    
+    // Ahora sí, actualizar la selección y cerrar el modal
+    setAlimentoSeleccionado(String(nuevo.id));
+    setCreandoAlimento(false);
   } catch (error) {
     console.error('Error al crear alimento:', error);
   }
