@@ -1,18 +1,11 @@
 import { Router } from "express";
+import * as reportesController from "../controllers/reportes.controller";
 import { authMiddleware } from "../middlewares/auth.middleware";
-import { getReporteDiario } from "../controllers/reportes.controller";
 
 const router = Router();
 
-/**
- * @route GET /api/v1/reportes/diario
- * @desc Reporte diario del usuario autenticado
- * @access Private
- */
-router.get(
-    "/diario",
-    authMiddleware,
-    getReporteDiario
-);
+// Protegemos los reportes con tu middleware de JWT
+router.get("/excel/consumo-global", authMiddleware, reportesController.generarExcelConsumo);
 
+router.get("/pdf/resumen-usuario", authMiddleware, reportesController.generarPdfResumen);
 export default router;
