@@ -61,6 +61,7 @@ class NutritionService {
   get registroDiario() {
     return this._registroDiarioService;
   }
+  
   get settings(): SettingsService {
     return this._settingsService;
   }

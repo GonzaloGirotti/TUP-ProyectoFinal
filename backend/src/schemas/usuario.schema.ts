@@ -18,6 +18,7 @@ export const registerSchema = z.object({
     fecha_nacimiento: z.string().datetime().optional().or(z.literal("")), // Acepta string de fecha o vacío
     genero: z.string().optional(),
     altura: z.number().optional(),
+    peso: z.number().optional(),
     nivel_actividad: z.string().optional(),
     tipo_objetivo: z.string().optional(),
   }),
@@ -45,6 +46,7 @@ export const settingsSchema = z.object({
       .or(z.literal("")),
     genero: z.string().optional(),
     altura: z.number().optional(),
+    peso: z.number().optional(),
     nivel_actividad: z.string().optional(),
     tipo_objetivo: z.string().optional(),
   }),
