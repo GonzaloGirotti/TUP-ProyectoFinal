@@ -1,4 +1,6 @@
 import { getApiConfig } from './baseService';
+import { authService } from './authService'; 
+import { UsuarioService } from './usuarioService'; 
 import { PesoService } from './pesoService';
 import { AlimentosService } from './alimentosService';
 import { ComidasService } from './comidasService';
@@ -6,11 +8,11 @@ import { AguaService } from './aguaService';
 import { EjercicioService } from './ejercicioService';
 import { ObjetivosService } from './objetivosService';
 import { RegistroDiarioService } from './registroDiarioService';
-import { SettingsService } from './settingsService';
-
 
 class NutritionService {
   // Instancias privadas
+  private _authService = authService; // authService ya es un objeto
+  private _usuarioService: UsuarioService;
   private _pesoService: PesoService;
   private _alimentosService: AlimentosService;
   private _comidasService: ComidasService;
@@ -18,11 +20,11 @@ class NutritionService {
   private _ejercicioService: EjercicioService;
   private _objetivosService: ObjetivosService;
   private _registroDiarioService: RegistroDiarioService;
-  private _settingsService: SettingsService;
 
   constructor() {
     const { baseURL } = getApiConfig();
     
+    this._usuarioService = new UsuarioService(baseURL);
     this._pesoService = new PesoService(baseURL);
     this._alimentosService = new AlimentosService(baseURL);
     this._comidasService = new ComidasService(baseURL);
@@ -30,39 +32,43 @@ class NutritionService {
     this._ejercicioService = new EjercicioService(baseURL);
     this._objetivosService = new ObjetivosService(baseURL);
     this._registroDiarioService = new RegistroDiarioService(baseURL);
-    this._settingsService = new SettingsService(baseURL);
   }
 
   // Getters para acceso a los servicios
-  get peso(): PesoService {
+  get auth() {
+    return this._authService;
+  }
+
+  get usuario() {
+    return this._usuarioService;
+  }
+
+  get peso() {
     return this._pesoService;
   }
 
-  get alimentos(): AlimentosService {
+  get alimentos() {
     return this._alimentosService;
   }
 
-  get comidas(): ComidasService {
+  get comidas() {
     return this._comidasService;
   }
 
-  get agua(): AguaService {
+  get agua() {
     return this._aguaService;
   }
 
-  get ejercicio(): EjercicioService {
+  get ejercicio() {
     return this._ejercicioService;
   }
 
-  get objetivos(): ObjetivosService {
+  get objetivos() {
     return this._objetivosService;
   }
 
   get registroDiario() {
     return this._registroDiarioService;
-  }
-  get settings(): SettingsService {
-    return this._settingsService;
   }
 }
 
@@ -70,4 +76,11 @@ class NutritionService {
 export const nutritionService = new NutritionService();
 
 // También exportar los servicios individuales por si se necesitan por separado
-export { PesoService, AlimentosService, ComidasService, ObjetivosService, SettingsService };
+export { 
+  authService, 
+  UsuarioService, 
+  PesoService, 
+  AlimentosService, 
+  ComidasService, 
+  ObjetivosService 
+};

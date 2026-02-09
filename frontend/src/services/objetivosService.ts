@@ -32,13 +32,23 @@ export class ObjetivosService extends BaseService {
         );
     }
 
-    async obtenerObjetivosHoy(token: string) {
-        return await this.axiosInstance.get<ObjetivosResponse>('/objetivos', this.getAuthConfig(token));
-    }
+  async obtenerObjetivos(token: string) {
+    return await this.axiosInstance.get<ObjetivosResponse>(
+      '/objetivos',
+      this.getAuthConfig(token)
+    );
+  }
 
-    async eliminarObjetivos(id: number, token: string) {
+    async obtenerObjetivoActual(token: string) {
+    const response = await this.obtenerObjetivos(token);
+    // TODO Lógica para encontrar el objetivo actual (más reciente)
+    return response.data.objetivos[0];
+  }
+
+
+    async eliminarObjetivos(id_objetivo: number, token: string) {
         return await this.axiosInstance.delete(
-            `/objetivos/${id}`,
+            `/objetivos/${id_objetivo}`,
             this.getAuthConfig(token)
         );
     }

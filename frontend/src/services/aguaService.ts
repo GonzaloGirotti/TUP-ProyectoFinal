@@ -29,9 +29,9 @@ export class AguaService extends BaseService {
         return await this.axiosInstance.get<AguaResponse>('/agua', this.getAuthConfig(token));
     }
 
-    async eliminarAgua(id: number, token: string) {
+    async eliminarAgua(id_agua: number, token: string) {
         return await this.axiosInstance.delete(
-            `/agua/${id}`,
+            `/agua/${id_agua}`,
             this.getAuthConfig(token)
         );
     }

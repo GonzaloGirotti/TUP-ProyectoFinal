@@ -44,15 +44,16 @@ export class ComidasService extends BaseService {
   }
 
   async verAlimentosDeComida(id_comida?: number, token?: string) {
+
     const url = id_comida ? `/comidas_alimentos?id_comida=${id_comida}` : '/comidas_alimentos';
     const config = token ? this.getAuthConfig(token) : undefined;
     
     return await this.axiosInstance.get(url, config);
   }
 
-  async eliminarAlimentoDeComida(id_comida_alimento: number, token: string) {
+  async eliminarAlimentoDeComida(id_comidas_alimentos: number, token: string) {
     return await this.axiosInstance.delete(
-      `/comidas_alimentos/${id_comida_alimento}`,
+      `/comidas_alimentos/${id_comidas_alimentos}`,
       this.getAuthConfig(token)
     );
   }

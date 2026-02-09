@@ -10,14 +10,14 @@ export class RegistroDiarioService extends BaseService {
   async obtenerRegistroDiario(id_usuario: number, token: string) {
 
     return await this.axiosInstance.get<RegistroDiarioResponse>(
-      `${this.baseURL}/registroDiario/${id_usuario}`,
+      `/registroDiario/${id_usuario}`,
       this.getAuthConfig(token)
     );
   }
     async  iniciarRegistroDiario(id_usuario: number, token: string) {
       try {
         const response = await this.axiosInstance.post(
-          `${this.baseURL}/registroDiario`,
+          `/registroDiario`,
           { id_usuario },
           this.getAuthConfig(token)
         );

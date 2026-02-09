@@ -35,9 +35,9 @@ export class EjercicioService extends BaseService {
     return await this.axiosInstance.get<EjercicioResponse>('/ejercicios', this.getAuthConfig(token));
   }
 
-  async eliminarEjercicio(id: number, token: string) {
+  async eliminarEjercicio(id_ejercicio: number, token: string) {
     return await this.axiosInstance.delete(
-      `/ejercicios/${id}`,
+      `/ejercicios/${id_ejercicio}`,
       this.getAuthConfig(token)
     );
   }
