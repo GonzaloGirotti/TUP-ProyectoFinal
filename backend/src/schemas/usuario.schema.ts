@@ -18,10 +18,14 @@ const fechaNacimientoSchema = z.preprocess(
 // Esquema para el registro de un nuevo usuario
 export const registerSchema = z.object({
   body: z.object({
-    nombre_usuario: z.string()
-      .min(1, "El nombre de usuario es requerido")
-      .max(50, "El nombre de usuario no puede exceder 50 caracteres")
+    nombre: z.string()
+      .min(1, "El nombre es requerido")
+      .max(50, "El nombre no puede exceder 50 caracteres")
       .regex(/^[a-zA-Z0-9_]+$/, "Solo se permiten letras, números y guiones bajos"),
+
+      apellido: z.string()
+      .min(1, "El apellido es requerido")
+      .max(50, "El apellido no puede exceder 50 caracteres"),
 
     email: z.string()
       .min(1, "El email es requerido")
@@ -37,7 +41,7 @@ export const registerSchema = z.object({
       .regex(/[0-9]/, "Debe contener al menos un número")
       .regex(/[^a-zA-Z0-9]/, "Debe contener al menos un carácter especial"),
 
-  fecha_nacimiento: fechaNacimientoSchema,
+    fecha_nacimiento: fechaNacimientoSchema,
 
     genero: z.enum(["masculino", "femenino", "otro", "prefiero_no_decir"], {
     }).optional(),
@@ -47,20 +51,33 @@ export const registerSchema = z.object({
       .min(50, "La altura mínima es 50 cm")
       .max(250, "La altura máxima es 250 cm")
       .optional(),
-  }),
+  
+
+  nivel_actividad: z.enum(["sedentario", "ligero", "moderado", "intenso"], {
+  }).optional(),
+
+  tipo_objetivo: z.enum(["perder_peso", "mantener_peso", "ganar_musculo"], {
+  }).optional(),
+  }).strict() // No permite campos extraños
+
 });
 
 
-// Esquema para actualizar perfil de usuario (sin password)
+// Esquema para actualizar perfil de usuario (sin password")
 
 
 
 export const updateUsuarioSchema = z.object({
   body: z.object({
-    nombre_usuario: z.string()
+    nombre: z.string()
       .min(1, "El nombre de usuario es requerido")
       .max(50, "El nombre de usuario no puede exceder 50 caracteres")
       .regex(/^[a-zA-Z0-9_]+$/, "Solo se permiten letras, números y guiones bajos")
+      .optional(),
+
+      apellido: z.string()
+      .min(1, "El apellido es requerido")
+      .max(50, "El apellido no puede exceder 50 caracteres")
       .optional(),
 
     email: z.string()
@@ -78,6 +95,11 @@ export const updateUsuarioSchema = z.object({
       .min(50, "La altura mínima es 50 cm")
       .max(250, "La altura máxima es 250 cm")
       .optional(),
+
+    nivel_actividad: z.enum(["sedentario", "ligero", "moderado", "intenso"] as const).optional(),
+
+    tipo_objetivo: z.enum(["perder_peso", "mantener_peso", "ganar_musculo"] as const).optional(),
+
   }).strict() // No permite campos extraños
 });
 
