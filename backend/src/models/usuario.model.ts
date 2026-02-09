@@ -11,7 +11,7 @@ export interface UsuarioAttributes {
   email: string;
   urlAvatar?: string;
   password: string;
-  fecha_nacimiento?: string;
+  fecha_nacimiento?: Date | null;
   genero?: string;
   altura?: number;
   nivel_actividad?: string;
@@ -35,7 +35,7 @@ class Usuario
   public email!: string;
   public urlAvatar?: string;
   public password!: string;
-  public fecha_nacimiento?: string;
+  public fecha_nacimiento?: Date | null;
   public genero?: string;
   public altura?: number;
   public nivel_actividad?: string;
@@ -101,8 +101,8 @@ Usuario.init(
       field: "password",
     },
     fecha_nacimiento: {
-      type: DataTypes.STRING,
-      field: "fecha_nacimiento",
+      type: DataTypes.DATE, // Debe ser DATE, no STRING
+      allowNull: true,
     },
     genero: {
       type: DataTypes.TEXT,
