@@ -15,6 +15,7 @@ import registroPesoRoutes from "./routes/registro_peso.routes";
 import aguaRoutes from "./routes/agua.routes";
 import ejercicioRoutes from "./routes/ejercicio.routes";
 import settingsRoutes from "./routes/settings.routes";
+import reportesRoutes from "./routes/reportes.routes";
 
 // Importamos los modelos para que se registren en Sequelize
 import "./models/usuario.model";
@@ -113,6 +114,9 @@ app.use("/api/v1/agua", aguaRoutes);
 
 // Registra las rutas de settings
 app.use("/api/v1/settings", settingsRoutes);
+
+// Registra las rutas de reportes
+app.use("/api/v1/reportes", reportesRoutes);
 
 // Exportamos la 'app' para que index.ts y nuestros tests puedan importarla.
 export default app;

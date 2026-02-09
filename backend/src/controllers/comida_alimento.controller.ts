@@ -16,7 +16,7 @@ export const createComidaAlimentoHandler = async (
 ) => {
   try {
     // 1. Obtener los datos del body (ya validados por Zod)
-    const { id_comida, id_alimento_consumido, cantidad_gramos } = req.body;
+    const { id_comida, id_alimento_consumido: id_alimento, cantidad_gramos } = req.body;
 
     // 2. Obtener el ID del usuario (del token verificado por authMiddleware)
     if (!req.usuario) {
@@ -43,7 +43,7 @@ export const createComidaAlimentoHandler = async (
     // 3. Buscar el alimento base en la tabla Alimentos
     const alimento = await Alimento.findOne({
       where: {
-        id_alimento: id_alimento_consumido
+        id_alimento: id_alimento
       }
     });
 

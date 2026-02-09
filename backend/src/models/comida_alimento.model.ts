@@ -1,7 +1,7 @@
 import { Model, DataTypes, Optional } from "sequelize";
 import { sequelize } from "../config/db"; // Importación de nuestra conexión
-import Comida from "./comida.model"; // Importacion del modelo comida para la relación
 import AlimentoConsumido from "./alimento_consumido.model"; // Importacion del modelo alimento consumido para la relación
+import Comida from "./comida.model";
 
 // Interface para los atributos de Comida_Alimento
 export interface ComidaAlimentoAttributes {
@@ -55,7 +55,7 @@ ComidaAlimento.init(
       allowNull: false,
       field: "id_comida",
       references: {
-        model: Comida, // Referencia al modelo Comida
+        model: "Comida", // Referencia al modelo Comida
         key: "id_comida", // La columna en la tabla Comidas
       },
     },
@@ -116,14 +116,15 @@ ComidaAlimento.init(
 );
 // Definición de las relaciones
 
+ComidaAlimento.belongsTo(AlimentoConsumido, {
+  foreignKey: "id_alimento_consumido",
+  as: "alimento",
+});
+
 ComidaAlimento.belongsTo(Comida, {
   foreignKey: "id_comida",
   as: "comida",
 });
 
-ComidaAlimento.belongsTo(AlimentoConsumido, {
-  foreignKey: "id_alimento_consumido",
-  as: "alimento",
-});
 
 export default ComidaAlimento;
