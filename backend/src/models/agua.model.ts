@@ -56,7 +56,7 @@ Agua.init(
   },
   {
     sequelize,
-    tableName: "Agua",
+    tableName: "agua",
     timestamps: true,
   },
 );

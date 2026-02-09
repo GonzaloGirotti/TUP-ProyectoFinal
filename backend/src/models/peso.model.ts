@@ -82,7 +82,7 @@ Peso.init(
   },
   {
     sequelize,
-    tableName: "Pesos", // Nombre de la tabla en la BD
+    tableName: "pesos", // Nombre de la tabla en la BD
     timestamps: true,
     createdAt: "fecha_creacion",
     updatedAt: "updatedAt",

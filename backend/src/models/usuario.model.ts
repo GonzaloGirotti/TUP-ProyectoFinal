@@ -135,7 +135,7 @@ Usuario.init(
   },
   {
     sequelize,
-    tableName: "Usuarios", // El nombre de la tabla en la BD
+    tableName: "usuarios", // El nombre de la tabla en la BD
     timestamps: true, // Habilitar timestamps
     createdAt: "fecha_creacion", // Mapear createdAt a 'fecha_creacion'
     updatedAt: "updatedAt", // Mapear updatedAt a 'updatedAt'

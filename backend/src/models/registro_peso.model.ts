@@ -69,7 +69,7 @@ Registro_Peso.init(
   },
   {
     sequelize,
-    tableName: "Objetivo_Peso", // Nombre de la tabla en la BD
+    tableName: "objetivo_peso", // Nombre de la tabla en la BD
     timestamps: true,
     createdAt: "fecha_creacion",
     updatedAt: "updatedAt",

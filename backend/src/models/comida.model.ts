@@ -1,7 +1,6 @@
 import { Model, DataTypes, Optional } from "sequelize";
 import { sequelize } from "../config/db"; // Importación de nuestra conexión
 import Usuario from "./usuario.model"; // Importacion del modelo Usuario para la relación
-import Alimento from "./alimento_consumido.model"; // Importacion del modelo Alimento para la relación
 
 // Interface para los atributos de Comida
 export interface ComidaAttributes {
@@ -76,7 +75,7 @@ Comida.init(
   },
   {
     sequelize,
-    tableName: "Comidas", // Nombre de la tabla en la BD
+    tableName: "comidas", // Nombre de la tabla en la BD
     timestamps: true,
     createdAt: "fecha_creacion",
     updatedAt: "updatedAt",
@@ -94,13 +93,6 @@ Comida.belongsTo(Usuario, {
 Usuario.hasMany(Comida, {
   foreignKey: "id_usuario",
   as: "comidas", // Un alias para cuando consultemos el usuario
-});
-
-Alimento.belongsToMany(Comida, {
-  through: "Comidas_Alimentos",
-  foreignKey: "id_alimento",
-  otherKey: "id_comida",
-  as: "comidas",
 });
 
 export default Comida;

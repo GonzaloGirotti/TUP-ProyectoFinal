@@ -56,7 +56,7 @@ Registro_Diario.init(
   },
   {
     sequelize,
-    tableName: "Registro_Diario", // Nombre de la tabla en la BD
+    tableName: "registro_diario", // Nombre de la tabla en la BD
     timestamps: true,
     createdAt: "fecha_creacion",
     updatedAt: "updatedAt",

@@ -89,7 +89,7 @@ Objetivos.init(
   },
   {
     sequelize,
-    tableName: "Objetivos", // Nombre de la tabla en la BD
+    tableName: "objetivos", // Nombre de la tabla en la BD
     timestamps: true,
     createdAt: "fecha_creacion",
     updatedAt: "updatedAt",

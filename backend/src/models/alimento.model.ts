@@ -64,7 +64,7 @@ Alimento.init(
   },
   {
     sequelize,
-    tableName: "Alimentos", // Nombre de la tabla en la BD
+    tableName: "alimentos", // Nombre de la tabla en la BD
     timestamps: true,
     createdAt: "fecha_creacion",
     updatedAt: "updatedAt",

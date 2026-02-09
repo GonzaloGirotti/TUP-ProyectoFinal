@@ -61,7 +61,7 @@ Ejercicio.init(
   },
   {
     sequelize,
-    tableName: "Ejercicios",
+    tableName: "ejercicios",
     timestamps: true,
   }
 );

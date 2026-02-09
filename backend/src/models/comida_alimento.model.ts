@@ -55,7 +55,7 @@ ComidaAlimento.init(
       allowNull: false,
       field: "id_comida",
       references: {
-        model: "Comida", // Referencia al modelo Comida
+        model: Comida, // Referencia al modelo Comida
         key: "id_comida", // La columna en la tabla Comidas
       },
     },
@@ -108,7 +108,7 @@ ComidaAlimento.init(
   },
   {
     sequelize,
-    tableName: "Comidas_Alimentos", // Nombre de la tabla en la BD
+    tableName: "comidas_alimentos", // Nombre de la tabla en la BD
     timestamps: true,
     createdAt: "fecha_creacion",
     updatedAt: "updatedAt",

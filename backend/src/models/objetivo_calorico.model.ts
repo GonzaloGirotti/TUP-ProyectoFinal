@@ -86,7 +86,7 @@ Objetivo_Calorico.init(
   },
   {
     sequelize,
-    tableName: "Objetivo_Calorico", // Nombre de la tabla en la BD
+    tableName: "objetivo_calorico", // Nombre de la tabla en la BD
     timestamps: true,
     createdAt: "fecha_creacion",
     updatedAt: "updatedAt",
