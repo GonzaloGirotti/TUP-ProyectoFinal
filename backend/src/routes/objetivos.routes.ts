@@ -10,6 +10,7 @@ import { validate } from "../middlewares/validate";
 import { createObjetivosSchema, updateObjetivosSchema } from "../schemas/objetivos.schema";
 
 const router = Router();
+
 /**
  * @route POST /api/v1/objetivos
  * @desc Crear un nuevo objetivo
@@ -21,11 +22,12 @@ router.post(
   validate(createObjetivosSchema), // 2. (Validador) ¿Tus datos son válidos?
   createObjetivosHandler, // 3. (Controlador) Si todo ok, ejecuta la lógica
 );
+
 /**
- @route GET /api/v1/objetivos
- @desc Obtener todos los registros de objetivos
- @access Private (requiere token)
-*/
+ * @route GET /api/v1/objetivos
+ * @desc Obtener todos los registros de objetivos
+ * @access Private (requiere token)
+ */
 router.get(
   "/",
   authMiddleware, // (Guardia) ¿Estás logueado?
@@ -37,7 +39,7 @@ router.get(
  * @desc Eliminar un registro de objetivo específico
  * @access Private (requiere token)
  */
-// Usamos :id_objetivo para que coincida con el nombre en la BD
+// Usamos :id_objetivo para que coincida con el nombre en la BD y controlador
 router.delete(
   "/:id_objetivo",
   authMiddleware, // (Guardia) Estás logueado?

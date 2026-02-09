@@ -3,19 +3,22 @@ import cors from "cors";
 // Importamos TODAS las rutas
 import authRoutes from "./routes/auth.routes";
 import pesoRoutes from "./routes/peso.routes";
-import alimentoRoutes from "./routes/alimento_consumido.routes";
+import alimentoRoutes from "./routes/alimento.routes";
 import comidaRoutes from "./routes/comida.routes";
 import comidaAlimentoRoutes from "./routes/comida_alimento.routes";
 import objetivoCaloricoRoutes from "./routes/objetivo_calorico.routes";
 import objetivoPesoRoutes from "./routes/objetivo_peso.routes";
+import objetivoRoutes from "./routes/objetivos.routes";
 import registroDiarioRoutes from "./routes/registro_diario.routes";
 import registroPesoRoutes from "./routes/registro_peso.routes";
 import aguaRoutes from "./routes/agua.routes";
 import ejercicioRoutes from "./routes/ejercicio.routes";
+import settingsRoutes from "./routes/settings.routes";
 
 // Importamos los modelos para que se registren en Sequelize
 import "./models/usuario.model";
 import "./models/peso.model";
+import "./models/alimento.model";
 import "./models/alimento_consumido.model";
 import "./models/comida.model";
 import "./models/comida_alimento.model";
@@ -74,10 +77,13 @@ app.use("/api/v1/registroDiario", registroDiarioRoutes);
 app.use("/api/v1/registroPeso", registroPesoRoutes);
 
 // Registra las rutas de ejercicios
-app.use("/api/v1/ejercicio", ejercicioRoutes);
+app.use("/api/v1/ejercicios", ejercicioRoutes);
 
 // Registra las rutas de agua
 app.use("/api/v1/agua", aguaRoutes);
+
+// Registra las rutas de settings
+app.use("/api/v1/settings", settingsRoutes);
 
 // Exportamos la 'app' para que index.ts y nuestros tests puedan importarla.
 export default app;

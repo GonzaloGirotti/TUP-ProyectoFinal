@@ -1,19 +1,17 @@
 import { z } from "zod";
 
-// Esquema para la carga de un nuevo alimento
 export const createEjercicioSchema = z.object({
   body: z.object({
-    id_registro_diario: z
-      .number()
-      .int()
-      .positive("El ID de registro diario debe ser un número positivo"),
-    tipo: z.string().min(3, "El tipo del ejercicio es requerido"),
-    duracion_minutos: z
-      .number()
-      .positive("La duración debe ser un número positivo"),
+    // Eliminamos id_registro_diario para simplificar la relación
+    tipo: z.string().min(1, "El tipo de ejercicio es requerido"),
+
     calorias_quemadas: z
       .number()
-      .positive("Las calorías quemadas deben ser un número positivo"),
+      .min(1, "Las calorías deben ser mayor a 0"),
+
+    duracion_minutos: z.number().optional(),
+
+    fecha: z.string().datetime().optional().or(z.date().optional()),
   }),
 });
 

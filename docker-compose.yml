@@ -1,12 +1,14 @@
+version: '3.8'
+
 services:
   postgres:
     image: postgres:15
     container_name: nutricion-db-dev
     restart: always
     ports:
-      - "5433:5432"
+      - "5432:5432"
     env_file:
-      - ./.env
+      - .env
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}

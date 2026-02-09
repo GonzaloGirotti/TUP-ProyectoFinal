@@ -60,13 +60,26 @@ export const createObjetivosHandler = async (
   }
 };
 
-// Controlador para obtener todos los objetivos en la BD
+// Controlador para obtener todos los objetivos del usuario autenticado
 export const getObjetivosHandler = async (req: Request, res: Response) => {
   try {
-    // 1. Buscar todos los objetivos
-    const objetivos = await Objetivos.findAll({});
-    // 3. Enviar respuesta
-    return res.status(200).json(objetivos);
+    // 1. Obtener el ID del usuario autenticado
+    if (!req.usuario) {
+      return res
+        .status(401)
+        .json({ message: "No se encontró información de usuario." });
+    }
+    const id_usuario = req.usuario.id;
+
+    // 2. Buscar todos los objetivos que coincidan con el id_usuario
+    // Ordenamos por fecha descendente (los más nuevos primero)
+    const objetivos = await Objetivos.findAll({
+      where: { id_usuario },
+      order: [["fecha_creacion", "DESC"]],
+    });
+
+    // 3. Enviar respuesta con estructura esperada por el frontend
+    return res.status(200).json({ objetivos });
   } catch (error: unknown) {
     // Usamos 'unknown' para ESlint
 

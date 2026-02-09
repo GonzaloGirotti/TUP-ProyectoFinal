@@ -46,7 +46,7 @@ export const createComidaAlimentoHandler = async (
     }
 
     // 4. Calcular los totales basados en la cantidad (Regla de tres simple)
-    // Asumimos que los macros del alimento base son por cada 100g
+    // Los macros del alimento base son por cada 100g
     const factor = cantidad_gramos / 100;
 
     const carbohidratos_total = alimento.carbohidratos * factor;
@@ -54,10 +54,20 @@ export const createComidaAlimentoHandler = async (
     const grasas_total = alimento.grasas * factor;
     const calorias_total = alimento.calorias * factor;
 
-    // 5. Objeto para crear
+    // 5. Crear primero un Alimento_Consumido con los datos específicos
+    const alimentoConsumido = await AlimentoConsumido.create({
+      nombre: alimento.nombre,
+      gramos: cantidad_gramos,
+      carbohidratos: alimento.carbohidratos,
+      proteinas: alimento.proteinas,
+      grasas: alimento.grasas,
+      calorias: alimento.calorias
+    });
+
+    // 6. Objeto para crear la relación Comida_Alimento
     const dataParaCrear = {
       id_comida,
-      id_alimento_consumido,
+      id_alimento_consumido: alimentoConsumido.id_alimento_consumido,
       cantidad_gramos,
       carbohidratos_total,
       grasas_total,
@@ -65,10 +75,10 @@ export const createComidaAlimentoHandler = async (
       calorias_total,
     };
 
-    // 6. Crear registro
+    // 7. Crear registro
     const nuevaComidaAlimento = await ComidaAlimento.create(dataParaCrear);
 
-    // 7. Responder
+    // 8. Responder
     return res.status(201).json(nuevaComidaAlimento);
   } catch (error: unknown) {
     console.error("[COMIDA_ALIMENTO_CONTROLLER]:", error);

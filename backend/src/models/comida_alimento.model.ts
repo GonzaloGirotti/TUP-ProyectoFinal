@@ -1,7 +1,7 @@
 import { Model, DataTypes, Optional } from "sequelize";
 import { sequelize } from "../config/db"; // Importación de nuestra conexión
 import Comida from "./comida.model"; // Importacion del modelo comida para la relación
-import Alimento from "./alimento_consumido.model"; // Importacion del modelo alimento para la relación
+import AlimentoConsumido from "./alimento_consumido.model"; // Importacion del modelo alimento consumido para la relación
 
 // Interface para los atributos de Comida_Alimento
 export interface ComidaAlimentoAttributes {
@@ -26,8 +26,7 @@ type ComidaAlimentoCreationAttributes = Optional<
 // Definición del Modelo
 class ComidaAlimento
   extends Model<ComidaAlimentoAttributes, ComidaAlimentoCreationAttributes>
-  implements ComidaAlimentoAttributes
-{
+  implements ComidaAlimentoAttributes {
   public id_comida_alimento!: number;
   public id_comida!: number;
   public id_alimento_consumido!: number;
@@ -62,36 +61,36 @@ ComidaAlimento.init(
     },
     id_alimento_consumido: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
       field: "id_alimento_consumido",
       references: {
-        model: Alimento, // Referencia al modelo Alimento
-        key: "id_alimento_consumido", // La columna en la tabla Alimentos
+        model: AlimentoConsumido, // Referencia al modelo Alimento Consumido
+        key: "id_alimento_consumido", // La columna en la tabla Alimento_Consumido
       },
     },
     cantidad_gramos: {
       type: DataTypes.REAL, // Tipo 'real' para números con decimales
-      allowNull: false,
+      allowNull: true,
       field: "cantidad_gramos",
     },
     carbohidratos_total: {
       type: DataTypes.REAL,
-      allowNull: false,
+      allowNull: true,
       field: "carbohidratos_total",
     },
     grasas_total: {
       type: DataTypes.REAL,
-      allowNull: false,
+      allowNull: true,
       field: "grasas_total",
     },
     proteinas_total: {
       type: DataTypes.REAL,
-      allowNull: false,
+      allowNull: true,
       field: "proteinas_total",
     },
     calorias_total: {
       type: DataTypes.REAL,
-      allowNull: false,
+      allowNull: true,
       field: "calorias_total",
     },
     fecha_creacion: {
@@ -122,7 +121,7 @@ ComidaAlimento.belongsTo(Comida, {
   as: "comida",
 });
 
-ComidaAlimento.belongsTo(Alimento, {
+ComidaAlimento.belongsTo(AlimentoConsumido, {
   foreignKey: "id_alimento_consumido",
   as: "alimento",
 });
