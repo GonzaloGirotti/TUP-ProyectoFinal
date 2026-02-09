@@ -27,7 +27,7 @@ export const registerHandler = async (
   res: Response,
 ) => {
   try {
-    const { nombre_usuario, email, password, fecha_nacimiento, genero, altura } =
+    const { nombre, email, password, fecha_nacimiento, genero, altura, nivel_actividad, tipo_objetivo } =
       req.body;
 
     // 1. Verificar si el email ya existe
@@ -39,12 +39,14 @@ export const registerHandler = async (
     // 2. Crear el nuevo usuario
     // El schema nos da un string, el modelo espera un Date. Lo convertimos.
     const nuevoUsuario = await Usuario.create({
-      nombre_usuario,
+      nombre,
       email,
       password,
       fecha_nacimiento,
       genero: genero || undefined,
       altura: altura || undefined,
+      nivel_actividad: nivel_actividad || undefined,
+      tipo_objetivo: tipo_objetivo || undefined,
     });
 
     // 3. Omitir la contraseña de la respuesta
@@ -95,7 +97,7 @@ export const loginHandler = async (
     const payload = {
       id: usuario.id_usuario,
       email: usuario.email,
-      nombre: usuario.nombre_usuario,
+      nombre: usuario.nombre,
     };
 
     const token = jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN as any });
@@ -124,7 +126,7 @@ export const loginHandler = async (
       usuario: {
         id: usuario.id_usuario,
         email: usuario.email,
-        nombre: usuario.nombre_usuario,
+        nombre: usuario.nombre,
       },
     });
   } catch (error: unknown) {
@@ -173,7 +175,7 @@ export const refreshTokenHandler = async (
     const payload = {
       id: usuario.id_usuario,
       email: usuario.email,
-      nombre: usuario.nombre_usuario,
+      nombre: usuario.nombre,
     };
 
     const newAccessToken = jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN as any });
@@ -201,7 +203,7 @@ export const refreshTokenHandler = async (
       usuario: {
         id: usuario.id_usuario,
         email: usuario.email,
-        nombre: usuario.nombre_usuario,
+        nombre: usuario.nombre,
       },
     });
   } catch (error: unknown) {
