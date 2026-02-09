@@ -20,6 +20,6 @@ router.post("/", validate(createEjercicioSchema), createEjercicioHandler);
 router.get("/", getEjerciciosHoyHandler);
 
 // Eliminar
-router.delete("/:id_ejercicio", deleteEjercicioHandler);
+router.delete("/:id, deleteEjercicioHandler);
 
 export default router;
