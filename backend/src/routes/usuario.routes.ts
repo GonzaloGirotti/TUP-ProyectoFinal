@@ -4,7 +4,8 @@ import {
   updateProfileHandler,
   changePasswordHandler,
   resetPasswordRequestHandler,
-  resetPasswordHandler} from "../controllers/usuario.controller";
+  resetPasswordHandler,
+  createProfileHandler} from "../controllers/usuario.controller";
 import { validate } from "../middlewares/validate";
 import { 
   updateUsuarioSchema,
@@ -20,8 +21,9 @@ const router = Router();
 router.use(authMiddleware);
 
 // Rutas protegidas de gestión de usuario
-router.get("/profile", getProfileHandler);
-router.put("/profile", validate(updateUsuarioSchema), updateProfileHandler);
+router.get("/", getProfileHandler);
+router.post("/", validate(updateUsuarioSchema), createProfileHandler); // Ruta para completar perfil después del registro (opcional, se puede usar PUT /profile también)
+router.put("/", validate(updateUsuarioSchema), updateProfileHandler);
 router.put("/change-password", validate(changePasswordSchema), changePasswordHandler);
 //router.delete("/account", deleteAccountHandler); TODO implementar esta ruta para eliminar cuenta (opcional, no es un requisito)
 
