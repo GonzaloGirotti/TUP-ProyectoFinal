@@ -9,6 +9,7 @@ import { GraficoDistribucion } from '../components/GraficoDistribucion';
 import { ModalAgregarComida } from '../components/ModalAgregarComida';
 import { ModalAgregarAgua } from '../components/ModalAgregarAgua';
 import { ModalAgregarEjercicio } from '../components/ModalAgregarEjercicio';
+import { PanelReportes } from '../components/PanelReportes';
 import type { SectionKey } from './types';
 import { SECTION_LABELS } from './types';
 import { nutritionService } from '../services/nutritionService';
@@ -59,7 +60,7 @@ export function DiarioPanel() {
     };
 
     cargarDatos();
-  }, [registroDiarioId]);
+  }, [registroDiarioId, cargarDiarioCompleto, cargarListaAlimentos]);
 
   const handleEliminarItem = async (seccion: SectionKey, id: number) => {
     if (!confirm("¿Eliminar este registro?")) return;
@@ -204,6 +205,9 @@ export function DiarioPanel() {
           />
         ))}
       </div>
+
+      {/* SECCIÓN DE REPORTES AÑADIDA */}
+      <PanelReportes />
 
       {modalOpen && seccionActiva && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
