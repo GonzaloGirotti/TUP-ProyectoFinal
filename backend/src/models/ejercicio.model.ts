@@ -63,7 +63,7 @@ Ejercicio.init(
     sequelize,
     tableName: "ejercicios",
     timestamps: true,
-  }
+  },
 );
 
 Usuario.hasMany(Ejercicio, { foreignKey: "id_usuario" });

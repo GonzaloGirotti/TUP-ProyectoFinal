@@ -6,7 +6,7 @@ import Usuario from "./usuario.model";
 export interface Objetivo_Peso_Attributes {
   id_objetivo_peso: number;
   id_usuario: number;
-  fecha_objetivo: Date;
+  fecha?: Date;
   peso_kg: number;
   fecha_creacion?: Date;
   updatedAt?: Date;
@@ -25,7 +25,7 @@ class Objetivo_Peso
 {
   public id_objetivo_peso!: number;
   public id_usuario!: number;
-  public fecha_objetivo!: Date;
+  public fecha!: Date;
   public peso_kg!: number;
   public fecha_creacion?: Date;
   public updatedAt?: Date;
@@ -45,10 +45,10 @@ Objetivo_Peso.init(
       allowNull: false,
       field: "id_usuario",
     },
-    fecha_objetivo: {
+    fecha: {
       type: DataTypes.DATE,
       allowNull: false,
-      field: "fecha_objetivo",
+      field: "fecha",
     },
     peso_kg: {
       type: DataTypes.REAL,
