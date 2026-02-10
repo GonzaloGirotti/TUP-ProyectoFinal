@@ -4,6 +4,7 @@ import {
   deleteObjetivoPesoHandler,
   createObjetivoPesoHandler,
   updateObjetivoPesoHandler,
+  deleteObjetivosPesoViejosHandler,
 } from "../controllers/objetivo_peso.controller";
 import { authMiddleware } from "../middlewares/auth.middleware";
 import { validate } from "../middlewares/validate";
@@ -33,26 +34,37 @@ router.get(
 );
 
 /**
- * @route DELETE /api/v1/objetivoPeso/:id_objetivoPeso
+ * @route DELETE /api/v1/objetivoPeso/viejos
+ * @desc Eliminar todos los registros de objetivos peso con fecha objetivo pasada
+ * @access Private (requiere token)
+ */
+router.delete(
+  "/viejos",
+  authMiddleware, // (Guardia) Estás logueado?
+  deleteObjetivosPesoViejosHandler, // (Controlador) Borrar objetivos peso viejos
+);
+
+/**
+ * @route DELETE /api/v1/objetivoPeso/:id_objetivo_peso
  * @desc Eliminar un registro de objetivo peso específico
  * @access Private (requiere token)
  */
-// Usamos :id_objetivoPeso para que coincida con el nombre en la BD
 router.delete(
-  "/:id_objetivoPeso",
+  "/:id_objetivo_peso",
   authMiddleware, // (Guardia) Estás logueado?
   deleteObjetivoPesoHandler, // (Controlador) Borrar el objetivo peso
 );
-export default router;
 
 /**
- * @route PUT /api/v1/objetivoPeso/:id_objetivoPeso
+ * @route PUT /api/v1/objetivoPeso/:id_objetivo_peso
  * @desc Actualizar un registro de objetivo peso específico
  * @access Private (requiere token)
  */
 router.put(
-  "/:id_objetivoPeso",
+  "/:id_objetivo_peso",
   authMiddleware, // (Guardia) Estás logueado?
   validate(createObjetivoPesoSchema), // (Validador) ¿Tus datos son válidos?
   updateObjetivoPesoHandler, // (Controlador) Actualizar el objetivo peso
 );
+
+export default router;

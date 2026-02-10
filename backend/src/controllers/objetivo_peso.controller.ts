@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { CreateObjetivoPesoInput } from "../schemas/objetivo_peso.schema"; // Importamos el tipo de Zod
 import Objetivo_Peso from "../models/objetivo_peso.model";
+import { Op } from "sequelize";
 
 /*
  Controlador para crear un nuevo objetivo.
@@ -144,6 +145,48 @@ export const updateObjetivoPesoHandler = async (
     // Usamos 'unknown' para ESlint
 
     console.error("[UPDATE_OBJETIVO_PESO_HANDLER]:", error);
+    let errorMessage = "Error interno del servidor";
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+    return res.status(500).json({ message: errorMessage });
+  }
+};
+
+export const deleteObjetivosPesoViejosHandler = async (req: Request, res: Response) => {
+  try {
+    // 1. Obtener el ID del usuario (del token)
+    if (!req.usuario) {
+      return res
+        .status(401)
+        .json({ message: "No se encontró información de usuario." });
+    }
+    const id_usuario = req.usuario.id;
+    
+    // 2. Obtener los objetivos peso actuales para ver si hay mas de uno.
+    const objetivosPeso = await Objetivo_Peso.findAll({
+      where: { id_usuario },
+      order: [["fecha", "DESC"]],
+    });
+
+    if (objetivosPeso.length <= 1) {
+      return res.status(200).json({ message: "No hay objetivos peso antiguos para eliminar." });
+    }
+
+    // 3. Eliminar todos los pesos excepto el más reciente
+    const resultado = await Objetivo_Peso.destroy({
+      where: {
+        id_usuario,
+        id_objetivo_peso: {
+          [Op.ne]: objetivosPeso[0].id_objetivo_peso, // 'ne' = 'not equal', mantenemos el más reciente
+        },
+      },
+    });
+    
+    // 4. Enviar respuesta
+    return res.status(200).json({ message: `${resultado} registros de peso antiguos eliminados.` });
+  } catch (error: unknown) {
+    console.error("[DELETE_VIEJOS_OBJETIVOS_PESO_HANDLER]:", error);
     let errorMessage = "Error interno del servidor";
     if (error instanceof Error) {
       errorMessage = error.message;

@@ -144,6 +144,7 @@ export function ObjetivosPanel() {
         },
         token
       );
+      await pesosService.eliminarObjetivosPesoViejos(token);
       alert('Objetivos y objetivo peso guardados exitosamente');
     } catch (error) {
         console.log('Objetivo peso: ', {
