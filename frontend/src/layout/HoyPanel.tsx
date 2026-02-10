@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import ChartPanel from "../components/MacrosChart";
 import { nutritionService } from "../services/nutritionService";
 import { authService } from "../services/authService";
+import { isSameDay } from 'date-fns';
 
 interface ComidaBackend {
   id_comida: number;
@@ -75,13 +76,9 @@ export function HoyPanel() {
       }
 
       // PROCESAMIENTO DE COMIDAS
-      const hoy = new Date();
-      const fechaLocal = hoy.toLocaleDateString('en-CA');
-
-      const comidasDeHoy = listaComidas.filter((comida) => {
-        const fechaComida = String(comida.fecha).substring(0, 10);
-        return fechaComida === fechaLocal;
-      });
+      const comidasDeHoy = listaComidas.filter((comida) => 
+        isSameDay(new Date(comida.fecha), new Date())
+      );
 
       let sumaCals = 0;
       let sumaProt = 0;
