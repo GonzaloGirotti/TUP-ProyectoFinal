@@ -189,10 +189,12 @@ export function DiarioPanel() {
         fecha: fecha.toISOString(),
         comentario: "Peso registrado desde el panel diario"
       }, token);
+      await nutritionService.peso.eliminarPesosViejos(token);
       cerrarModal();
       await cargarDiarioCompleto();
     } catch (err) {
       alert("Error guardando peso");
+      console.log("Error detalle peso:", err);
     } finally {
       setGuardando(false);
     }

@@ -201,14 +201,15 @@ export function ProgresoPanel() {
 
       <div className="flex w-full justify-between gap-2">
         <div className="panel-item w-1/2">
-        {/* Peso obtenido de la última entrada de settings */}
           <h2>Peso</h2>
+          {/* Obtener el peso definido como peso actual */}
+          <h4>{entradas.length > 0 ? `${entradas[entradas.length - 1].peso} kg` : "N/A"}</h4>
           
 
         </div>
         <div className="panel-item w-1/2">
           <h2>IMC</h2>
-          <h4>{calcularIMC(80, 1.75)}</h4>
+          <h4>{entradas.length > 0 ? calcularIMC(entradas[entradas.length - 1].peso, 1.75) : "N/A"}</h4>
         </div>
       </div>
 

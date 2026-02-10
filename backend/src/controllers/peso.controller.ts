@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import Peso from "../models/peso.model"; // Importamos el modelo Peso
 import { CreatePesoInput } from "../schemas/peso.schema"; // Importamos el tipo de Zod
+import { Op } from "sequelize";
 
 /*
  Controlador para crear un nuevo registro de peso.
@@ -146,3 +147,46 @@ export const deletePesoHandler = async (req: Request, res: Response) => {
     return res.status(500).json({ message: errorMessage });
   }
 };
+
+export const deleteViejosPesosHandler = async (req: Request, res: Response) => {
+  try {
+    // 1. Obtener el ID del usuario (del token)
+    if (!req.usuario) {
+      return res
+        .status(401)
+        .json({ message: "No se encontró información de usuario." });
+    }
+    const id_usuario = req.usuario.id;
+    
+    // 2. Obtener los pesos actuales para ver si hay mas de uno.
+    const pesos = await Peso.findAll({
+      where: { id_usuario },
+      order: [["fecha", "DESC"]],
+    });
+
+    if (pesos.length <= 1) {
+      return res.status(200).json({ message: "No hay pesos antiguos para eliminar." });
+    }
+
+    // 3. Eliminar todos los pesos excepto el más reciente
+    const resultado = await Peso.destroy({
+      where: {
+        id_usuario,
+        id_peso: {
+          [Op.ne]: pesos[0].id_peso, // 'ne' = 'not equal', mantenemos el más reciente
+        },
+      },
+    });
+    
+    // 4. Enviar respuesta
+    return res.status(200).json({ message: `${resultado} registros de peso antiguos eliminados.` });
+  } catch (error: unknown) {
+    console.error("[DELETE_VIEJOS_PESOS_HANDLER]:", error);
+    let errorMessage = "Error interno del servidor";
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+    return res.status(500).json({ message: errorMessage });
+  }
+};
+

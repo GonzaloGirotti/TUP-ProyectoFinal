@@ -3,10 +3,13 @@ import {
   createPesoHandler,
   getPesosHandler,
   deletePesoHandler,
+  deleteViejosPesosHandler,
 } from "../controllers/peso.controller";
 import { authMiddleware } from "../middlewares/auth.middleware";
 import { validate } from "../middlewares/validate";
 import { createPesoSchema } from "../schemas/peso.schema";
+import Peso from "../models/peso.model";
+import { Op } from "sequelize/types/operators";
 
 const router = Router();
 /**
@@ -32,6 +35,17 @@ router.get(
 );
 
 /**
+ * @route DELETE /api/v1/pesos/viejos
+ * @desc Eliminar todos los registros de peso excepto el más reciente del usuario logueado
+ * @access Private (requiere token)
+ */
+router.delete(
+  "/viejos",
+  authMiddleware, // (Guardia) Estás logueado?
+  deleteViejosPesosHandler, // (Controlador) Eliminar los pesos viejos
+);
+
+/**
  * @route DELETE /api/v1/pesos/:id
  * @desc Eliminar un registro de peso específico
  * @access Private (requiere token)
@@ -42,7 +56,6 @@ router.delete(
   authMiddleware, // (Guardia) Estás logueado?
   deletePesoHandler, // (Controlador) Borrar el peso
 );
-export default router;
 
 /**
  * @route PUT /api/v1/pesos/:id_peso
@@ -55,3 +68,5 @@ router.put(
   validate(createPesoSchema), // (Validador) ¿Tus datos son válidos?
   createPesoHandler, // (Controlador) Actualizar el peso
 );
+
+export default router;

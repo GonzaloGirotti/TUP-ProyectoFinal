@@ -3,6 +3,7 @@ import { authService } from '../services/authService';
 import { nutritionService } from '../services/nutritionService';
 import type { SectionKey, ItemDiario, ResumenDiario } from '../layout/types';
 import { normalizarSeccion } from '../utils/normalizadores';
+import { isSameDay } from 'date-fns';
 
 export const useNutritionData = () => {
   const [registroDiarioId, setRegistroDiarioId] = useState<number | null>(null);
@@ -30,7 +31,6 @@ export const useNutritionData = () => {
       ]);
 
       const todasLasComidas = resComidas.data as any[];
-      const fechaLocal = new Date().toLocaleDateString('en-CA');
 
       const tempItems: Record<SectionKey, ItemDiario[]> = {
         desayuno: [], almuerzo: [], cena: [], aperitivo: [],
@@ -40,16 +40,11 @@ export const useNutritionData = () => {
       let totalCaloriasComida = 0;
 
       const hoy = new Date();
-      const anio = hoy.getFullYear();
-      const mes = hoy.getMonth();
-      const dia = hoy.getDate();
 
       const comidasHoy = todasLasComidas.filter(c => {
         const fechaComida = new Date(c.fecha);
         // Comparamos año, mes y día de forma absoluta
-        return fechaComida.getFullYear() === anio &&
-          fechaComida.getMonth() === mes &&
-          fechaComida.getDate() === dia;
+        return isSameDay(fechaComida, hoy);
       });
 
       console.log("Comidas filtradas para hoy:", comidasHoy.length);
@@ -111,7 +106,13 @@ export const useNutritionData = () => {
         objetivo: 2000,
         alimento: Math.round(totalCaloriasComida),
         ejercicio: resEjercicios.data.total_calorias || 0,
-        peso: resPesos.data.pesos.length > 0 ? resPesos.data.pesos[resPesos.data.pesos.length - 1].peso_kg : 0
+        peso: resPesos.data.length > 0 ? resPesos.data[resPesos.data.length - 1].peso_kg : 0
+      });
+      console.log("Resumen actualizado:", {
+        objetivo: 2000,
+        alimento: Math.round(totalCaloriasComida),
+        ejercicio: resEjercicios.data.total_calorias || 0,
+        peso: resPesos.data.length > 0 ? resPesos.data[resPesos.data.length - 1].peso_kg : 0
       });
     } catch (error) {
       console.error("Error cargando diario:", error);

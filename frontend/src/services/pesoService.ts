@@ -58,4 +58,11 @@ export class PesoService extends BaseService {
       this.getAuthConfig(token)
     );
   }
+
+  async eliminarPesosViejos(token: string) {
+    return await this.axiosInstance.delete(
+      '/pesos/viejos',
+      this.getAuthConfig(token)
+    );
+  }
 }
