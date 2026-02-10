@@ -37,9 +37,20 @@ export const useNutritionData = () => {
 
       let totalCaloriasComida = 0;
 
-      const comidasHoy = todasLasComidas.filter(c =>
-        String(c.fecha).substring(0, 10) === fechaLocal
-      );
+      const hoy = new Date();
+      const anio = hoy.getFullYear();
+      const mes = hoy.getMonth();
+      const dia = hoy.getDate();
+
+      const comidasHoy = todasLasComidas.filter(c => {
+        const fechaComida = new Date(c.fecha);
+        // Comparamos año, mes y día de forma absoluta
+        return fechaComida.getFullYear() === anio &&
+          fechaComida.getMonth() === mes &&
+          fechaComida.getDate() === dia;
+      });
+
+      console.log("Comidas filtradas para hoy:", comidasHoy.length);
 
       await Promise.all(comidasHoy.map(async (comida) => {
         try {

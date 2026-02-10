@@ -10,6 +10,7 @@ export const NORMALIZAR_SECCION: Record<string, SectionKey> = {
 };
 
 export function normalizarSeccion(nombreComida: string): SectionKey {
+  console.log("Normalizando:", nombreComida);
   const nombreNorm = nombreComida.toLowerCase();
   for (const key in NORMALIZAR_SECCION) {
     if (nombreNorm.includes(key)) {

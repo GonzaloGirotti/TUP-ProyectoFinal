@@ -119,8 +119,7 @@ export function DiarioPanel() {
 
       if (cantidad < 100) {
         alert("Cantidad muy baja, ingresa al menos 100 gramos");
-        setGuardando(false);
-        return; // Detener aquí
+        return;
       }
 
       await nutritionService.comidas.agregarAlimentoAComida({
@@ -130,9 +129,10 @@ export function DiarioPanel() {
         cantidad_gramos: cantidad
       } as any, token);
 
-      // Primero cerramos el modal, luego recargamos los datos
       cerrarModal();
-      await cargarDiarioCompleto();
+      setTimeout(() => {
+        cargarDiarioCompleto();
+      }, 100);
     } catch (err) {
       console.error(err);
       alert("Error al guardar comida. Verifica la consola.");
