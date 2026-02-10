@@ -9,11 +9,12 @@ export const useNutritionData = () => {
   const [resumen, setResumen] = useState<ResumenDiario>({
     objetivo: 2000,
     alimento: 0,
-    ejercicio: 0
+    ejercicio: 0,
+    peso: 0
   });
   const [itemsPorSeccion, setItemsPorSeccion] = useState<Record<SectionKey, ItemDiario[]>>({
     desayuno: [], almuerzo: [], cena: [], aperitivo: [],
-    ejercicio: [], agua: [],
+    ejercicio: [], agua: [], peso: []
   });
 
   const cargarDiarioCompleto = useCallback(async () => {
@@ -21,10 +22,11 @@ export const useNutritionData = () => {
     if (!token) return;
 
     try {
-      const [resComidas, resAgua, resEjercicios] = await Promise.all([
+      const [resComidas, resAgua, resEjercicios, resPesos] = await Promise.all([
         nutritionService.comidas.listarComidas(token),
         nutritionService.agua.obtenerAguaHoy(token),
-        nutritionService.ejercicio.obtenerEjerciciosHoy(token)
+        nutritionService.ejercicio.obtenerEjerciciosHoy(token),
+        nutritionService.peso.verHistorialPesos(token)
       ]);
 
       const todasLasComidas = resComidas.data as any[];
@@ -32,7 +34,7 @@ export const useNutritionData = () => {
 
       const tempItems: Record<SectionKey, ItemDiario[]> = {
         desayuno: [], almuerzo: [], cena: [], aperitivo: [],
-        ejercicio: [], agua: []
+        ejercicio: [], agua: [], peso: [] 
       };
 
       let totalCaloriasComida = 0;
@@ -92,11 +94,24 @@ export const useNutritionData = () => {
         });
       }
 
+      console.log("Pesos: ", resPesos.data);
+
+      if(resPesos.data) {
+        resPesos.data.forEach((reg: any) => {
+            tempItems.peso.push({
+              id_relacion: reg.id_peso,
+              texto: `${reg.peso_kg} kg`
+            });
+            setResumen(prev => ({ ...prev, peso: reg.peso_kg }));
+        });
+      }
+
       setItemsPorSeccion({ ...tempItems });
       setResumen({
         objetivo: 2000,
         alimento: Math.round(totalCaloriasComida),
-        ejercicio: resEjercicios.data.total_calorias || 0
+        ejercicio: resEjercicios.data.total_calorias || 0,
+        peso: resPesos.data.pesos.length > 0 ? resPesos.data.pesos[resPesos.data.pesos.length - 1].peso_kg : 0
       });
     } catch (error) {
       console.error("Error cargando diario:", error);
@@ -123,6 +138,7 @@ export const useNutritionData = () => {
 
     if (seccion === 'agua') await nutritionService.agua.eliminarAgua(id, token);
     else if (seccion === 'ejercicio') await nutritionService.ejercicio.eliminarEjercicio(id, token);
+    else if (seccion === 'peso') await nutritionService.peso.eliminarPeso(id, token);
     else await nutritionService.comidas.eliminarAlimentoDeComida(id, token);
   };
 

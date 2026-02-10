@@ -1,4 +1,4 @@
-export type SectionKey = 'desayuno' | 'almuerzo' | 'cena' | 'aperitivo' | 'ejercicio' | 'agua';
+export type SectionKey = 'desayuno' | 'almuerzo' | 'cena' | 'aperitivo' | 'ejercicio' | 'agua' | 'peso';
 export type MealSectionKey = 'desayuno' | 'almuerzo' | 'cena' | 'aperitivo';
 
 export interface AlimentoBackend {
@@ -11,6 +11,7 @@ export interface ResumenDiario {
   objetivo: number;
   alimento: number;
   ejercicio: number;
+  peso: number;
 }
 
 export interface ItemDiario {
@@ -39,4 +40,5 @@ export const SECTION_LABELS: Record<SectionKey, string> = {
   aperitivo: 'Aperitivo',
   ejercicio: 'Ejercicio',
   agua: 'Agua',
+  peso: 'Peso'
 };

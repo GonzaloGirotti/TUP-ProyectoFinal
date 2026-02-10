@@ -11,7 +11,7 @@ interface ComidaCardProps {
     items: ItemDiario[];
     onAgregar: () => void;
     onEliminar: (id: number) => void;
-    tipo?: 'comida' | 'agua' | 'ejercicio'; // Opcional, por si queremos estilos distintos
+    tipo?: 'comida' | 'agua' | 'ejercicio' | 'peso'; // Opcional, por si queremos estilos distintos
 }
 
 export const ComidaCard: React.FC<ComidaCardProps> = ({
@@ -24,7 +24,7 @@ export const ComidaCard: React.FC<ComidaCardProps> = ({
     // Colores según el tipo de tarjeta
     const isAgua = tipo === 'agua';
     const isEjercicio = tipo === 'ejercicio';
-
+    const isPeso = tipo === 'peso';
     let headerColor = "text-slate-200";
     let dotColor = "bg-emerald-500";
     let btnColor = "text-emerald-400 border-emerald-500/30";
@@ -37,6 +37,10 @@ export const ComidaCard: React.FC<ComidaCardProps> = ({
         headerColor = "text-orange-400";
         dotColor = "bg-orange-500";
         btnColor = "text-orange-400 border-orange-500/30";
+    } else if (isPeso) {
+        headerColor = "text-yellow-400";
+        dotColor = "bg-yellow-500";
+        btnColor = "text-yellow-400 border-yellow-500/30";
     }
 
     return (

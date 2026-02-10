@@ -9,6 +9,7 @@ import { GraficoDistribucion } from '../components/GraficoDistribucion';
 import { ModalAgregarComida } from '../components/ModalAgregarComida';
 import { ModalAgregarAgua } from '../components/ModalAgregarAgua';
 import { ModalAgregarEjercicio } from '../components/ModalAgregarEjercicio';
+import { ModalAgregarPeso } from '../components/ModalAgregarPeso';
 import { PanelReportes } from '../components/PanelReportes';
 import type { SectionKey } from './types';
 import { SECTION_LABELS } from './types';
@@ -177,6 +178,26 @@ export function DiarioPanel() {
     }
   };
 
+  const handleGuardarPeso = async (peso_kg: number, fecha: Date) => {
+    const token = authService.getToken();
+    if (!token) return;
+
+    setGuardando(true);
+    try {
+      await nutritionService.peso.registrarPeso({
+        peso_kg,
+        fecha: fecha.toISOString(),
+        comentario: "Peso registrado desde el panel diario"
+      }, token);
+      cerrarModal();
+      await cargarDiarioCompleto();
+    } catch (err) {
+      alert("Error guardando peso");
+    } finally {
+      setGuardando(false);
+    }
+  };
+
   if (registroDiarioId === null) {
     return (
       <div className="p-10 text-center text-slate-400">
@@ -236,6 +257,14 @@ export function DiarioPanel() {
               {seccionActiva === 'ejercicio' && (
                 <ModalAgregarEjercicio
                   onGuardar={handleGuardarEjercicio}
+                  onCancelar={cerrarModal}
+                  guardando={guardando}
+                />
+              )}
+
+              {seccionActiva === 'peso' && (
+                <ModalAgregarPeso
+                  onGuardar={handleGuardarPeso}
                   onCancelar={cerrarModal}
                   guardando={guardando}
                 />
