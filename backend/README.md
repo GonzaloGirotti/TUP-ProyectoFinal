@@ -66,17 +66,14 @@ Asegurate de usar `docker-compose down` cuando hayas finalizado con cada prueba,
 **Importante:** Espera unos 10-15 segundos después de ejecutar este comando para que PostgreSQL termine de iniciarse antes de continuar.
 
 ---
-### Paso 3: Instalar y Migrar (Terminal 2)
+### Paso 3: Instalar (Terminal 2)
 
 Abre una **segunda terminal**, navega a la carpeta del backend y prepara el código.
 
 \# 1. Entrar al backend  
 cd backend  
 <br/>\# 2. Instalar dependencias  
-npm install
-<br/>\# 3. Crear las tablas en la base de datos (Migraciones)  
-\# (Esto requiere que el Paso 2 esté listo)  
-npm run db:migrate  
+npm install 
 
 _Deberías ver un mensaje de éxito indicando que se crearon las tablas Usuarios, Pesos, Alimentos, Comidas, Comidas-Alimentos_
 
