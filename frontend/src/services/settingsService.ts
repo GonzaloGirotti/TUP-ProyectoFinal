@@ -45,7 +45,25 @@ export class SettingsService extends BaseService {
     }
 
     async obtenerSettings(id_usuario: number | undefined, token: string) {
-        return await this.axiosInstance.get<SettingsResponse>(`/settings/${id_usuario}`, this.getAuthConfig(token));
+        const pesoYaCargado = await this.axiosInstance.get(`/pesos/`, this.getAuthConfig(token));
+        const settingsResponse = await this.axiosInstance.get<SettingsResponse>(`/settings/${id_usuario}`, this.getAuthConfig(token));
+        
+        if (pesoYaCargado.data.length === 0) {
+            // Si no hay pesos cargados, retornar la configuracion guardada en settings
+            return settingsResponse;
+        } else {
+            // Si hay pesos cargados, actualizar el peso con el valor más reciente
+            const pesoMasReciente = pesoYaCargado.data[0]; 
+            const settings = settingsResponse.data.settings[0]; // Asumimos que solo hay un registro de settings por usuario
+            return {
+                data: {
+                    settings: [{
+                        ...settings,
+                        peso: pesoMasReciente.peso_kg, // Sobrescribimos el peso con el valor más reciente
+                    }]
+                }
+            };
+        }
     }
 
     async updateSettings(id_usuario: number, payload: SettingsPayLoad, token: string) {

@@ -115,6 +115,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
               },
               token
             );
+            pesosService.eliminarPesosViejos(token);
       
             alert('Settings guardados exitosamente');
           } catch (error) {
