@@ -7,4 +7,4 @@ NutriApp es una aplicación web diseñada para ayudar a los usuarios a gestionar
 - [README Frontend del Proyecto NutriApp](./frontend/README.md)
 
 ## Diagrama E-R
-![Diagrama E-R NutriApp](./Images/Modelo%20E-R.jpeg)
+![Diagrama E-R NutriApp](./Images/MODELO%20E-R.jpeg)
