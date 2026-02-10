@@ -113,6 +113,36 @@ Hemos incluido una colección inteligente (NutriApp_Collection.json) que maneja 
 
 3. Arrastra el archivo NutriApp_Collection.json (ubicado en la raíz).
 
+4. Ejecuta Register para crear un usuario.
+
+5. Ejecuta Login (el token se guarda automáticamente)
+
+6.  Ejecuta cualquier otra petición.
+La colección está lista para usar con la URL base localhost:4000/api/v1.
+
+ Son 12 carpetas organizadas con todos los endpoints documentados
+- Autenticación automática - El token JWT se guarda automáticamente al hacer login
+- Captura automática de IDs - Cada recurso creado guarda su ID para usarlo en otras peticiones
+- Variables de colección configuradas (base_url, jwt_token, y todos los IDs necesarios)
+- Ejemplos de body incluidos en todas las peticiones POST/PUT
+- Autorización Bearer configurada a nivel de colección
+
+Endpoints incluidos:
+_ Autenticación (2 requests)
+_ Pesos (3 requests)
+_ Alimentos (3 requests)
+_ Comidas (3 requests)
+_ Comidas-Alimentos (3 requests)
+_ Objetivo Calórico (4 requests: POST, GET, PUT, DELETE)
+_ Objetivo Peso (4 requests: POST, GET, PUT, DELETE)
+_ Registro Diario (6 requests)
+_ Registro Peso (4 requests: POST, GET, PUT, DELETE)
+_ Ejercicios (4 requests: POST, GET, PUT, DELETE)
+_ Agua (3 requests)
+_ Settings (3 requests)
+
+
+
 ### 2. Autenticación Automática
 
 No necesitas copiar y pegar tokens manualmente. La colección tiene un script que lo hace automaticamente.
@@ -130,10 +160,6 @@ No necesitas copiar y pegar tokens manualmente. La colección tiene un script qu
 ### Advertencia sobre el Orden de Pruebas:
 Ejecute las pruebas de eliminación (DELETE) al final.
 Si borra un recurso (ej: un Alimento) antes de tiempo, otras pruebas que dependen de él (ej: "Agregar Alimento a Comida") fallarán con error 404 porque el recurso ya no existe.
-
-### Nota sobre Datos de Prueba (Seeders):
-Para esta entrega de prototipo, la carga de datos inicial se realiza manualmente utilizando esta colección de Postman.
-Para la versión final, se implementarán Seeders automáticos (npm run db:seed) que van a rellenar la base de datos instantáneamente.
 
 ---
 ## Documentación de los Endpoints
@@ -252,5 +278,4 @@ _(Requiere Header Authorization: Bearer &lt;token&gt;)_
 - src/routes/: Definición de endpoints y middlewares.
 - src/schemas/: Validaciones de datos con Zod.
 - src/middlewares/: Protección de rutas (Auth) y validación.
-- src/migrations/: Historial de cambios de la Base de Datos.
 - src/tests/: Tests de integración con Vitest.

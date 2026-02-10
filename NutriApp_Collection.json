@@ -1,609 +1,1393 @@
 {
-	"info": {
-		"_postman_id": "nutri-app-backend",
-		"name": "NutriApp API (Prototipo)",
-		"description": "Colección para el Backend de Nutrición. Incluye los 5 módulos principales: Auth, Pesos, Alimentos, Comidas y Comidas_Alimentos.",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-	},
-	"item": [
-		{
-			"name": "1. Módulo Usuarios (Auth)",
-			"item": [
-				{
-					"name": "Registrar Usuario",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"nombre_usuario\": \"Profesor Demo\",\n    \"email\": \"profe@test.com\",\n    \"password\": \"admin123\",\n    \"fecha_nacimiento\": \"1980-01-01T00:00:00.000Z\",\n    \"genero\": \"Femenino\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:4000/api/v1/auth/register",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "4000",
-							"path": [
-								"api",
-								"v1",
-								"auth",
-								"register"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Login (Captura Token)",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"var jsonData = pm.response.json();",
-									"if (jsonData.token) {",
-									"    pm.collectionVariables.set(\"jwt_token\", jsonData.token);",
-									"    console.log(\"Token capturado exitosamente\");",
-									"}"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"email\": \"profe@test.com\",\n    \"password\": \"admin123\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:4000/api/v1/auth/login",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "4000",
-							"path": [
-								"api",
-								"v1",
-								"auth",
-								"login"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "2. Módulo Pesos",
-			"item": [
-				{
-					"name": "Crear Peso (Captura ID)",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"var jsonData = pm.response.json();",
-									"if (jsonData.id_peso) {",
-									"    pm.collectionVariables.set(\"id_peso_creado\", jsonData.id_peso);",
-									"}"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{jwt_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"peso_kg\": 70.5,\n    \"comentario\": \"Peso inicial de prueba\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:4000/api/v1/pesos",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "4000",
-							"path": [
-								"api",
-								"v1",
-								"pesos"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Listar Pesos",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{jwt_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:4000/api/v1/pesos",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "4000",
-							"path": [
-								"api",
-								"v1",
-								"pesos"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Borrar Peso Creado",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{jwt_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:4000/api/v1/pesos/{{id_peso_creado}}",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "4000",
-							"path": [
-								"api",
-								"v1",
-								"pesos",
-								"{{id_peso_creado}}"
-							]
-						},
-						"description": "Usa automáticamente el ID del último peso creado."
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "3. Módulo Alimentos",
-			"item": [
-				{
-					"name": "Crear Alimento (Captura ID)",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"var jsonData = pm.response.json();",
-									"if (jsonData.id_alimento) {",
-									"    pm.collectionVariables.set(\"id_alimento_creado\", jsonData.id_alimento);",
-									"}"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{jwt_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"nombre\": \"Manzana Verde\",\n    \"carbohidratos\": 14,\n    \"proteinas\": 0.3,\n    \"grasas\": 0.2,\n    \"calorias\": 52\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:4000/api/v1/alimentos",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "4000",
-							"path": [
-								"api",
-								"v1",
-								"alimentos"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Listar Alimentos",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{jwt_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:4000/api/v1/alimentos",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "4000",
-							"path": [
-								"api",
-								"v1",
-								"alimentos"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Borrar Alimento Creado",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{jwt_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:4000/api/v1/alimentos/{{id_alimento_creado}}",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "4000",
-							"path": [
-								"api",
-								"v1",
-								"alimentos",
-								"{{id_alimento_creado}}"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "4. Módulo Comidas",
-			"item": [
-				{
-					"name": "Crear Comida (Captura ID)",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"var jsonData = pm.response.json();",
-									"if (jsonData.id_comida) {",
-									"    pm.collectionVariables.set(\"id_comida_creada\", jsonData.id_comida);",
-									"}"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{jwt_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"nombre_comida\": \"Almuerzo\",\n    \"fecha\": \"2025-11-20T13:00:00.000Z\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:4000/api/v1/comidas",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "4000",
-							"path": [
-								"api",
-								"v1",
-								"comidas"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Listar Comidas",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{jwt_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:4000/api/v1/comidas",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "4000",
-							"path": [
-								"api",
-								"v1",
-								"comidas"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Borrar Comida Creada",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{jwt_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:4000/api/v1/comidas/{{id_comida_creada}}",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "4000",
-							"path": [
-								"api",
-								"v1",
-								"comidas",
-								"{{id_comida_creada}}"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "5. Módulo Comidas_Alimentos (Relación)",
-			"item": [
-				{
-					"name": "Agregar Alimento a Comida (Captura ID)",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"var jsonData = pm.response.json();",
-									"if (jsonData.id_comida_alimento) {",
-									"    pm.collectionVariables.set(\"id_relacion_creada\", jsonData.id_comida_alimento);",
-									"}"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{jwt_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"id_comida\": {{id_comida_creada}},\n    \"id_alimento\": {{id_alimento_creado}},\n    \"cantidad_gramos\": 200\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:4000/api/v1/comidas_alimentos",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "4000",
-							"path": [
-								"api",
-								"v1",
-								"comidas_alimentos"
-							]
-						},
-						"description": "Usa automáticamente los IDs de la comida y alimento que creaste en los pasos anteriores."
-					},
-					"response": []
-				},
-				{
-					"name": "Listar Alimentos de Comidas",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{jwt_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:4000/api/v1/comidas_alimentos",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "4000",
-							"path": [
-								"api",
-								"v1",
-								"comidas_alimentos"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Quitar Alimento de Comida",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{jwt_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:4000/api/v1/comidas_alimentos/{{id_relacion_creada}}",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "4000",
-							"path": [
-								"api",
-								"v1",
-								"comidas_alimentos",
-								"{{id_relacion_creada}}"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		}
-	],
-	"variable": [
-		{
-			"key": "jwt_token",
-			"value": "",
-			"type": "string"
-		},
-		{
-			"key": "id_peso_creado",
-			"value": "1",
-			"type": "string"
-		},
-		{
-			"key": "id_alimento_creado",
-			"value": "1",
-			"type": "string"
-		},
-		{
-			"key": "id_comida_creada",
-			"value": "1",
-			"type": "string"
-		},
-		{
-			"key": "id_relacion_creada",
-			"value": "1",
-			"type": "string"
-		}
-	]
+    "info": {
+        "_postman_id": "nutriapp-complete-collection",
+        "name": "NutriApp API - Complete",
+        "description": "Colección completa de la API de NutriApp con autenticación automática y captura de IDs",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "auth": {
+        "type": "bearer",
+        "bearer": [
+            {
+                "key": "token",
+                "value": "{{jwt_token}}",
+                "type": "string"
+            }
+        ]
+    },
+    "event": [
+        {
+            "listen": "prerequest",
+            "script": {
+                "type": "text/javascript",
+                "exec": [
+                    ""
+                ]
+            }
+        },
+        {
+            "listen": "test",
+            "script": {
+                "type": "text/javascript",
+                "exec": [
+                    ""
+                ]
+            }
+        }
+    ],
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "localhost:4000/api/v1",
+            "type": "string"
+        },
+        {
+            "key": "jwt_token",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "id_peso",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "id_alimento",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "id_comida",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "id_comida_alimento",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "id_objetivoCalorico",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "id_objetivoPeso",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "id_registroDiario",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "id_registroPeso",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "id_ejercicio",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "id_agua",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "id_settings",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "id_usuario",
+            "value": "",
+            "type": "string"
+        }
+    ],
+    "item": [
+        {
+            "name": "1. Autenticación",
+            "item": [
+                {
+                    "name": "Register",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 201) {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    if (jsonData.id_usuario) {",
+                                    "        pm.collectionVariables.set('id_usuario', jsonData.id_usuario);",
+                                    "        console.log('✅ ID de usuario guardado: ' + jsonData.id_usuario);",
+                                    "    }",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"nombre\": \"Juan\",\n  \"apellido\": \"Pérez\",\n  \"email\": \"juan.perez@example.com\",\n  \"password\": \"Password123!\",\n  \"fecha_nacimiento\": \"1990-01-15\",\n  \"genero\": \"M\",\n  \"altura\": 175\n}"
+                        },
+                        "url": {
+                            "raw": "http://{{base_url}}/auth/register",
+                            "protocol": "http",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "register"
+                            ]
+                        },
+                        "description": "Registrar un nuevo usuario en el sistema"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Login",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200) {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    if (jsonData.token) {",
+                                    "        pm.collectionVariables.set('jwt_token', jsonData.token);",
+                                    "        console.log('✅ Token JWT guardado automáticamente');",
+                                    "    }",
+                                    "    if (jsonData.id_usuario) {",
+                                    "        pm.collectionVariables.set('id_usuario', jsonData.id_usuario);",
+                                    "        console.log('✅ ID de usuario guardado: ' + jsonData.id_usuario);",
+                                    "    }",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"juan.perez@example.com\",\n  \"password\": \"Password123!\"\n}"
+                        },
+                        "url": {
+                            "raw": "http://{{base_url}}/auth/login",
+                            "protocol": "http",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "login"
+                            ]
+                        },
+                        "description": "Iniciar sesión y obtener token JWT"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "2. Pesos",
+            "item": [
+                {
+                    "name": "Registrar Peso",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 201) {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    if (jsonData.id_peso) {",
+                                    "        pm.collectionVariables.set('id_peso', jsonData.id_peso);",
+                                    "        console.log('✅ ID de peso guardado: ' + jsonData.id_peso);",
+                                    "    }",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"peso\": 75.5,\n  \"fecha\": \"2026-02-10\"\n}"
+                        },
+                        "url": {
+                            "raw": "http://{{base_url}}/pesos",
+                            "protocol": "http",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "pesos"
+                            ]
+                        },
+                        "description": "Registrar un nuevo pesaje"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Ver Historial de Pesos",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "http://{{base_url}}/pesos",
+                            "protocol": "http",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "pesos"
+                            ]
+                        },
+                        "description": "Obtener el historial de pesos del usuario"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Eliminar Peso",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "http://{{base_url}}/pesos/{{id_peso}}",
+                            "protocol": "http",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "pesos",
+                                "{{id_peso}}"
+                            ]
+                        },
+                        "description": "Eliminar un registro de peso"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "3. Alimentos",
+            "item": [
+                {
+                    "name": "Crear Alimento",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 201) {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    if (jsonData.id_alimento) {",
+                                    "        pm.collectionVariables.set('id_alimento', jsonData.id_alimento);",
+                                    "        console.log('✅ ID de alimento guardado: ' + jsonData.id_alimento);",
+                                    "    }",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"nombre\": \"Manzana\",\n  \"calorias\": 52,\n  \"proteinas\": 0.3,\n  \"carbohidratos\": 14,\n  \"grasas\": 0.2,\n  \"porcion_gramos\": 100\n}"
+                        },
+                        "url": {
+                            "raw": "http://{{base_url}}/alimentos",
+                            "protocol": "http",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "alimentos"
+                            ]
+                        },
+                        "description": "Crear un nuevo alimento base"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Listar Alimentos",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "http://{{base_url}}/alimentos",
+                            "protocol": "http",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "alimentos"
+                            ]
+                        },
+                        "description": "Obtener lista de alimentos disponibles"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Eliminar Alimento",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "http://{{base_url}}/alimentos/{{id_alimento}}",
+                            "protocol": "http",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "alimentos",
+                                "{{id_alimento}}"
+                            ]
+                        },
+                        "description": "Eliminar un alimento"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "4. Comidas",
+            "item": [
+                {
+                    "name": "Crear Comida",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 201) {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    if (jsonData.id_comida) {",
+                                    "        pm.collectionVariables.set('id_comida', jsonData.id_comida);",
+                                    "        console.log('✅ ID de comida guardado: ' + jsonData.id_comida);",
+                                    "    }",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"tipo_comida\": \"Almuerzo\",\n  \"fecha\": \"2026-02-10\"\n}"
+                        },
+                        "url": {
+                            "raw": "http://{{base_url}}/comidas",
+                            "protocol": "http",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "comidas"
+                            ]
+                        },
+                        "description": "Crear una cabecera de comida"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Listar Comidas",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "http://{{base_url}}/comidas",
+                            "protocol": "http",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "comidas"
+                            ]
+                        },
+                        "description": "Obtener lista de comidas del usuario"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Eliminar Comida",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "http://{{base_url}}/comidas/{{id_comida}}",
+                            "protocol": "http",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "comidas",
+                                "{{id_comida}}"
+                            ]
+                        },
+                        "description": "Eliminar una comida completa"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "5. Comidas-Alimentos",
+            "item": [
+                {
+                    "name": "Agregar Alimento a Comida",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 201) {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    if (jsonData.id_comida_alimento) {",
+                                    "        pm.collectionVariables.set('id_comida_alimento', jsonData.id_comida_alimento);",
+                                    "        console.log('✅ ID de comida-alimento guardado: ' + jsonData.id_comida_alimento);",
+                                    "    }",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"id_comida\": \"{{id_comida}}\",\n  \"id_alimento\": \"{{id_alimento}}\",\n  \"cantidad_gramos\": 150\n}"
+                        },
+                        "url": {
+                            "raw": "http://{{base_url}}/comidas_alimentos",
+                            "protocol": "http",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "comidas_alimentos"
+                            ]
+                        },
+                        "description": "Agregar un alimento a una comida (calcula macros automáticamente)"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Ver Alimentos de Comidas",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "http://{{base_url}}/comidas_alimentos",
+                            "protocol": "http",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "comidas_alimentos"
+                            ]
+                        },
+                        "description": "Ver qué alimentos tiene cada comida"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Quitar Alimento de Comida",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "http://{{base_url}}/comidas_alimentos/{{id_comida_alimento}}",
+                            "protocol": "http",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "comidas_alimentos",
+                                "{{id_comida_alimento}}"
+                            ]
+                        },
+                        "description": "Eliminar un alimento de una comida"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "6. Objetivo Calórico",
+            "item": [
+                {
+                    "name": "Crear Objetivo Calórico",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 201) {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    if (jsonData.id_objetivoCalorico) {",
+                                    "        pm.collectionVariables.set('id_objetivoCalorico', jsonData.id_objetivoCalorico);",
+                                    "        console.log('✅ ID de objetivo calórico guardado: ' + jsonData.id_objetivoCalorico);",
+                                    "    }",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"calorias_objetivo\": 2000,\n  \"proteinas_objetivo\": 150,\n  \"carbohidratos_objetivo\": 200,\n  \"grasas_objetivo\": 70,\n  \"fecha_inicio\": \"2026-02-10\"\n}"
+                        },
+                        "url": {
+                            "raw": "http://{{base_url}}/objetivoCalorico",
+                            "protocol": "http",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "objetivoCalorico"
+                            ]
+                        },
+                        "description": "Crear un objetivo calórico para el usuario"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Obtener Objetivos Calóricos",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "http://{{base_url}}/objetivoCalorico",
+                            "protocol": "http",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "objetivoCalorico"
+                            ]
+                        },
+                        "description": "Obtener todos los objetivos calóricos del usuario"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Actualizar Objetivo Calórico",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"calorias_objetivo\": 2200,\n  \"proteinas_objetivo\": 160,\n  \"carbohidratos_objetivo\": 220,\n  \"grasas_objetivo\": 75\n}"
+                        },
+                        "url": {
+                            "raw": "http://{{base_url}}/objetivoCalorico/{{id_objetivoCalorico}}",
+                            "protocol": "http",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "objetivoCalorico",
+                                "{{id_objetivoCalorico}}"
+                            ]
+                        },
+                        "description": "Actualizar un objetivo calórico existente"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Eliminar Objetivo Calórico",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "http://{{base_url}}/objetivoCalorico/{{id_objetivoCalorico}}",
+                            "protocol": "http",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "objetivoCalorico",
+                                "{{id_objetivoCalorico}}"
+                            ]
+                        },
+                        "description": "Eliminar un objetivo calórico"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "7. Objetivo Peso",
+            "item": [
+                {
+                    "name": "Crear Objetivo Peso",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 201) {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    if (jsonData.id_objetivoPeso) {",
+                                    "        pm.collectionVariables.set('id_objetivoPeso', jsonData.id_objetivoPeso);",
+                                    "        console.log('✅ ID de objetivo peso guardado: ' + jsonData.id_objetivoPeso);",
+                                    "    }",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"peso_objetivo\": 70,\n  \"fecha_inicio\": \"2026-02-10\",\n  \"fecha_objetivo\": \"2026-06-10\"\n}"
+                        },
+                        "url": {
+                            "raw": "http://{{base_url}}/objetivoPeso",
+                            "protocol": "http",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "objetivoPeso"
+                            ]
+                        },
+                        "description": "Crear un objetivo de peso para el usuario"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Obtener Objetivos Peso",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "http://{{base_url}}/objetivoPeso",
+                            "protocol": "http",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "objetivoPeso"
+                            ]
+                        },
+                        "description": "Obtener todos los objetivos de peso del usuario"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Actualizar Objetivo Peso",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"peso_objetivo\": 68,\n  \"fecha_objetivo\": \"2026-05-10\"\n}"
+                        },
+                        "url": {
+                            "raw": "http://{{base_url}}/objetivoPeso/{{id_objetivoPeso}}",
+                            "protocol": "http",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "objetivoPeso",
+                                "{{id_objetivoPeso}}"
+                            ]
+                        },
+                        "description": "Actualizar un objetivo de peso existente"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Eliminar Objetivo Peso",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "http://{{base_url}}/objetivoPeso/{{id_objetivoPeso}}",
+                            "protocol": "http",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "objetivoPeso",
+                                "{{id_objetivoPeso}}"
+                            ]
+                        },
+                        "description": "Eliminar un objetivo de peso"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "8. Registro Diario",
+            "item": [
+                {
+                    "name": "Crear Registro Diario",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 201) {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    if (jsonData.id_registroDiario) {",
+                                    "        pm.collectionVariables.set('id_registroDiario', jsonData.id_registroDiario);",
+                                    "        console.log('✅ ID de registro diario guardado: ' + jsonData.id_registroDiario);",
+                                    "    }",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"fecha\": \"2026-02-10\",\n  \"calorias_consumidas\": 1800,\n  \"proteinas_consumidas\": 140,\n  \"carbohidratos_consumidos\": 180,\n  \"grasas_consumidas\": 65\n}"
+                        },
+                        "url": {
+                            "raw": "http://{{base_url}}/registroDiario",
+                            "protocol": "http",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "registroDiario"
+                            ]
+                        },
+                        "description": "Crear un registro diario para el usuario"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Obtener Todos los Registros Diarios",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "http://{{base_url}}/registroDiario",
+                            "protocol": "http",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "registroDiario"
+                            ]
+                        },
+                        "description": "Obtener todos los registros diarios del usuario desde el body"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Obtener Registros por ID Usuario (Path)",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "http://{{base_url}}/registroDiario/all/{{id_usuario}}",
+                            "protocol": "http",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "registroDiario",
+                                "all",
+                                "{{id_usuario}}"
+                            ]
+                        },
+                        "description": "Obtener todos los registros diarios de un usuario desde el path param"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Obtener Registro de Hoy",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "http://{{base_url}}/registroDiario/{{id_usuario}}",
+                            "protocol": "http",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "registroDiario",
+                                "{{id_usuario}}"
+                            ]
+                        },
+                        "description": "Obtener el registro diario de hoy del usuario"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Actualizar Registro Diario",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"calorias_consumidas\": 1900,\n  \"proteinas_consumidas\": 145,\n  \"carbohidratos_consumidos\": 190,\n  \"grasas_consumidas\": 68\n}"
+                        },
+                        "url": {
+                            "raw": "http://{{base_url}}/registroDiario/{{id_registroDiario}}",
+                            "protocol": "http",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "registroDiario",
+                                "{{id_registroDiario}}"
+                            ]
+                        },
+                        "description": "Actualizar un registro diario existente"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Eliminar Registro Diario",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "http://{{base_url}}/registroDiario/{{id_registroDiario}}",
+                            "protocol": "http",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "registroDiario",
+                                "{{id_registroDiario}}"
+                            ]
+                        },
+                        "description": "Eliminar un registro diario"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "9. Registro Peso",
+            "item": [
+                {
+                    "name": "Crear Registro Peso",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 201) {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    if (jsonData.id_registroPeso) {",
+                                    "        pm.collectionVariables.set('id_registroPeso', jsonData.id_registroPeso);",
+                                    "        console.log('✅ ID de registro peso guardado: ' + jsonData.id_registroPeso);",
+                                    "    }",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"peso\": 74.8,\n  \"fecha\": \"2026-02-10\",\n  \"notas\": \"Después del ejercicio\"\n}"
+                        },
+                        "url": {
+                            "raw": "http://{{base_url}}/registroPeso",
+                            "protocol": "http",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "registroPeso"
+                            ]
+                        },
+                        "description": "Crear un registro de peso del usuario"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Obtener Registros de Peso",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "http://{{base_url}}/registroPeso",
+                            "protocol": "http",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "registroPeso"
+                            ]
+                        },
+                        "description": "Obtener todos los registros de peso del usuario"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Actualizar Registro Peso",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"peso\": 74.5,\n  \"notas\": \"Medición corregida\"\n}"
+                        },
+                        "url": {
+                            "raw": "http://{{base_url}}/registroPeso/{{id_registroPeso}}",
+                            "protocol": "http",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "registroPeso",
+                                "{{id_registroPeso}}"
+                            ]
+                        },
+                        "description": "Actualizar un registro de peso existente"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Eliminar Registro Peso",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "http://{{base_url}}/registroPeso/{{id_registroPeso}}",
+                            "protocol": "http",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "registroPeso",
+                                "{{id_registroPeso}}"
+                            ]
+                        },
+                        "description": "Eliminar un registro de peso"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "10. Ejercicios",
+            "item": [
+                {
+                    "name": "Crear Ejercicio",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 201) {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    if (jsonData.id_ejercicio) {",
+                                    "        pm.collectionVariables.set('id_ejercicio', jsonData.id_ejercicio);",
+                                    "        console.log('✅ ID de ejercicio guardado: ' + jsonData.id_ejercicio);",
+                                    "    }",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"tipo_ejercicio\": \"Correr\",\n  \"duracion_minutos\": 30,\n  \"calorias_quemadas\": 300,\n  \"fecha\": \"2026-02-10\"\n}"
+                        },
+                        "url": {
+                            "raw": "http://{{base_url}}/ejercicios",
+                            "protocol": "http",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "ejercicios"
+                            ]
+                        },
+                        "description": "Crear un registro de ejercicio"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Obtener Ejercicios de Hoy",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "http://{{base_url}}/ejercicios",
+                            "protocol": "http",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "ejercicios"
+                            ]
+                        },
+                        "description": "Obtener todos los ejercicios de hoy del usuario"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Actualizar Ejercicio",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"duracion_minutos\": 45,\n  \"calorias_quemadas\": 450\n}"
+                        },
+                        "url": {
+                            "raw": "http://{{base_url}}/ejercicios/{{id_ejercicio}}",
+                            "protocol": "http",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "ejercicios",
+                                "{{id_ejercicio}}"
+                            ]
+                        },
+                        "description": "Actualizar un registro de ejercicio existente"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Eliminar Ejercicio",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "http://{{base_url}}/ejercicios/{{id_ejercicio}}",
+                            "protocol": "http",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "ejercicios",
+                                "{{id_ejercicio}}"
+                            ]
+                        },
+                        "description": "Eliminar un registro de ejercicio"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "11. Agua",
+            "item": [
+                {
+                    "name": "Registrar Agua",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 201) {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    if (jsonData.id_agua) {",
+                                    "        pm.collectionVariables.set('id_agua', jsonData.id_agua);",
+                                    "        console.log('✅ ID de agua guardado: ' + jsonData.id_agua);",
+                                    "    }",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"cantidad_ml\": 250,\n  \"fecha\": \"2026-02-10\"\n}"
+                        },
+                        "url": {
+                            "raw": "http://{{base_url}}/agua",
+                            "protocol": "http",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "agua"
+                            ]
+                        },
+                        "description": "Registrar consumo de agua"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Obtener Registros de Agua de Hoy",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "http://{{base_url}}/agua",
+                            "protocol": "http",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "agua"
+                            ]
+                        },
+                        "description": "Obtener todos los registros de agua de hoy"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Eliminar Registro de Agua",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "http://{{base_url}}/agua/{{id_agua}}",
+                            "protocol": "http",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "agua",
+                                "{{id_agua}}"
+                            ]
+                        },
+                        "description": "Eliminar un registro de agua"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "12. Settings",
+            "item": [
+                {
+                    "name": "Crear o Actualizar Settings",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 201 || pm.response.code === 200) {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    if (jsonData.id_settings) {",
+                                    "        pm.collectionVariables.set('id_settings', jsonData.id_settings);",
+                                    "        console.log('✅ ID de settings guardado: ' + jsonData.id_settings);",
+                                    "    }",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"tema\": \"oscuro\",\n  \"idioma\": \"es\",\n  \"notificaciones_activas\": true,\n  \"unidad_peso\": \"kg\"\n}"
+                        },
+                        "url": {
+                            "raw": "http://{{base_url}}/settings",
+                            "protocol": "http",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "settings"
+                            ]
+                        },
+                        "description": "Crear o actualizar la configuración del usuario"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Obtener Settings",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "http://{{base_url}}/settings",
+                            "protocol": "http",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "settings"
+                            ]
+                        },
+                        "description": "Obtener la configuración actual del usuario"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Actualizar Settings Existente",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"tema\": \"claro\",\n  \"notificaciones_activas\": false\n}"
+                        },
+                        "url": {
+                            "raw": "http://{{base_url}}/settings/{{id_settings}}",
+                            "protocol": "http",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "settings",
+                                "{{id_settings}}"
+                            ]
+                        },
+                        "description": "Actualizar configuración existente del usuario"
+                    },
+                    "response": []
+                }
+            ]
+        }
+    ]
 }
